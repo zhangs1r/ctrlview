@@ -265,10 +265,10 @@ def parse_fm(md):
 
 def nav(active=""):
     return ('<nav class="bar"><div class="inner">'
-            '<a class="brand" href="../index.html">CtrlView</a>'
-            f'<a href="../index.html" class="{"on" if active=="home" else ""}">首页</a>'
-            f'<a href="../columns.html" class="{"on" if active=="cols" else ""}">栏目</a>'
-            f'<a href="../archive.html" class="{"on" if active=="arch" else ""}">全部文章</a>'
+            '<a class="brand" href="index.html">CtrlView</a>'
+            f'<a href="index.html" class="{"on" if active=="home" else ""}">首页</a>'
+            f'<a href="columns.html" class="{"on" if active=="cols" else ""}">栏目</a>'
+            f'<a href="archive.html" class="{"on" if active=="arch" else ""}">全部文章</a>'
             f'<a href="../index.html?force={BUILD}" title="绕过 CDN 缓存">↻ 强制刷新</a>'
             '</div></nav>')
 
@@ -300,7 +300,7 @@ def build(repo, out):
         tags = "".join(f'<span class="tag">{H.escape(t.strip())}</span>'
                        for t in fm.get("tags", "[]").strip("[]").split(",") if t.strip())
         aid = p["id"]
-        body = md2html(p["md"], figdir="../figs/")
+        body = md2html(p["md"], figdir="figs/")
         doc = f"""<!DOCTYPE html><html lang="zh-CN"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
