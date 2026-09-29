@@ -1,0 +1,51 @@
+{
+  "site": {
+    "name": "CtrlView",
+    "tagline": "用控制工程的视角读 AI 与机器人论文",
+    "description": "面向控制工程背景的读者：每篇论文讲清问题背景、核心公式与设计动机，不用术语堆砌。"
+  },
+  "columns": [
+    {
+      "id": "slam",
+      "name": "SLAM 与状态估计",
+      "queries": ["all:\"visual SLAM\"", "all:\"state estimation\"", "all:\"visual-inertial odometry\"", "all:\"loop closure\""],
+      "note": "控制背景的强项区，术语迁移成本最低"
+    },
+    {
+      "id": "embodied",
+      "name": "具身智能与 VLA",
+      "queries": ["all:\"embodied AI\"", "all:\"vision-language-action\"", "all:\"robot manipulation\""],
+      "note": "AI 与控制的交汇点，关注数据引擎与策略学习"
+    },
+    {
+      "id": "control",
+      "name": "控制与优化",
+      "queries": ["all:\"model predictive control\"", "all:\"optimal control\"", "cat:math.OC"],
+      "note": "把熟悉的方法接到机器人前沿"
+    },
+    {
+      "id": "robotics",
+      "name": "机器人",
+      "queries": ["cat:cs.RO"],
+      "note": "基础盘，量最大"
+    },
+    {
+      "id": "cps",
+      "name": "信息物理系统",
+      "queries": ["cat:eess.SY", "all:\"cyber-physical\"", "all:\"digital twin\""],
+      "note": "靠 LLM 判别是否真有物理-信息耦合"
+    },
+    {
+      "id": "security",
+      "name": "隐私与安全",
+      "queries": ["cat:cs.CR", "cat:cs.CY"],
+      "note": "含差分隐私、成员推断、对抗样本"
+    },
+    {
+      "id": "automation",
+      "name": "自动化",
+      "queries": ["all:\"manufacturing\"", "all:\"assembly task\"", "all:\"industrial automation\""],
+      "note": "工业/产线落地，量偏小"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+out/
+data/candidates.json
+data/queue.json
+__pycache__/
+*.pyc
+.DS_Store
