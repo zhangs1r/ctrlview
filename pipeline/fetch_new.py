@@ -74,12 +74,28 @@ def main(repo):
     json.dump(found, open(f"{repo}/data/candidates.json", "w"),
               ensure_ascii=False, indent=1)
 
+    # 按栏目均衡取样：每栏最多 PER_COL 候选，保证小栏目不被大栏目挤掉
+    PER_COL = 8
+    fresh, seen2 = [], set()
+    for c in cfg["columns"]:
+        ps = sorted(found.get(c["id"], []), key=lambda x: x["id"], reverse=True)
+        for p in ps[:PER_COL]:
+            if p["id"] in seen2:
+                continue
+            seen2.add(p["id"])
+            fresh.append(p)
+    # 同栏目内按 id 倒序（数字比较，避免字符串排序把大 id 排后面）
+    fresh.sort(key=lambda x: (x["column"], x["id"]), reverse=False)
+    fresh.sort(key=lambda x: int(x["id"].split(".")[-1]) if x["id"].split(".")[-1].isdigit() else 0,
+               reverse=True)
+
     total = sum(len(v) for v in found.values())
-    fresh = sorted({p["id"]: p for v in found.values() for p in v}.values(),
-                   key=lambda x: x["id"], reverse=True)
-    json.dump(fresh[:60], open(f"{repo}/data/queue.json", "w"),
+    json.dump(fresh, open(f"{repo}/data/queue.json", "w"),
               ensure_ascii=False, indent=1)
-    print(f"\n合计候选 {total}，去重后待处理 {len(fresh)}（已跳过历史 {len(seen)} 篇）")
+    import collections
+    dist = collections.Counter(x["column_name"] for x in fresh)
+    print(f"\n合计候选 {total}，去重后入队 {len(fresh)}（已跳过历史 {len(seen)} 篇）")
+    print("入队分布：", dict(dist))
     print("→ data/queue.json 是下一步精读要处理的清单")
 
 
