@@ -7,14 +7,14 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001144329"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39902.html?force=20261001144329" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.72c9c7f6.css?v=20261001175749"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39902.html?force=20261001175749" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">隐私与安全 · 论文精读</div>
 <h1>CodeMimicry：把有害请求写成一段没写完的 Python 类</h1>
 <div class="meta"><b>Zhen Liang, Hai Huang, Wentao Chen</b><br>
-arXiv:2609.39902 · 2026-10-05 · 精读约 36 分钟</div>
+arXiv:2609.39902 · 2026-10-01 · 精读约 36 分钟</div>
 <div class="tags"><a class="tag" href="topics.html#t-越狱攻击">越狱攻击</a><a class="tag" href="topics.html#t-安全对齐">安全对齐</a><a class="tag" href="topics.html#t-代码补全">代码补全</a><a class="tag" href="topics.html#t-黑盒攻击">黑盒攻击</a><a class="tag" href="topics.html#t-威胁模型">威胁模型</a></div>
 </header>
 <h2>它想干什么</h2>
@@ -54,10 +54,10 @@ arXiv:2609.39902 · 2026-10-05 · 精读约 36 分钟</div>
 <p>需要多少次查询。攻击轮次上限 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math></math>，实际平均 <strong>1.51</strong> 次。第一轮就有 75.5% 的样本成功，所以这个上限很少被用满。</p>
 <p>要不要看输出概率。不要，只看返回的文本。</p>
 <p>实验设置里还有一条边界。攻击者一侧需要一个有推理和编码能力的模型来生成代码骨架，论文用的是 DeepSeek-R1（附录 C）。这份算力不占目标模型的查询预算。</p>
-<figure><img src="figs/2609.39902-fig1.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　CodeMimicry 的三个环节。左上角是有害问题，攻击者把它抽成一个代码骨架，类名和方法名把场景说成政府安全审计一类的正常工作。上方那个蓝色代码块是攻击者交出来的半成品，每个方法体里只有文档字符串和注释，末尾留一个省略号。右侧加上静态的代码补全触发词，拼成最终提示送进目标模型。目标模型的回复交给打分器，按 1 到 10 分打有害程度，回复连同历史一起回到攻击者那里做分析和改进。分数到 10 分或者轮次用尽就结束。</figcaption></figure>
+<figure><img src="figs/2609.39902-fig1.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　CodeMimicry 的三个环节。左上角是有害问题，攻击者把它抽成一个代码骨架，类名和方法名把场景说成政府安全审计一类的正常工作。上方那个蓝色代码块是攻击者交出来的半成品，每个方法体里只有文档字符串和注释，末尾留一个省略号。右侧加上静态的代码补全触发词，拼成最终提示送进目标模型。目标模型的回复交给打分器，按 1 到 10 分打有害程度，回复连同历史一起回到攻击者那里做分析和改进。分数到 10 分或者轮次用尽就结束。</figcaption></figure>
 <h3>2.3 阶段与章节对齐</h3>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>问题形式化</td><td>§3.1</td><td>有害问题 q</td><td>变换 φ 的定义与判据 E</td></tr><tr><td>威胁模型</td><td>§3.2</td><td>黑盒 API 假定</td><td>能力清单与禁止清单</td></tr><tr><td>骨架生成</td><td>§3.3</td><td>q、攻击者提示词</td><td>半成品代码 P_c</td></tr><tr><td>套触发词</td><td>§3.3 图 13</td><td>P_c</td><td>最终提示 P</td></tr><tr><td>目标补全</td><td>§3.3</td><td>P</td><td>回复 R</td></tr><tr><td>打分与精修</td><td>算法 1</td><td>q、P_c、R、历史 H</td><td>新的 P_c，或者结束</td></tr><tr><td>机制分析</td><td>§5</td><td>50 条成功、50 条失败、50 条良性代码</td><td>隐状态、拒绝方向、引导结果</td></tr><tr><td>防御测试</td><td>§6 与附录 D</td><td>现成防御方法</td><td>残余 ASR</td></tr></tbody></table></div>
-<figure><img src="figs/2609.39902-svg-anatomy.svg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）外层是一段静态触发词，把任务声明成代码补全。中层是攻击者生成的半成品类，恶意意图分三处落下，方法名承载语义，文档字符串与注释写成功能需求，配套工具函数与参数撑出正常工程文件的体量。右侧是目标模型内部的两条路，本次接到的是代码补全那条。</figcaption></figure>
+<figure><img src="figs/2609.39902-svg-anatomy.svg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）外层是一段静态触发词，把任务声明成代码补全。中层是攻击者生成的半成品类，恶意意图分三处落下，方法名承载语义，文档字符串与注释写成功能需求，配套工具函数与参数撑出正常工程文件的体量。右侧是目标模型内部的两条路，本次接到的是代码补全那条。</figcaption></figure>
 <p>这节要你记住的是，<mark>黑盒、纯查询、只看返回文本</mark>，攻击者改的就只有提示。</p>
 <hr>
 <h2>三、方法拆解</h2>
@@ -127,7 +127,7 @@ H ← 包含 q 的初始提示词
 <p>还有一个现象要看。模板法整体压过自动优化法，14.75% 到 85.00% 对 20.00% 到 37.00%。论文的解释是模板法借了非自然语言域的力。</p>
 <p>HarmBench 上的结果在表 5，用的是 7 个有害行为类别各随机抽 10 条拼成的 70 条子集。CodeMimicry 平均 <strong>96.07%</strong>，平均查询 1.46 次。最强的自动基线 AutoDAN-Turbo 是 43.47%。Claude Sonnet 4 上 FlipAttack、PAIR、DRA 都是 0，CodeMimicry 是 74.29%。GPT-5-chat 上 CodeMimicry 是 100%。</p>
 <h3>4.2 效率</h3>
-<figure><img src="figs/2609.39902-fig2.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　每个点代表一个目标模型。横轴刻度从 50 到 250，标注是平均查询数。纵轴是攻击成功率，0 到 100。红色菱形是 CodeMimicry，全部挤在左上角，成功率都在 90 以上。黑色方块是 AutoDAN-Turbo，蓝色圆点是 PAIR，两者沿一条斜线铺开，想拉高成功率就得多花查询。这张图的横轴口径见图注后的说明。</figcaption></figure>
+<figure><img src="figs/2609.39902-fig2.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　每个点代表一个目标模型。横轴刻度从 50 到 250，标注是平均查询数。纵轴是攻击成功率，0 到 100。红色菱形是 CodeMimicry，全部挤在左上角，成功率都在 90 以上。黑色方块是 AutoDAN-Turbo，蓝色圆点是 PAIR，两者沿一条斜线铺开，想拉高成功率就得多花查询。这张图的横轴口径见图注后的说明。</figcaption></figure>
 <p>CodeMimicry 的平均查询数是 <strong>1.51</strong>，PAIR 是 4.18，AutoDAN-Turbo 是 2.81。论文的换算是，相对 PAIR，攻击成功率高 2.80 倍而查询只用 0.36 倍；相对 AutoDAN-Turbo，成功率高 2.61 倍而查询只用 0.54 倍。</p>
 <p>攻击者侧的开销也算了。表 12 里 CodeMimicry 平均消耗 1656 个输入 token 与 1341 个输出 token，PAIR 是 8030 与 5005，差了三到四倍。这一栏是攻击者模型的账单。</p>
 <p>反向的数字有两条。CodeAttack 与 CodeChameleon 这类模板法不需要攻击者模型，攻击者侧的 token 消耗是 0，CodeMimicry 是 2997 个。另有一格，CodeMimicry 在 Claude Sonnet 4 上的查询数是 2.54，是它在 GPT-4.1 上 1.04 的 2.4 倍，碰上最硬的目标时效率优势收窄了不少。</p>
@@ -140,9 +140,9 @@ H ← 包含 q 的初始提示词
 <p>数据来自表 4，数据集是 AdvBench 的 50 条子集。三个攻击者的差距主要在 Claude Sonnet 4 这一列上，R1 比 Grok-3 高 8 个百分点。论文把它归给推理能力，理由是 R1 能搭出更绕的代码结构。</p>
 <p>生成出来的代码能不能跑，论文在附录 B.5 里另测了一遍。语法正确率 98.9%，沙箱里跑得通的比例 97.9%，两者都满足的功能有效比例 97.1%。8 个模型里有 4 个的功能有效比例是 100%，最低的 Gemini-2.5-Pro 也有 92.0%。这一栏回答的是一个自然的质疑，模型是不是只在吐一堆似是而非的伪代码。</p>
 <h3>4.4 隐空间里的证据</h3>
-<figure><img src="figs/2609.39902-fig4.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4(b)</b>　Llama-3-8B-Instruct 第 16 层隐状态的 t-SNE 投影。红色叉是失败的越狱代码，绿色圆点是良性代码，蓝色三角是成功的越狱代码。失败那一族被推到左下角，自成一块。良性与成功两族在右上角互相穿插，看不出边界。第 16 层以前三族混在一起，从这个深度开始才分开。</figcaption></figure>
+<figure><img src="figs/2609.39902-fig4.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4(b)</b>　Llama-3-8B-Instruct 第 16 层隐状态的 t-SNE 投影。红色叉是失败的越狱代码，绿色圆点是良性代码，蓝色三角是成功的越狱代码。失败那一族被推到左下角，自成一块。良性与成功两族在右上角互相穿插，看不出边界。第 16 层以前三族混在一起，从这个深度开始才分开。</figcaption></figure>
 <p>论文用 t-SNE 与 PCA 两种降维方法把高维隐状态画到平面上，两者都只保留最能拉开样本间距离的那几个方向。前 16 层的三族大量重叠，模型还没把这件事分开。第 16 层开始，失败样本聚成一个孤立的簇，良性代码和成功越狱代码挤在一块。论文的读法是，成功的越狱提示做到的是分布外规避，它没有落进拒绝那一簇。</p>
-<figure><img src="figs/2609.39902-fig5.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　纵轴是隐状态在拒绝方向上的投影分数，正数说明拒绝机制被激活，负数说明落在合规一侧。红色虚线是失败的越狱代码，它从第 16 层开始一路往上，到最后几层冲到 50 以上。绿色实线是良性代码，全程压在 0 以下。蓝色虚线是成功的越狱代码，它几乎贴着良性代码走，两者的差距随深度越拉越大。拒绝方向由失败样本与良性代码的质心之差定义，模型是 Llama-3-8B-Instruct。</figcaption></figure>
+<figure><img src="figs/2609.39902-fig5.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　纵轴是隐状态在拒绝方向上的投影分数，正数说明拒绝机制被激活，负数说明落在合规一侧。红色虚线是失败的越狱代码，它从第 16 层开始一路往上，到最后几层冲到 50 以上。绿色实线是良性代码，全程压在 0 以下。蓝色虚线是成功的越狱代码，它几乎贴着良性代码走，两者的差距随深度越拉越大。拒绝方向由失败样本与良性代码的质心之差定义，模型是 Llama-3-8B-Instruct。</figcaption></figure>
 <p>投影把图 4 里那个观察变成了一个标量。失败样本的投影值随层数上升，越往深层越正。良性代码全程为负。<mark>成功样本几乎贴着良性代码走，跟失败样本的距离越拉越大。</mark>论文的结论是，成功攻击避开的是表示空间里拒绝机制覆盖的那块区域。</p>
 <p>激活引导从反方向验了一遍。对原本会输出有害内容的样本叠加 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>&#x1D42F;</mi><mrow><mi>j</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msup></mrow></math></math>，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 变大，重新开始拒绝的样本条数变多。同样的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 之下，层号越靠近第 16 层，重新拒绝的样本越多。反过来对原本被拒的失败样本做引导，模型会把有害内容补进代码里。论文在附录 E.2 里把这组实验搬到 Llama-3.1-70B-Instruct 上重做，投影的定性结论一致，最强干预出现在第 40 层附近。</p>
 <h3>4.5 防御的代价</h3>
@@ -210,5 +210,5 @@ H ← 包含 q 的初始提示词
 <h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li><a href="https://arxiv.org/abs/2402.16717" target="_blank" rel="noopener">CodeChameleon</a><span style="color:var(--ink3);font-size:13px">　arXiv:2402.16717　把请求加密后塞进代码，靠加解密函数改写形式；结构固定、单轮，抗正则清洗反而更好</span></li><li><a href="https://arxiv.org/abs/2512.23173" target="_blank" rel="noopener">EquaCode</a><span style="color:var(--ink3);font-size:13px">　arXiv:2512.23173　同一作者，把请求包装成方程求解加代码补全的多策略组合；策略由人选定，不随目标模型自适应</span></li><li><a href="https://arxiv.org/abs/2310.08419" target="_blank" rel="noopener">PAIR</a><span style="color:var(--ink3);font-size:13px">　arXiv:2310.08419　让攻击者模型按目标回复反复改写提示；全程在自然语言空间搜索，不利用代码域结构</span></li><li>CodeAttack<span style="color:var(--ink3);font-size:13px">　同样借代码补全绕过安全，但模板手工设计、单轮，不做反馈精修</span></li><li>AutoDAN-Turbo<span style="color:var(--ink3);font-size:13px">　用一个长期运行的智能体自己探索越狱策略；策略库建在自然语言上，缺域知识</span></li></ul>
 <a class="paperlink" href="https://arxiv.org/abs/2609.39902" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2609.39902） →</a>
-<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:43</footer>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 17:57</footer>
 </div></body></html>

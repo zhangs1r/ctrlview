@@ -92,6 +92,10 @@ nav.bar .brand{font-weight:700;color:var(--ink);margin-right:6px}
 .card .cname{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.06em}
 .card .ctitle{font-size:17px;font-weight:680;line-height:1.42;margin:8px 0 10px}
 .card .cmeta{font-size:13px;color:var(--ink3);line-height:1.7}
+.card .cabs{font-size:13.5px;color:var(--ink2);line-height:1.72;margin:0 0 11px}
+.cards.abs{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
+.colsec{margin:10px 0 38px}
+.colnote{color:var(--ink2);font-size:14.5px;margin:6px 0 0}
 .badge{display:inline-block;font-size:11.5px;padding:3px 9px;border-radius:99px;
   background:var(--accent-bg);color:var(--accent);font-weight:600;margin-left:6px}
 .paperlink{display:inline-block;margin:22px 0 0;padding:11px 18px;background:var(--accent-bg);
@@ -101,7 +105,7 @@ nav.bar .brand{font-weight:700;color:var(--ink);margin-right:6px}
   body{font-size:16.5px} .wrap{padding:0 16px 64px} header.top{padding:34px 0 22px}
   table{font-size:13.5px} th,td{padding:7px 8px}
   pre{padding:12px 14px;font-size:13px} pre.flow{font-size:12px;line-height:1.9}
-  aside.ctrl{font-size:15px} .cards{grid-template-columns:1fr;gap:12px}
+  aside.ctrl{font-size:15px} .cards,.cards.abs{grid-template-columns:1fr;gap:12px}
   .eq{padding:14px 40px}
 }
 """
@@ -496,21 +500,35 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 </div></body></html>"""
         open(f"{out}/{aid}.html", "w", encoding="utf-8").write(doc)
 
-    def card(p):
+    def excerpt(p, n=150):
+        """卡片摘要：取正文里第一段可读文字（去掉标题、表格、列表、引用块、小字块）"""
+        b = plain_body(p["md"])
+        b = re.sub(r"(?m)^\s*(?:#{1,6}\s.*|\|.*|[-*+]\s+.*|>.*|※.*|⚠.*|<.*)$", "", b)
+        b = strip_md(b)
+        b = re.sub(r"\s+", " ", b).strip()
+        return (b[:n].rstrip() + "…") if len(b) > n else b
+
+    def home_card(p):
         fm = p["fm"]
         return (f'<a class="card" href="{p["id"]}.html">'
-                f'<div class="cname">{H.escape(fm.get("column",""))}</div>'
                 f'<div class="ctitle">{H.escape(fm.get("title",""))}</div>'
-                f'<div class="cmeta">{H.escape(fm.get("authors",""))}<br>'
-                f'arXiv:{p["id"]} · {H.escape(fm.get("read_time",""))}</div></a>')
+                f'<div class="cabs">{H.escape(excerpt(p))}</div>'
+                f'<div class="cmeta">arXiv:{p["id"]} · {H.escape(fm.get("date",""))} · '
+                f'精读约 {H.escape(fm.get("read_time",""))}</div></a>')
 
-    cards = "".join(card(p) for p in posts)
-
-    # ---- 首页 ----
-    cols_html = "".join(
-        f'<a class="card" href="columns.html#c-{c["id"]}">'
-        f'<div class="cname">{c["name"]}</div>'
-        f'<div class="cmeta">{H.escape(c.get("note",""))}</div></a>' for c in columns)
+    # ---- 首页：按栏目分组，每张卡片带摘要 ----
+    home_secs = ""
+    for c in columns:
+        ps = sorted([p for p in posts if p["fm"].get("column") == c["id"]],
+                    key=lambda p: (p["fm"].get("date", ""), p["id"]), reverse=True)
+        if not ps:
+            continue
+        home_secs += (
+            f'<section class="colsec">'
+            f'<h2 id="c-{c["id"]}">{c["name"]}<span class="badge">{len(ps)} 篇</span></h2>'
+            f'<p class="colnote">{H.escape(c.get("note",""))}　'
+            f'<a href="columns.html#c-{c["id"]}">栏目页 →</a></p>'
+            f'<div class="cards abs">{"".join(home_card(p) for p in ps)}</div></section>')
     open(f"{out}/index.html", "w", encoding="utf-8").write(f"""<!DOCTYPE html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>{site['name']} · {site['tagline']}</title>
@@ -533,13 +551,11 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 <span style="color:var(--ink3)">若看到旧内容，点上方「↻ 强制刷新」，或用 Ctrl/Cmd + Shift + R 硬刷新。</span><br>
 <span style="color:var(--ink2)">也可以 <a href="feed.xml">订阅 Atom</a>，或者直接
 <a href="search.html">搜索</a>、翻<a href="topics.html">主题</a>、
-查<a href="glossary.html">跨文章术语表</a>、看<a href="history.html">历史推荐</a>。</span>
+查<a href="glossary.html">跨文章术语表</a>、看<a href="history.html">历史推荐</a>、
+<a href="columns.html">全部栏目</a>。</span>
 </div>
-<h2>最新精读</h2>
-<div class="cards">{cards}</div>
-<h2>全部栏目</h2>
-<div class="cards">{cols_html}</div>
-<footer>每天 12:10 自动更新 · 论文原文版权归原作者所有<br>最后更新：{BUILD_HUMAN}</footer>
+{home_secs}
+<footer>每周一 18:00 自动更新 · 论文原文版权归原作者所有<br>最后更新：{BUILD_HUMAN}</footer>
 </div></body></html>""")
 
     # ---- 栏目页 ----
@@ -572,7 +588,7 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 <link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
 {nav('arch', 'archive.html')}<div class="wrap wide">
 <header class="top"><div class="kicker">全部文章</div><h1>归档（{len(posts)} 篇）</h1></header>
-<div class="cards">{cards}</div><footer>CtrlView · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
+<div class="cards abs">{"".join(home_card(p) for p in posts)}</div><footer>CtrlView · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
 
     # ---- 主题页（按 tags 聚合） ----
     tsec = ""

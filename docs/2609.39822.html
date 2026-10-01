@@ -7,14 +7,14 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001144329"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39822.html?force=20261001144329" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.72c9c7f6.css?v=20261001175749"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39822.html?force=20261001175749" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">具身智能与 VLA · 论文精读</div>
 <h1>实时 VLA 的时间缺口：两阶段去噪与系统级延迟盘点</h1>
 <div class="meta"><b>Di Wu, Rongtian Shen, Ping Liu 等</b><br>
-arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
+arXiv:2609.39822 · 2026-10-01 · 精读约 36 分钟</div>
 <div class="tags"><a class="tag" href="topics.html#t-VLA">VLA</a><a class="tag" href="topics.html#t-实时控制">实时控制</a><a class="tag" href="topics.html#t-流匹配">流匹配</a><a class="tag" href="topics.html#t-动作分块">动作分块</a><a class="tag" href="topics.html#t-系统延迟">系统延迟</a></div>
 </header>
 <h2>它想干什么</h2>
@@ -28,7 +28,7 @@ arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
 <h2>一、问题背景</h2>
 <h3>1.1 时间尺度不匹配是物理问题</h3>
 <p>控制环的位置指令得按固定周期发。周期 20 到 33 毫秒，对应 30 到 50 Hz。VLA 的推理周期是几百毫秒。两者的比例摆在那里。</p>
-<figure><img src="figs/2609.39822-fig1.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　论文原文的图 1。（a）同步推理，机器人等推理算完才动，图上标着 Stall。（b）异步推理，推理与执行并行，接缝处出现块间断裂。（c）异步执行，新块用的是推理开始那一刻的观测，而机器人真实状态已经往前走了一段，图中用 state mismatch 标出这段错位。右下角还画了块内不一致，同一个块里不同位置的动作来自不同状态的观测。</figcaption></figure>
+<figure><img src="figs/2609.39822-fig1.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　论文原文的图 1。（a）同步推理，机器人等推理算完才动，图上标着 Stall。（b）异步推理，推理与执行并行，接缝处出现块间断裂。（c）异步执行，新块用的是推理开始那一刻的观测，而机器人真实状态已经往前走了一段，图中用 state mismatch 标出这段错位。右下角还画了块内不一致，同一个块里不同位置的动作来自不同状态的观测。</figcaption></figure>
 <p>论文把这件事画成三种时序。同步推理最老实，等新动作块算完再动，代价是推理期间机器人停着。异步推理把推理挪到执行旁边并行跑，机器人不停了，接缝处却出现了断裂，旧块的尾巴和新块的开头对不上。</p>
 <p>异步执行再往前走一步。新块是用推理开始那一刻的观测算出来的，等它接管，机器人状态已经变了。论文给这两种情况各起了一个名字。块与块之间的叫块间不连续，块内部感知与执行的时差叫块内不一致。</p>
 <h3>1.2 延迟分两类</h3>
@@ -49,7 +49,7 @@ arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
 <p>这节要你记住的是，延迟分模型的和系统的两类，只有一类能靠算法改。</p>
 <hr>
 <h2>二、总体结构</h2>
-<figure><img src="figs/2609.39822-fig5.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　论文原文的图 5。左边是客户端，右边是服务端。客户端里，采集模块把头顶相机、左右腕部相机和机器人状态缓存在一起，推理线程取快照拼请求，实时执行方法模块给出优化后的动作，动作缓冲负责交接。发布线程与机器人控制器独立运行，按高频发指令。底部是记录模块，落盘预测动作块、实际执行动作和运行时延迟。服务端只做 VLA 策略推理，回传动作块加延迟元数据。图里把 π0.5 之外的策略也画在服务端，说明推理那一格是可替换的。</figcaption></figure>
+<figure><img src="figs/2609.39822-fig5.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　论文原文的图 5。左边是客户端，右边是服务端。客户端里，采集模块把头顶相机、左右腕部相机和机器人状态缓存在一起，推理线程取快照拼请求，实时执行方法模块给出优化后的动作，动作缓冲负责交接。发布线程与机器人控制器独立运行，按高频发指令。底部是记录模块，落盘预测动作块、实际执行动作和运行时延迟。服务端只做 VLA 策略推理，回传动作块加延迟元数据。图里把 π0.5 之外的策略也画在服务端，说明推理那一格是可替换的。</figcaption></figure>
 <p>论文的框架分成客户端和服务端两块。客户端在机器人这边，负责采集、请求、缓冲、发布和记录。服务端在 GPU 那边，只做策略推理。</p>
 <p>客户端里的采集模块持续把三路相机的最新帧和机器人状态缓存在一起。推理线程按配置频率取一份快照，拼成请求。请求里除了图像、语言和状态，还带上采样步数，以及执行策略需要的延迟字段。</p>
 <p>服务端收到请求，做输入变换、跑 VLA，把动作块连同延迟元数据回传。客户端用延迟估计算出这一块动作的期望生效索引，再在动作缓冲里完成交接、混合和重排。发布线程独立跑，按控制频率逐条发指令，不等推理。</p>
@@ -72,7 +72,7 @@ arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
 <p>跨主机部署时，请求和动作块都要走一段网络，这段通信开销落在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mrow><mtext>up</mtext></mrow></msub></mrow></math></math> 与 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mrow><mtext>down</mtext></mrow></msub></mrow></math></math> 上。同主机部署改用共享内存，这两项会缩水。感知采集那一段不在这里，它在主机收到观测之前就已经发生。</p>
 <p>测量靠一套标定装置。机器人做小幅正弦摆动，屏幕上显示主机时间码和相位条，一台 RealSense 同时拍下屏幕和末端贴的 ArUco 标记，那是一种黑白方块标记，相机拍到就能算出它的位姿。主机记下相机时间戳、收图时刻、关节指令和 SDK 反馈。视觉按 30 帧每秒采集，状态按 100 Hz 记录。</p>
 <p>数字在 RTX 4090 D 24 GB 上测得，用的是 JAX 这个数值计算框架。标准 10 步 Flow 的 <strong>61.557 ms</strong> 取自 620 次推理调用的平均，排除了首次即时编译。感知和执行那四笔在表 1 里，图像读出 <strong>32.8 ± 3.3 ms</strong> 最大，本体感觉反馈 <strong>26.4 ± 6.2 ms</strong> 次之。</p>
-<figure><img src="figs/2609.39822-svg-budget.svg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）依据表 5 与表 7 的三组实测推理时间反算出的两块成本。灰色是与步数无关的固定部分，绿色是每多一步就多一次的专家前向。横轴是毫秒，数值来源是论文表 1、表 5 和表 7 在 RTX 4090 D 上的测量。</figcaption></figure>
+<figure><img src="figs/2609.39822-svg-budget.svg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）依据表 5 与表 7 的三组实测推理时间反算出的两块成本。灰色是与步数无关的固定部分，绿色是每多一步就多一次的专家前向。横轴是毫秒，数值来源是论文表 1、表 5 和表 7 在 RTX 4090 D 上的测量。</figcaption></figure>
 <blockquote><p>📌 <strong>控制视角</strong>　表 5 和表 7 给了三个 NFE 下的实测时间，10 步 61.557 ms、5 步 36.808 ms、2 步 21.956 ms。这三点几乎落在同一条直线上，反算出来斜率是每步 <strong>4.95 ms</strong>，截距是 <strong>12.06 ms</strong>，三点偏差不到 0.01 ms。<mark>这条直线说明省步数的收益有上限，固定成本那 12.06 ms 一分不动</mark>。这也是步数少五倍、加速只有 2.804 倍的原因。控制里的采样周期账也一样，先分清哪部分是常数项，再谈优化。</p></blockquote>
 <h3>3.2 速度场在两端长得不一样</h3>
 <p>要决定预算怎么分配到时间轴上，先得看清每一步在干什么。论文固定住模型参数、语言条件和初始噪声，把标准 10 步推理的完整速度场轨迹录下来。</p>
@@ -82,7 +82,7 @@ arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
 <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02016;</mo><mo>&#x000B7;</mo><msub><mo>&#x02016;</mo><mi>F</mi></msub></mrow></math></math> 是 Frobenius 范数，把矩阵所有元素平方求和再开方。</p>
 <p>方向变化用相邻两步速度场的夹角衡量</p>
 <div class="eq"><span class="eqn">(4)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x003B8;</mi><mi>k</mi></msub><mo>&#x0003D;</mo><mi>arccos</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mi>&#x027E8;</mi><msub><mi>v</mi><mi>k</mi></msub><mo>&#x0002C;</mo><msub><mi>v</mi><mrow><mi>k</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><msub><mi>&#x027E9;</mi><mi>F</mi></msub></mrow><mrow><mo>&#x02016;</mo><msub><mi>v</mi><mi>k</mi></msub><msub><mo>&#x02016;</mo><mi>F</mi></msub><mo>&#x02016;</mo><msub><mi>v</mi><mrow><mi>k</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><msub><mo>&#x02016;</mo><mi>F</mi></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mfrac><mrow><msup><mn>180</mn><mo>&#x02218;</mo></msup></mrow><mrow><mi>&#x003C0;</mi></mrow></mfrac><mo>&#x0002C;</mo><mspace width="1em" /><mi>k</mi><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><mn>10</mn></mrow></math></math></div>
-<figure><img src="figs/2609.39822-fig3.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　论文原文图 3 的右半部分，横轴是去噪步数，纵轴是相邻两步速度场的夹角，单位是度。六条曲线对应六次不同的观测，第 2 到第 8 步都趴在 1 度以下，最后一步一起扬起，最高的一条超过 5 度。左半部分是速度场幅度的 RMS 曲线，前中期在 1.08 到 1.17 之间平稳，到第 10 步多数曲线才明显下移。</figcaption></figure>
+<figure><img src="figs/2609.39822-fig3.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　论文原文图 3 的右半部分，横轴是去噪步数，纵轴是相邻两步速度场的夹角，单位是度。六条曲线对应六次不同的观测，第 2 到第 8 步都趴在 1 度以下，最后一步一起扬起，最高的一条超过 5 度。左半部分是速度场幅度的 RMS 曲线，前中期在 1.08 到 1.17 之间平稳，到第 10 步多数曲线才明显下移。</figcaption></figure>
 <p>六条幅度曲线在前中期平稳，彼此差异不到百分之一。夹角那边更清楚，第 2 到第 8 步全在 1 度以下，最后一步一起抬头。</p>
 <p>附录 C 补了一次尺度核对。它用式 (3) 的 RMS 去比预测速度与训练目标速度，15 条轨迹、10 个步数上平均绝对相对偏差 <strong>0.775%</strong>。第 10 步的平均带符号偏差是 <strong>−1.813%</strong>，单条最低 <strong>−4.941%</strong>。<mark>末端改的主要是方向，幅度只是小幅修正</mark>。</p>
 <p>这个异质性直接给出采样策略。前中期方向不变，就用一个长跨步走过去。末端方向修正集中，就切一小段细算。</p>
@@ -98,7 +98,7 @@ arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
 <p>于是两次求值和两次更新是</p>
 <div class="eq"><span class="eqn">(7)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="left"><msup><mi>v</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mi>&#x1D4B1;</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mn>1</mn><mo>&#x02192;</mo><mn>1</mn><mi>;</mi><mi>c</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><msup><mover><mrow><mi>v</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msub><mi>&#x1D4B1;</mi><mi>&#x003B8;</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>x</mi><mi>&#x003C4;</mi></msub><mo>&#x0002C;</mo><mi>&#x003C4;</mi><mo>&#x02192;</mo><mn>0</mn><mi>;</mi><mi>c</mi><mo stretchy="false">&#x00029;</mo></mtd></mtr><mtr><mtd columnalign="left"><msub><mi>x</mi><mi>&#x003C4;</mi></msub><mo>&#x0003D;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003C4;</mi><mo stretchy="false">&#x00029;</mo><msup><mi>v</mi><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>x</mi><mn>0</mn></msub><mo>&#x0003D;</mo><msub><mi>x</mi><mi>&#x003C4;</mi></msub><mo>&#x02212;</mo><mi>&#x003C4;</mi><msup><mover><mrow><mi>v</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></msup></mtd></mtr></mtable></mrow></math></math></div>
 <p>第一段在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math></math> 处问一次局部速度，走一个长度 0.7 的欧拉步，落到 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>&#x003C4;</mi></msub></mrow></math></math>。第二段输入 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>x</mi><mi>&#x003C4;</mi></msub></mrow></math></math>、当前时刻 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C4;</mi></mrow></math></math> 和目标时刻 0，一次拿到这段的平均速度，再走一个长度 0.3 的步。部署时没有教师分支，只有这两次专家前向。</p>
-<figure><img src="figs/2609.39822-fig4.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　论文原文的图 4。上半是训练，条件由三路输入经 VLM 编码器合成。噪声隐变量 x₁ 分两路走。一路是标准 Flow Matching 大跨步。另一路在两阶段分支里先做大跨步，再到 SnapFlow 短程细化。两条分支各占一半概率。下半是推理，同一个条件只求值两次，先走到中间时刻 τ，再短程细化到 0。右侧小图对比均匀两步与非均匀两步，均匀两步把切分点放在中点，本文放在 0.3。</figcaption></figure>
+<figure><img src="figs/2609.39822-fig4.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　论文原文的图 4。上半是训练，条件由三路输入经 VLM 编码器合成。噪声隐变量 x₁ 分两路走。一路是标准 Flow Matching 大跨步。另一路在两阶段分支里先做大跨步，再到 SnapFlow 短程细化。两条分支各占一半概率。下半是推理，同一个条件只求值两次，先走到中间时刻 τ，再短程细化到 0。右侧小图对比均匀两步与非均匀两步，均匀两步把切分点放在中点，本文放在 0.3。</figcaption></figure>
 <p>论文在这里说了一句老实话。NFE 少了五倍，执行时间不会少五倍，因为两次求值里每一次都要跑完整的阶段计算，条件编码也照跑。</p>
 <h3>3.4 末端细化的监督怎么造</h3>
 <p>第二段借用 SnapFlow 的 shortcut 机制。这一段的监督信号没有现成的，得自己造。</p>
@@ -208,5 +208,5 @@ arXiv:2609.39822 · 2026-10-05 · 精读约 36 分钟</div>
 <h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li>π0<span style="color:var(--ink3);font-size:13px">　本文对比的流匹配 VLA 基线，重复去噪是它推理成本的主要来源</span></li><li>Flow Matching<span style="color:var(--ink3);font-size:13px">　本文动作生成所基于的框架，被砍掉的正是它的多步去噪</span></li></ul>
 <a class="paperlink" href="https://arxiv.org/abs/2609.39822" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2609.39822） →</a>
-<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:43</footer>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 17:57</footer>
 </div></body></html>

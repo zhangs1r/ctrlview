@@ -22,8 +22,8 @@
 ## 流水线
 
 ```
-fetch_new.py . 9      抓 arXiv 各栏目候选，自动剔除历史推荐 → data/queue.json
-（每栏目挑 3 篇）      按 L1 栏目 profile 的选文偏好挑
+fetch_new.py .        抓「上一轮日期+1 → 今天」的候选，全量不截断，自动剔除历史推荐 → data/queue.json
+（每栏目挑 2 篇）      按 L1 栏目 profile 的选文偏好挑
 record_round.py       登记本轮，重复直接拒绝 → data/history.json
 （下载原文）           paper-download 技能的 fetch_paper.py，内置 %PDF- 魔数校验
 （解析）               PDF 必须走 MinerU 转 Markdown 才能读
@@ -57,7 +57,8 @@ git push              → GitHub Pages 自动重建
 
 ## 定时任务
 
-每周一 18:00，每栏目精读 3 篇，全站 21 篇。执行器是本机 DSH 任务看板。
+每周一 18:00，每栏目精读 2 篇，全站 14 篇。执行器是本机 DSH 任务看板。
+窗口按「上一轮登记日期 + 1 天 → 今天」推算，所以每轮登记的日期必须是实际执行日。
 整条链路**不需要代理**（arXiv PDF、OpenAlex、MinerU 都直连可用），
 只有最后 push 到 GitHub 那一步要开。
 

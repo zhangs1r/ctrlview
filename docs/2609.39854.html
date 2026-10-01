@@ -7,14 +7,14 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001144329"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39854.html?force=20261001144329" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.72c9c7f6.css?v=20261001175749"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39854.html?force=20261001175749" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">控制与优化 · 论文精读</div>
 <h1>RL 引导的 PAC-NMPC：让强化学习给随机 MPC 带路</h1>
 <div class="meta"><b>Adam Polevoy, Dillon Capalongo, Katherine Tang 等</b><br>
-arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
+arXiv:2609.39854 · 2026-10-01 · 精读约 45 分钟</div>
 <div class="tags"><a class="tag" href="topics.html#t-随机 MPC">随机 MPC</a><a class="tag" href="topics.html#t-采样型优化">采样型优化</a><a class="tag" href="topics.html#t-安全强化学习">安全强化学习</a><a class="tag" href="topics.html#t-概率保证">概率保证</a><a class="tag" href="topics.html#t-固定翼导航">固定翼导航</a></div>
 </header>
 <h2>它想干什么</h2>
@@ -41,10 +41,10 @@ arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
 <p>这节要你记住的是，难处在于只有一个学出来的分布，没有界也没有结构。</p>
 <hr>
 <h2>二、总体结构</h2>
-<figure><img src="figs/2609.39854-fig2.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　AC-PAC-NMPC 的整体结构。左侧 Warm-Start 框里串起三样东西，标称动力学 f、传感器预测 h、actor 策略 π。这个框交出去的是决策变量 ν，不是一个控制序列。中间 NMPC 框的目标是代价界与违反概率界相加，两条硬约束分别卡住违反概率与终端值函数。两个框里都画着动力学、传感器预测和值函数这三块。右侧是硬件回路，深度图 y 回控制器与暖启动，OptiTrack 给的状态只回暖启动。底部图例把控制器、学习模型、硬件三类块分开，三个学习模型统一画成橙色。</figcaption></figure>
+<figure><img src="figs/2609.39854-fig2.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　AC-PAC-NMPC 的整体结构。左侧 Warm-Start 框里串起三样东西，标称动力学 f、传感器预测 h、actor 策略 π。这个框交出去的是决策变量 ν，不是一个控制序列。中间 NMPC 框的目标是代价界与违反概率界相加，两条硬约束分别卡住违反概率与终端值函数。两个框里都画着动力学、传感器预测和值函数这三块。右侧是硬件回路，深度图 y 回控制器与暖启动，OptiTrack 给的状态只回暖启动。底部图例把控制器、学习模型、硬件三类块分开，三个学习模型统一画成橙色。</figcaption></figure>
 <p>把图上的几个环节和论文章节对齐。</p>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>训练三个模型</td><td>§VI-B §VII-B §VII-C</td><td>仿真动力学与传感器模型</td><td>actor、critic、传感器预测</td></tr><tr><td>暖启动</td><td>§V-A</td><td>当前状态与测量历史</td><td>均值初值、预设大方差</td></tr><tr><td>采样与算界</td><td>§IV-A §V-B</td><td>先验分布、采样轨迹</td><td>代价界、违反概率界、值函数界</td></tr><tr><td>SQP 求解</td><td>§V-C</td><td>三个界与两条硬约束</td><td>决策变量</td></tr><tr><td>执行</td><td>§V</td><td>决策变量</td><td>TVLQR 反馈策略</td></tr></tbody></table></div>
-<figure><img src="figs/2609.39854-svg-flow.svg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）决策变量是高斯代理分布的均值与对角方差，维数各为 N<sub>T</sub>·n<sub>u</sub>。暖启动只填初值，采样与 TVLQR 展开决定代价样本，两个 PAC 界在 SQP 里被当成硬约束。均值对应的反馈策略被执行，落到下一时刻再走一遍。</figcaption></figure>
+<figure><img src="figs/2609.39854-svg-flow.svg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）决策变量是高斯代理分布的均值与对角方差，维数各为 N<sub>T</sub>·n<sub>u</sub>。暖启动只填初值，采样与 TVLQR 展开决定代价样本，两个 PAC 界在 SQP 里被当成硬约束。均值对应的反馈策略被执行，落到下一时刻再走一遍。</figcaption></figure>
 <p>这节要你记住的是，三个学习模型都长在采样器的入口处。</p>
 <hr>
 <h2>三、方法拆解</h2>
@@ -97,7 +97,7 @@ arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
 <p>论文定义的概率安全保证是这句</p>
 <div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x02119;</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mi>&#x02119;</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>&#x1D431;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mi>i</mi></mrow></msub><mo>&#x02208;</mo><mi>&#x1D4AE;</mi><mo>&#x0002C;</mo><mo>&#x02200;</mo><mi>i</mi><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>0</mn><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msub><mi>N</mi><mi>T</mi></msub><mo stretchy="false">&#x0007D;</mo><mo>&#x02223;</mo><msub><mi>&#x1D431;</mi><mi>t</mi></msub><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x02265;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>&#x003B2;</mi><mrow><mi>&#x1D4AE;</mi></mrow></msub><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x02265;</mo><mn>1</mn><mo>&#x02212;</mo><msub><mi>&#x003B4;</mi><mrow><mi>&#x1D4AE;</mi></mrow></msub></mrow></math></math></div>
 <p>两层的量词要分开读。外层概率来自算法自身的随机性，包括采样和 dropout mask。内层概率来自动力学噪声。整句说的是，以不低于 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><msub><mi>&#x003B4;</mi><mi>&#x1D4AE;</mi></msub></mrow></math></math> 的置信度，条件碰撞概率不超过 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B2;</mi><mi>&#x1D4AE;</mi></msub></mrow></math></math>。</p>
-<figure><img src="figs/2609.39854-svg-twolevel.svg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）外层管算法，内层管机器人。左列是外层的置信度，参数 δ 由用户给，取 0.05。右列是内层的条件概率，上界由采样出来的违反概率界提供，再压到 ε<sub>c</sub> 以下。样本量从中间那个不等式进界，采样越多上界越紧。</figcaption></figure>
+<figure><img src="figs/2609.39854-svg-twolevel.svg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）外层管算法，内层管机器人。左列是外层的置信度，参数 δ 由用户给，取 0.05。右列是内层的条件概率，上界由采样出来的违反概率界提供，再压到 ε<sub>c</sub> 以下。样本量从中间那个不等式进界，采样越多上界越紧。</figcaption></figure>
 <p>两个参数各有来路。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B2;</mi><mi>&#x1D4AE;</mi></msub></mrow></math></math> 就是违反概率的 PAC 上界 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x1D49E;</mi><mrow><mi>&#x003B1;</mi></mrow><mrow><mo>&#x0002B;</mo></mrow></msubsup></mrow></math></math>，被当成硬约束压到 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003F5;</mi><mi>c</mi></msub></mrow></math></math> 以下，固定翼取 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003F5;</mi><mi>c</mi></msub><mo>&#x0003D;</mo><mn>0.1</mn></mrow></math></math>。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B4;</mi><mi>&#x1D4AE;</mi></msub></mrow></math></math> 就是用户给的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B4;</mi></mrow></math></math>，两组实验都取 0.05。样本量按 3.1 节那个不等式进界，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>L</mi><mo>&#x000B7;</mo><mi>M</mi></mrow></math></math> 翻倍，集中项减半。</p>
 <p>第二个界作用在终端值函数上</p>
 <div class="eq"><span class="eqn">(15)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x02119;</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mi>&#x1D53C;</mi><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><msup><mi>V</mi><mrow><mi>&#x003D5;</mi><mi>&#x003C8;</mi></mrow></msup><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D431;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><msub><mi>N</mi><mi>T</mi></msub></mrow></msub><mo>&#x0002C;</mo><msub><mover accent="true"><mrow><mi>&#x1D432;</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>t</mi><mo>&#x0002B;</mo><msub><mi>N</mi><mi>T</mi></msub></mrow></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x02264;</mo><msub><mi>&#x1D49E;</mi><mrow><msubsup><mi>&#x1D4B1;</mi><mrow><mi>&#x003B1;</mi></mrow><mrow><mo>&#x0002B;</mo></mrow></msubsup></mrow></msub><mo stretchy="false">&#x00028;</mo><mrow><mi mathvariant="bold-italic">&#x003BD;</mi></mrow><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x02265;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B4;</mi></mrow></math></math></div>
@@ -115,7 +115,7 @@ arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
 <p>再从假设的未来状态反算距离和方位，最后分配给最近的离散方位。<u>平面、全视场、已知方位表，三个条件凑齐了才成立</u>。</p>
 <p>固定翼不行。深度图先投到三维，再投到未来位姿的像面上，最近邻和双线性泼溅都试过，结果常常留下大片没赋值的像素（图 10 中间那格的黑区）。终端状态上评价不了值函数，整条链就断了。</p>
 <p>于是改成监督学习。数据全部来自仿真，让 actor 在随机环境里飞，把 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D431;</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x1D432;</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x1D431;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mi>k</mi></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math> 当输入、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D432;</mi><mrow><mi>t</mi><mo>&#x0002B;</mo><mi>k</mi></mrow></msub></mrow></math></math> 当目标，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math></math> 取 0 到 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mi>T</mi></msub></mrow></math></math>。训练损失是平滑 L1 加上结构相似性 SSIM 那一项。全连接和 U-Net 都训过，U-Net 更好。</p>
-<figure><img src="figs/2609.39854-fig10.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 10</b>　深度图预测的三种做法，从左到右依次是原论文图 10 的 (b) 真值、(c) 几何投影、(e) U-Net。真值来自飞行中采集的 RealSense D450 深度图，颜色由蓝到黄表示由近到远。几何投影那一格的黑区就是投不到的像素，这类空洞会让值函数在终端状态上算不出来。U-Net 那一格把空洞填满了。三格按 (b)(c)(e) 顺序拼合，FC 那一版的结果见表 V。</figcaption></figure>
+<figure><img src="figs/2609.39854-fig10.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 10</b>　深度图预测的三种做法，从左到右依次是原论文图 10 的 (b) 真值、(c) 几何投影、(e) U-Net。真值来自飞行中采集的 RealSense D450 深度图，颜色由蓝到黄表示由近到远。几何投影那一格的黑区就是投不到的像素，这类空洞会让值函数在终端状态上算不出来。U-Net 那一格把空洞填满了。三格按 (b)(c)(e) 顺序拼合，FC 那一版的结果见表 V。</figcaption></figure>
 <p>U-Net 有三段编码解码，输入深度图先过一层卷积升通道，每段是卷积加 RMS 归一化加 SiLU 再加 20% dropout，通道数逐段翻倍、分辨率逐段减半。条件化走 FiLM [78] 那一套，把初始到未来状态的 SE(3) 变换展平后过两层全连接，用它的输出缩放和平移瓶颈层的特征图。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>&#x1D421;</mi><mrow><mi>&#x003B7;</mi></mrow></msup></mrow></math></math> 同样带 MC dropout，传感器预测的不确定度因此也能进 PAC 界。</p>
 <p>预测精度见表 V，指标是仿真数据上的留出验证集。</p>
 <div class="scroll"><table><thead><tr><th>模型</th><th>FLOPs (M)</th><th>δ₁</th><th>REL</th><th>RMSE</th></tr></thead><tbody><tr><td>几何，最近邻</td><td>无</td><td>0.133</td><td>2.838</td><td>0.634</td></tr><tr><td>几何，泼溅</td><td>无</td><td>0.186</td><td>2.240</td><td>0.548</td></tr><tr><td>全连接</td><td>36.798</td><td>0.848</td><td>0.170</td><td>0.081</td></tr><tr><td><strong>U-Net</strong></td><td><strong>42.283</strong></td><td><strong>0.923</strong></td><td><strong>0.087</strong></td><td><strong>0.058</strong></td></tr></tbody></table></div>
@@ -153,7 +153,7 @@ arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
 <p>数据来自表 II 与表 III，都是仿真，每组 100 个环境。这两张表属于第 VI 节，论文写明该节沿用前作 [6] 的公式与实验结果，而且这组实验没有开 RL 暖启动。</p>
 <p>MPPI 指模型预测路径积分控制，无梯度地采样开环输入序列，按代价做指数加权平均。它实现简单、不用求解器，代价是没有约束违反概率的界，表里那两栏 23% 和 36% 就是这个缺口的代价。二次终端代价那一行是另一类失败，论文的说法是系统常常卡在局部极小里，卡住率 24% 与 53%。A* 那一路会规划穿过被遮挡的障碍，论文给的解释是障碍没进地图之前车已经太近了，违反率 7% 和 5%。</p>
 <p>本文那行在两张表里都没违反过约束。反向的数字也要看，陷阱环境里本文卡住 7%，比 actor 的 2% 高，说明放松不了。</p>
-<figure><img src="figs/2609.39854-fig5.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　杂乱环境与陷阱环境的轨迹对比，背景是学习值函数的切片热图，暖色表示代价高。左图四种方法的轨迹叠在一起，绿色是 actor，蓝色是二次终端代价，两条都绕了远路。右图的凹陷阱里，蓝色那条停在陷阱口，学习值函数那条从上方绕出。陷阱内部在热图上是一块代价高台。</figcaption></figure>
+<figure><img src="figs/2609.39854-fig5.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　杂乱环境与陷阱环境的轨迹对比，背景是学习值函数的切片热图，暖色表示代价高。左图四种方法的轨迹叠在一起，绿色是 actor，蓝色是二次终端代价，两条都绕了远路。右图的凹陷阱里，蓝色那条停在陷阱口，学习值函数那条从上方绕出。陷阱内部在热图上是一块代价高台。</figcaption></figure>
 <p>真机那组是 1/10 遥控车加 Velodyne Puck LITE，动捕定位，20 个环境。</p>
 <div class="scroll"><table><thead><tr><th>方法</th><th>成功</th><th>卡住</th><th>违反</th></tr></thead><tbody><tr><td>actor 策略</td><td>85%</td><td>0%</td><td>15%</td></tr><tr><td>PAC-NMPC 加学习值函数</td><td>95%</td><td>5%</td><td>0%</td></tr><tr><td>actor，值函数用错轴距训练</td><td>70%</td><td>0%</td><td>30%</td></tr><tr><td>PAC-NMPC，值函数用错轴距训练</td><td>80%</td><td>20%</td><td>0%</td></tr></tbody></table></div>
 <p>数据来自表 IV，20 个真机环境。最后两行是把值函数按 0.5 米轴距训练、采样时仍用正确轴距 0.33 米，测试模型不匹配时的表现，违反率仍然是 0。</p>
@@ -172,14 +172,14 @@ arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
 <p>分布外这组里 actor 掉到 46%，本文 76%，追平了最强基线，代价低 30%。论文的说法是本文既吃到了一部分 RL 的长时程行为，又对分布偏移更稳。成功率和基线打平这一点要如实读，优势只剩在代价上。</p>
 <p>真机上本文 80%，两个基线都是 40%。基线掉得比 actor 更狠，论文的观察是深度图噪声仍会漏过梯度滤波和降采样进到建图环节，而本文只查最近几帧，噪声的整合面小得多。</p>
 <p>反向的数字依旧存在。仿真里 actor 成功时的平均代价 468.1 低于本文的 513.3，低了约 9%，这笔差价是安全约束开出来的。分布外那组成功率打平，优势只剩在代价上。真机那一格本文两项都领先，没有反向的例子。</p>
-<figure><img src="figs/2609.39854-fig13.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 13</b>　固定翼真机实验的场地与飞行时间切片。橙色和蓝色的包裹柱按仿真分布随机摆放，钢梁和螺旋楼梯是场地固有障碍，不参与随机。图中叠了同一段飞行在不同时刻的飞机姿态，柱间空隙就是航迹要穿的地方。</figcaption></figure>
+<figure><img src="figs/2609.39854-fig13.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 13</b>　固定翼真机实验的场地与飞行时间切片。橙色和蓝色的包裹柱按仿真分布随机摆放，钢梁和螺旋楼梯是场地固有障碍，不参与随机。图中叠了同一段飞行在不同时刻的飞机姿态，柱间空隙就是航迹要穿的地方。</figcaption></figure>
 <p>这节要你记住的是，长时程眼光与限制都要，缺一个成功率就掉到个位数。</p>
 <h3>4.3 界本身准不准</h3>
 <p>界算得准不准，要用蒙特卡洛估计来对。小车那组用的是 1024 条轨迹加 1024 组 dropout mask。</p>
 <div class="scroll"><table><thead><tr><th>是否采样 dropout</th><th>代价界被违反</th><th>违反概率界被违反</th></tr></thead><tbody><tr><td>采样</td><td>从未</td><td>0.34%</td></tr><tr><td>不采样</td><td>65.49%</td><td>1.45%</td></tr></tbody></table></div>
 <p>数据来自第 VI-D1 节，比例的分母是全部规划间隔。右边那一列是违反概率界本身被蒙特卡洛估计打破的比例，不是碰撞率。</p>
 <p>第二行值得盯住。不采样 dropout 就相当于把网络权重的分布当成了确定的，<mark>代价界有 65.49% 的规划间隔被蒙特卡洛估计打破</mark>。论文用这一组对比来说明 actor 与 critic 的不确定度确实被算进了界里。</p>
-<figure><img src="figs/2609.39854-fig14.jpg?v=20261001144329" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 14</b>　固定翼真机某次试验里逐规划间隔的界与蒙特卡洛估计。上格是期望代价，蓝线是 PAC 界，橙线是蒙特卡洛估计。中格是约束违反概率，虚线是 0.1 的容许阈值，中间有一次尖峰冲到 1.0，来自连续两帧深度图的杂散噪声。下格是期望值函数变化，全程为负，说明进步约束在起作用。</figcaption></figure>
+<figure><img src="figs/2609.39854-fig14.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 14</b>　固定翼真机某次试验里逐规划间隔的界与蒙特卡洛估计。上格是期望代价，蓝线是 PAC 界，橙线是蒙特卡洛估计。中格是约束违反概率，虚线是 0.1 的容许阈值，中间有一次尖峰冲到 1.0，来自连续两帧深度图的杂散噪声。下格是期望值函数变化，全程为负，说明进步约束在起作用。</figcaption></figure>
 <p>小车那组在平均意义上保证违反概率低于 5%，两组实验的 δ 都取 0.05。图 14 是固定翼真机的一次试验，中格那次尖峰来自连续两帧深度图里的杂散噪声。<mark>界里的随机源只有动力学噪声和网络 dropout 两项</mark>，当前测量是当确定输入进去的。</p>
 <blockquote><p>📌 <strong>控制视角</strong>　这类概率界的适用条件要按随机源逐项核对。界里的随机源是过程噪声和网络 dropout，当前测量被当成已知输入，感知噪声只能间接影响界。判断一套带保证的方案能不能上现场，先列清界覆盖了哪几个随机源，缺的那几个在现场会不会出现。</p></blockquote>
 <p>这节要你记住的是，不确定度漏出界外，界就作废。</p>
@@ -240,5 +240,5 @@ arXiv:2609.39854 · 2026-10-05 · 精读约 45 分钟</div>
 <h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li>PAC-NMPC<span style="color:var(--ink3);font-size:13px">　本文直接前身，同样采样、同样对违反概率给 PAC 界，缺 RL 暖启动与学习传感器预测，短时程且难上高维感知</span></li><li>POLO<span style="color:var(--ink3);font-size:13px">　学概率值函数并当终端代价，机制与本文一半重合，但没有 PAC 硬约束、不给安全保证</span></li><li>Safe RL-MPC<span style="color:var(--ink3);font-size:13px">　学鲁棒线性 MPC 的参数换保证，非线性只能当扰动，保守且不处理感知</span></li><li>predictive safety filter<span style="color:var(--ink3);font-size:13px">　用约束收紧的鲁棒 NMPC 过滤学习策略输出，同样保守、无感知输入</span></li><li>DiffStack<span style="color:var(--ink3);font-size:13px">　可微 MPC 嵌进策略且吃感知输入，但不建模随机动力学、无安全保证</span></li></ul>
 <a class="paperlink" href="https://arxiv.org/abs/2609.39854" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2609.39854） →</a>
-<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:43</footer>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 17:57</footer>
 </div></body></html>
