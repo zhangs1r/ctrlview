@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 430" width="940" height="430" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13.5px;font-weight:650;fill:#1b1b1f}
+    .sub{font-size:12px;fill:#6b6b78}
+    .m{fill:#6b6b78;font-size:12px}
+    .arw{stroke:#8c8c99;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8c8c99"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="30">从一帧单目图像到一条控制指令，五个阶段</text>
+
+  <rect class="b1" x="30" y="62" width="162" height="96" rx="6"/>
+  <rect class="b1" x="212" y="62" width="162" height="96" rx="6"/>
+  <rect class="b2" x="394" y="62" width="162" height="96" rx="6"/>
+  <rect class="b3" x="576" y="62" width="162" height="96" rx="6"/>
+  <rect class="b3" x="758" y="62" width="152" height="96" rx="6"/>
+
+  <text class="blk" x="111" y="92" text-anchor="middle">01 检测</text>
+  <text class="sub" x="111" y="115" text-anchor="middle">YOLOv5-6D</text>
+  <text class="sub" x="111" y="136" text-anchor="middle">关键点 + 包围盒</text>
+
+  <text class="blk" x="293" y="92" text-anchor="middle">02 位姿解算</text>
+  <text class="sub" x="293" y="115" text-anchor="middle">PnP，用已知尺寸</text>
+  <text class="sub" x="293" y="136" text-anchor="middle">位置 p、姿态 R</text>
+
+  <text class="blk" x="475" y="92" text-anchor="middle">03 状态估计</text>
+  <text class="sub" x="475" y="115" text-anchor="middle">位置 p（+ 倾角方向）</text>
+  <text class="sub" x="475" y="136" text-anchor="middle">p、v、a</text>
+
+  <text class="blk" x="657" y="92" text-anchor="middle">04 轨迹外推</text>
+  <text class="sub" x="657" y="115" text-anchor="middle">1.4 s 时域</text>
+  <text class="sub" x="657" y="136" text-anchor="middle">未来轨迹</text>
+
+  <text class="blk" x="834" y="92" text-anchor="middle">05 控制</text>
+  <text class="sub" x="834" y="115" text-anchor="middle">NMPC</text>
+  <text class="sub" x="834" y="136" text-anchor="middle">推力与姿态指令</text>
+
+  <path class="arw" d="M192,110 L208,110"/>
+  <path class="arw" d="M374,110 L390,110"/>
+  <path class="arw" d="M556,110 L572,110"/>
+  <path class="arw" d="M738,110 L754,110"/>
+
+  <path class="arw" d="M834,158 L834,196 L111,196 L111,164"/>
+  <text class="m" x="470" y="190" text-anchor="middle">跟随机自己也动，下一帧的视角由它决定</text>
+
+  <path d="M386,168 L386,182 L564,182 L564,168" fill="none" stroke="#b07d3a" stroke-width="1.6"/>
+  <text class="m" x="475" y="212" text-anchor="middle" fill="#8a5a2d">本文的改动只在这一步</text>
+
+  <rect x="30" y="240" width="880" height="160" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="blk" x="52" y="270">两派估计器的分岔在第 03 步</text>
+  <text class="m" x="52" y="300">只看位置的一派，拿到第 02 步的 p 就够，R 被丢掉。残差只有一个，就是位置新息。</text>
+  <text class="m" x="52" y="324">看得见姿态的一派，把 R 里的机身 z 轴方向也当成测量一起送进去，残差因此多了一项方向新息。</text>
+  <text class="m" x="52" y="348">第 01、02 步对两派完全相同，用的是同一个检测器、同一份 PnP 输出，这样比较才落在滤波器身上。</text>
+  <text class="m" x="52" y="378">第 03 步的输出直接进第 04 步的外推。外推误差在 1.4 s 时域上放大，再交给 NMPC，这就是延迟能变成飞行能力的原因。</text>
+</svg>

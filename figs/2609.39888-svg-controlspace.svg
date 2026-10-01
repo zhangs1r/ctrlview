@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 520" width="1040" height="520" font-family="Microsoft YaHei, Helvetica, Arial, sans-serif">
+  <rect width="1040" height="520" fill="#ffffff"/>
+  <defs>
+    <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333"/>
+    </marker>
+    <marker id="rd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c0504d"/>
+    </marker>
+    <marker id="gr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f7d4f"/>
+    </marker>
+  </defs>
+
+  <line x1="520" y1="40" x2="520" y2="490" stroke="#cccccc" stroke-width="1" stroke-dasharray="6 6"/>
+
+  <text x="90" y="34" font-size="15" font-weight="bold" fill="#a03d3a">直接把状态裁回框里</text>
+  <text x="590" y="34" font-size="15" font-weight="bold" fill="#1d5c39">只在控制量上降违反</text>
+
+  <!-- left panel -->
+  <rect x="396" y="80" width="89" height="350" fill="#fdeceb"/>
+  <line x1="90" y1="430" x2="490" y2="430" stroke="#333333" stroke-width="1.4" marker-end="url(#ax)"/>
+  <line x1="90" y1="430" x2="90" y2="76" stroke="#333333" stroke-width="1.4" marker-end="url(#ax)"/>
+  <text x="300" y="456" font-size="12" fill="#333333" text-anchor="middle">车速 v（m/s）</text>
+  <text x="72" y="250" font-size="12" fill="#333333" text-anchor="middle" transform="rotate(-90 72 250)">位置 x（m）</text>
+  <line x1="396" y1="80" x2="396" y2="430" stroke="#c0504d" stroke-width="1.4" stroke-dasharray="7 5"/>
+  <text x="402" y="72" font-size="12" fill="#c0504d">v 的上界</text>
+  <text x="470" y="120" font-size="11.5" fill="#c0504d" text-anchor="end">违反区</text>
+  <path d="M 120 400 C 220 370, 300 280, 470 160" fill="none" stroke="#2f7d4f" stroke-width="2.4"/>
+
+  <circle cx="440" cy="250" r="6" fill="#c0504d"/>
+  <text x="450" y="246" font-size="12" fill="#c0504d">提案</text>
+  <line x1="440" y1="250" x2="400" y2="250" stroke="#c0504d" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#rd)"/>
+  <circle cx="396" cy="250" r="6" fill="#e08a2a"/>
+  <text x="388" y="276" font-size="12" fill="#b06a12" text-anchor="end">裁剪后的点</text>
+  <line x1="396" y1="250" x2="396" y2="216" stroke="#c0504d" stroke-width="1.6" stroke-dasharray="4 4"/>
+  <circle cx="396" cy="214" r="4" fill="#2f7d4f"/>
+  <text x="388" y="238" font-size="12" fill="#c0504d" text-anchor="end">到流形的距离</text>
+
+  <text x="106" y="112" font-size="12.5" fill="#a03d3a">① 提案可能同时越过状态界和执行器界</text>
+  <text x="106" y="134" font-size="12.5" fill="#a03d3a">② 裁剪只把越界的那一个分量夹回来</text>
+  <text x="106" y="156" font-size="12.5" fill="#a03d3a">③ 夹完的落点一般不在等式流形上</text>
+  <text x="90" y="482" font-size="12" fill="#666666">绿线是等式流形，控制量是这条曲线的参数</text>
+
+  <!-- right panel -->
+  <rect x="896" y="80" width="89" height="350" fill="#fdeceb"/>
+  <line x1="590" y1="430" x2="990" y2="430" stroke="#333333" stroke-width="1.4" marker-end="url(#ax)"/>
+  <line x1="590" y1="430" x2="590" y2="76" stroke="#333333" stroke-width="1.4" marker-end="url(#ax)"/>
+  <text x="800" y="456" font-size="12" fill="#333333" text-anchor="middle">车速 v（m/s）</text>
+  <text x="572" y="250" font-size="12" fill="#333333" text-anchor="middle" transform="rotate(-90 572 250)">位置 x（m）</text>
+  <line x1="896" y1="80" x2="896" y2="430" stroke="#c0504d" stroke-width="1.4" stroke-dasharray="7 5"/>
+  <text x="902" y="72" font-size="12" fill="#c0504d">v 的上界</text>
+  <text x="970" y="120" font-size="11.5" fill="#c0504d" text-anchor="end">违反区</text>
+  <path d="M 620 400 C 720 370, 800 280, 970 160" fill="none" stroke="#2f7d4f" stroke-width="2.4"/>
+  <path d="M 838 259 C 846 251, 854 245, 878 228" fill="none" stroke="#2f7d4f" stroke-width="6" stroke-opacity="0.35"/>
+
+  <circle cx="940" cy="250" r="6" fill="#c0504d"/>
+  <text x="932" y="240" font-size="12" fill="#c0504d" text-anchor="end">提案</text>
+  <path d="M 934 258 C 900 286, 872 268, 864 246" fill="none" stroke="#2f7d4f" stroke-width="1.8" marker-end="url(#gr)"/>
+  <circle cx="862" cy="241" r="6" fill="#2f7d4f"/>
+  <text x="854" y="274" font-size="12" fill="#1d5c39" text-anchor="end">修正后的落点</text>
+
+  <text x="606" y="112" font-size="12.5" fill="#1d5c39">① 逆动力学从两个状态反推控制量</text>
+  <text x="606" y="134" font-size="12.5" fill="#1d5c39">② 用控制量重算状态，落点落在流形上</text>
+  <text x="606" y="156" font-size="12.5" fill="#1d5c39">③ 每一步只在控制量上降违反，再投影回控制箱</text>
+  <text x="590" y="482" font-size="12" fill="#666666">粗绿段是控制箱允许的那一段流形，落点只能在这上面滑</text>
+</svg>

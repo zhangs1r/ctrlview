@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1000" height="560" fill="#ffffff"/>
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a6b86"/>
+    </marker>
+  </defs>
+
+  <!-- 第一行 1 2 3 4 -->
+  <rect x="20" y="46" width="225" height="120" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="36" y="72" font-size="14.5" font-weight="700" fill="#16212b">① 建模　§III-A</text>
+  <text x="36" y="100" font-size="12" fill="#33475a">METANET，二阶宏观动力学</text>
+  <text x="36" y="122" font-size="12" fill="#33475a">状态转移 x(t+1) = F(x(t), d(t); θ)</text>
+  <text x="36" y="144" font-size="12" fill="#33475a">六个参数 θ ∈ B ⊂ ℝ⁶，式(1)至(5)</text>
+
+  <rect x="270" y="46" width="225" height="120" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="286" y="72" font-size="14.5" font-weight="700" fill="#16212b">② 扰动与偏差　§III-A</text>
+  <text x="286" y="100" font-size="12" fill="#33475a">d̃(t) = d(t) + ε(t)，‖ε(t)‖ ≤ ε̄</text>
+  <text x="286" y="122" font-size="12" fill="#33475a">偏差 e(t) = x̃(t) − x(t)，式(9)</text>
+  <text x="286" y="144" font-size="12" fill="#33475a">初值相同，e(0) = 0，参数不跟着改</text>
+
+  <rect x="520" y="46" width="225" height="120" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="536" y="72" font-size="14.5" font-weight="700" fill="#16212b">③ 标定写成最优控制　§III-B</text>
+  <text x="536" y="100" font-size="12" fill="#33475a">min J(θ) = Σ‖x(t) − x_gt(t)‖²</text>
+  <text x="536" y="122" font-size="12" fill="#33475a">静态 θ̄ 全时域一个值</text>
+  <text x="536" y="144" font-size="12" fill="#33475a">动态 θ(t) 每拍重解，式(10)至(12)</text>
+
+  <rect x="770" y="46" width="225" height="120" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="786" y="72" font-size="14.5" font-weight="700" fill="#16212b">④ 均衡点线性化　§IV</text>
+  <text x="786" y="100" font-size="12" fill="#33475a">在 ρ_e = 35 的空间均匀均衡上</text>
+  <text x="786" y="122" font-size="12" fill="#33475a">局部 Jacobian A，式(14)</text>
+  <text x="786" y="144" font-size="12" fill="#33475a">上游 Jacobian B，式(15)</text>
+
+  <!-- 第一行箭头 -->
+  <path d="M245,106 H264" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <path d="M495,106 H514" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <path d="M745,106 H764" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <!-- 换行箭头 -->
+  <path d="M882,170 V240" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+
+  <!-- 第二行 5 6 7 8 从右往左 -->
+  <rect x="770" y="246" width="225" height="124" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="786" y="272" font-size="14.5" font-weight="700" fill="#16212b">⑤ 串稳定性判据　§IV</text>
+  <text x="786" y="300" font-size="12" fill="#33475a">G(z) = (zI − A)⁻¹B，式(16)</text>
+  <text x="786" y="322" font-size="12" fill="#33475a">取密度到密度那一个分量</text>
+  <text x="786" y="344" font-size="12" fill="#33475a">峰值越过 0 dB 即放大，图 1</text>
+
+  <rect x="520" y="246" width="225" height="124" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="536" y="272" font-size="14.5" font-weight="700" fill="#16212b">⑥ 优势标度　§V-A</text>
+  <text x="536" y="300" font-size="12" fill="#33475a">Assumption 1，曲率 μ，封顶 D</text>
+  <text x="536" y="322" font-size="12" fill="#33475a">Assumption 2，敏感度常数 L</text>
+  <text x="536" y="344" font-size="12" fill="#33475a">命题 1，(μL²H/2)·Var_D(x_gt)</text>
+
+  <rect x="270" y="246" width="225" height="124" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="286" y="272" font-size="14.5" font-weight="700" fill="#16212b">⑦ 偏差上界　§V-B</text>
+  <text x="286" y="300" font-size="12" fill="#33475a">Assumption 3，一阶展开，式(29)</text>
+  <text x="286" y="322" font-size="12" fill="#33475a">Assumption 4，界 M 与 γ，式(30)(31)</text>
+  <text x="286" y="344" font-size="12" fill="#33475a">引理 1 与定理 1，式(34)(40)</text>
+
+  <rect x="20" y="246" width="225" height="124" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="36" y="272" font-size="14.5" font-weight="700" fill="#16212b">⑧ 验证　§VI</text>
+  <text x="36" y="300" font-size="12" fill="#33475a">合成算例，6 km 瓶颈，v_free 时变</text>
+  <text x="36" y="322" font-size="12" fill="#33475a">I-24 MOTION，14 段真实轨迹</text>
+  <text x="36" y="344" font-size="12" fill="#33475a">图 3 至图 5</text>
+
+  <!-- 第二行箭头，从右往左 -->
+  <path d="M770,308 H751" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <path d="M520,308 H501" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <path d="M270,308 H251" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+
+  <!-- 底部结论条 -->
+  <rect x="20" y="396" width="975" height="128" rx="8" fill="#fdf6e8" stroke="#b7791f" stroke-width="1.6"/>
+  <text x="40" y="424" font-size="14" font-weight="700" fill="#7a5210">论文的两条结论线</text>
+  <text x="40" y="452" font-size="12.5" fill="#b03a2e">放大线　参数集让式(16) 密度到密度的峰值增益越过 0 dB 时，边界噪声沿走廊逐段放大。Scenario A 峰值约 +4 dB，折算每段涨 58.5%，图 1。</text>
+  <text x="40" y="478" font-size="12.5" fill="#1f6fb2">标的线　动态参数的名义代价 J(θ*) 不大于任何静态参数，这压低定理 1 的第二项。而 M 从 2.55 涨到 6.04，第一项反而变大，图 4 上半幅。</text>
+  <text x="40" y="504" font-size="12.5" fill="#33475a">论文原文指出 M 单独决定不了界的紧度，第二项由更低的名义代价主导。两条线正是在第二项上相接。</text>
+</svg>

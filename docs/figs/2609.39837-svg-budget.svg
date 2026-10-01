@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:12px}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+  </style>
+
+  <text class="tb" x="24" y="32">误差的三个来源，各自能拧的旋钮</text>
+  <text class="sm" x="24" y="54">三项相加就是定理给出的值隙上界，三项之间不是各调各的</text>
+
+  <rect class="b1" x="24" y="76" width="280" height="150" rx="8"/>
+  <text class="blk" x="42" y="102">第一项，优化误差</text>
+  <text class="sm" x="42" y="126">形如 C₁ 除以 ρ 的负 K 次幂减一</text>
+  <text class="sm" x="42" y="148">旋钮是迭代轮数 K</text>
+  <text class="sm" x="42" y="170">K 越大这一项越小</text>
+  <text class="sm" x="42" y="194">收缩速度 ρ 由 actor 步长定</text>
+  <text class="sm" x="42" y="214">所以加大 K 是在花算力</text>
+
+  <rect class="b2" x="320" y="76" width="280" height="150" rx="8"/>
+  <text class="blk" x="338" y="102">第二项，常数步长的跟踪偏差</text>
+  <text class="sm" x="338" y="126">形如 C₂ 乘 η</text>
+  <text class="sm" x="338" y="148">旋钮是 actor 步长 η</text>
+  <text class="sm" x="338" y="170">η 越小这一项越小</text>
+  <text class="sm" x="338" y="194">但 η 变小让 ρ 更靠近一</text>
+  <text class="sm" x="338" y="214">第一项的收缩因此变慢</text>
+
+  <rect class="b3" x="616" y="76" width="280" height="150" rx="8"/>
+  <text class="blk" x="634" y="102">第三项，批内混合偏差</text>
+  <text class="sm" x="634" y="126">形如 C₃ 乘 κ_b 的 B 次幂再除常数</text>
+  <text class="sm" x="634" y="148">旋钮是批长 B 与权重参数</text>
+  <text class="sm" x="634" y="170">B 越大这一项指数变小</text>
+  <text class="sm" x="634" y="194">代价是每条 critic 更新更贵</text>
+  <text class="sm" x="634" y="214">样本账按 K 乘 B 结</text>
+
+  <rect x="24" y="248" width="872" height="148" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="blk" x="44" y="274">按同样的精度目标把三个旋钮配平</text>
+  <text class="sm" x="44" y="300">取 actor 步长正比于精度目标，迭代轮数按精度目标的倒数增长，批长按精度目标的对数增长。</text>
+  <text class="sm" x="44" y="322">三项于是各落到同一量级，总样本数写成轮数乘批长，得到那个带折扣因子五次方和覆盖倒数的表达式。</text>
+  <text class="sm" x="44" y="344">行为策略覆盖越均匀，覆盖倒数越小；近均匀时它约等于状态数乘动作数的倒数。</text>
+  <text class="sm" x="44" y="366">批长按对数增长意味着每一轮 critic 更新要摊上越来越多的样本，这一点在标题里看不出来。</text>
+</svg>

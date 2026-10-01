@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 500" width="920" height="500" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:16px;font-weight:700}
+    .bn{fill:#1b1b1f;font-size:14px;font-weight:700}
+    .bd{fill:#6b6b78;font-size:11.5px}
+    .ct{fill:#1b1b1f;font-size:13.5px;font-weight:700}
+    .cl{fill:#3d3d47;font-size:11.5px}
+    .cq{fill:#8a5a2d;font-size:11.5px}
+    .note{fill:#4a4a55;font-size:12.5px}
+    .blk{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.5}
+    .cst{fill:#faf9f7;stroke:#ddd9d2;stroke-width:1.5}
+    .lift{fill:#fdf5ec;stroke:#e0c39a;stroke-width:1.5}
+    .arr{stroke:#b9b4ab;stroke-width:1.6;fill:none;marker-end:url(#ah)}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b9b4ab"/>
+    </marker>
+  </defs>
+
+  <text class="ttl" x="30" y="34">决策向量的四块，以及每一块被哪组约束钉住</text>
+
+  <!-- 第一行：四块 -->
+  <rect class="blk" x="30"  y="62" width="210" height="86" rx="8"/>
+  <text class="bn" x="46" y="88">关键帧状态</text>
+  <text class="bd" x="46" y="110">vec(R) 9 + v 3 + p 3</text>
+  <text class="bd" x="46" y="130">= 15 / 帧</text>
+
+  <rect class="blk" x="256" y="62" width="150" height="86" rx="8"/>
+  <text class="bn" x="272" y="88">零偏块</text>
+  <text class="bd" x="272" y="110">b_g 3 + b_a 3</text>
+  <text class="bd" x="272" y="130">= 6 / 块</text>
+
+  <rect class="blk" x="422" y="62" width="300" height="86" rx="8"/>
+  <text class="bn" x="438" y="88">乘积提升变量</text>
+  <text class="bd" x="438" y="110">Y 9 + Y′ 9 + Wᵛ 3 + Wᵖ 3</text>
+  <text class="bd" x="438" y="130">= 24 / 边</text>
+
+  <rect class="blk" x="738" y="62" width="120" height="86" rx="8"/>
+  <text class="bn" x="754" y="88">同伦标量</text>
+  <text class="bd" x="754" y="110">s</text>
+  <text class="bd" x="754" y="130">= 1</text>
+
+  <!-- 箭头 -->
+  <path class="arr" d="M135,152 L135,190"/>
+  <path class="arr" d="M331,152 L331,190"/>
+  <path class="arr" d="M572,152 L572,190"/>
+  <path class="arr" d="M798,152 L798,190"/>
+
+  <!-- 第二行：约束 -->
+  <rect class="cst" x="30" y="196" width="210" height="198" rx="8"/>
+  <text class="ct" x="46" y="220">旋转约束</text>
+  <text class="cl" x="46" y="246">(31) 列正交 RᵀR = s²I　6 / 节点</text>
+  <text class="cl" x="46" y="268">(31) 叉乘定第三列　3 / 节点</text>
+  <text class="cl" x="46" y="296">A1 行正交 RRᵀ = s²I　6 / 节点</text>
+  <text class="cl" x="46" y="324">主约束只写列正交</text>
+  <text class="cl" x="46" y="344">A1 补上漏掉的行正交</text>
+
+  <rect class="cst" x="256" y="196" width="150" height="198" rx="8"/>
+  <text class="ct" x="272" y="220">零偏项</text>
+  <text class="cl" x="272" y="246">先验 (37c)　6 / 块</text>
+  <text class="cl" x="272" y="268">游走 (37d)　6 / 相邻块</text>
+  <text class="cl" x="272" y="296">零偏不进提升</text>
+  <text class="cl" x="272" y="316">只由这两项兜底</text>
+
+  <rect class="cst" x="422" y="196" width="300" height="198" rx="8"/>
+  <text class="ct" x="438" y="220">提升变量的定义与冗余约束</text>
+  <text class="cl" x="438" y="244">(30a)(30b) 楔形定义　9 + 9 / 边</text>
+  <text class="cl" x="438" y="266">(30c) 向量定义　3 + 3 / 边</text>
+  <rect class="lift" x="434" y="278" width="276" height="78" rx="6"/>
+  <text class="cq" x="446" y="298">B1 零空间 Yw = 0　3 / 提升</text>
+  <text class="cq" x="446" y="320">B2 Gram YᵀY = |w|²I − w wᵀ　6 / 提升</text>
+  <text class="cq" x="446" y="342">C1 范数 |W|² = |u|²　2 / 边</text>
+  <text class="cl" x="438" y="374">B1 只给零空间，B2 才把 Gram 钉死</text>
+
+  <rect class="cst" x="738" y="196" width="120" height="198" rx="8"/>
+  <text class="ct" x="754" y="220">齐次化</text>
+  <text class="cl" x="754" y="246">s² = 1</text>
+  <text class="cl" x="754" y="274">仿射项也写成</text>
+  <text class="cl" x="754" y="294">二次型</text>
+
+  <!-- 底部注 -->
+  <text class="note" x="30" y="438">表 II 报的 n 就是这个记账式的实测值。每多一个关键帧，n 增 39，正好是 15 个状态加 24 个提升。</text>
+  <text class="note" x="30" y="462">每多一个零偏块，n 增 6。四组冗余约束只往系统里加方程，四个块一个都不变大。</text>
+  <text class="note" x="30" y="486">B1 单独上阵时秩和间隙几乎不动，B2 才把松弛压到秩一。</text>
+</svg>

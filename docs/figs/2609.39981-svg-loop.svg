@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="900" height="520" fill="#ffffff"/>
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a6b86"/>
+    </marker>
+    <marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b7791f"/>
+    </marker>
+  </defs>
+
+  <!-- 主链四步 -->
+  <rect x="50" y="40" width="410" height="80" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="70" y="72" font-size="15.5" font-weight="700" fill="#16212b">① 解三个原方程</text>
+  <text x="70" y="100" font-size="13.5" fill="#33475a">式(2) → P　　式(7) → Z　　式(16) → P̃</text>
+
+  <rect x="50" y="158" width="410" height="80" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="70" y="184" font-size="15.5" font-weight="700" fill="#16212b">② 算显式偏导，解三个伴随方程</text>
+  <text x="70" y="208" font-size="13.5" fill="#33475a">式(10) ∂J/∂P　式(11) ∂J/∂Z</text>
+  <text x="70" y="228" font-size="13.5" fill="#33475a">式(12) → Λ_P　式(13) → Λ_Z　式(18) → Λ̃</text>
+
+  <rect x="50" y="276" width="410" height="80" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="70" y="308" font-size="15.5" font-weight="700" fill="#16212b">③ 拼梯度</text>
+  <text x="70" y="336" font-size="13.5" fill="#33475a">∇_K J_μ = 式(14) + μ · 式(17)</text>
+
+  <rect x="50" y="394" width="410" height="80" rx="8" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.6"/>
+  <text x="70" y="424" font-size="15.5" font-weight="700" fill="#16212b">④ Armijo 回溯线搜索</text>
+  <text x="70" y="452" font-size="13.5" fill="#33475a">K ← K − η ∇_K J_μ，只接受充分下降的步长</text>
+
+  <!-- 步间箭头 -->
+  <path d="M255,120 V152" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <path d="M255,238 V270" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <path d="M255,356 V388" stroke="#4a6b86" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+
+  <!-- 回到起点的闭环 -->
+  <path d="M255,474 V492 H24 V80 H46" stroke="#2f6f9f" stroke-width="2" fill="none" marker-end="url(#arw)"/>
+  <text x="18" y="300" font-size="13" fill="#2f6f9f" transform="rotate(-90 18 300)">迭代 k → k+1</text>
+
+  <!-- 右侧事实框 -->
+  <rect x="520" y="40" width="360" height="200" rx="8" fill="#fdf6e8" stroke="#b7791f" stroke-width="1.6"/>
+  <text x="540" y="72" font-size="15.5" font-weight="700" fill="#4a3a12">关于这个闭环的三件事实</text>
+  <text x="540" y="108" font-size="13.5" fill="#5a4715">· 护栏 μ · log det P̃ 在 ρ(A_K) → 1 时发散</text>
+  <text x="540" y="140" font-size="13.5" fill="#5a4715">· 于是次水平集 S₀ 紧，迭代留在稳定域内</text>
+  <text x="540" y="172" font-size="13.5" fill="#5a4715">· 一轮共 6 个 n × n Lyapunov 方程，各 O(n³)</text>
+  <text x="540" y="212" font-size="13" fill="#8a7133">这三件事实是收敛证明的全部支点</text>
+
+  <path d="M462,104 L514,136" stroke="#b7791f" stroke-width="1.6" stroke-dasharray="5 4" fill="none" marker-end="url(#arwd)"/>
+
+  <!-- 图例 -->
+  <rect x="520" y="272" width="14" height="10" fill="#eef2f6" stroke="#4a6b86"/>
+  <text x="542" y="282" font-size="12.5" fill="#43596b">一次迭代的执行顺序</text>
+  <rect x="520" y="298" width="14" height="10" fill="#fdf6e8" stroke="#b7791f"/>
+  <text x="542" y="308" font-size="12.5" fill="#43596b">稳定域护栏与迭代代价</text>
+</svg>

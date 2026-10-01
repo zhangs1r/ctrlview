@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 340" width="920" height="340" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:14px;font-weight:650;fill:#1b1b1f}
+    .lab{font-size:13px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .brk{stroke:#1b1b1f;stroke-width:2;fill:none}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+  </style>
+
+  <text class="tb" x="30" y="30">初始化方程的三列块：尺度、初速度、重力各占一块</text>
+
+  <text class="m" x="145" y="68" text-anchor="middle">1 列</text>
+  <text class="m" x="335" y="68" text-anchor="middle">3 列</text>
+  <text class="m" x="525" y="68" text-anchor="middle">3 列</text>
+
+  <rect class="b1" x="60" y="80" width="170" height="100" rx="6"/>
+  <rect class="b2" x="250" y="80" width="170" height="100" rx="6"/>
+  <rect class="b3" x="440" y="80" width="170" height="100" rx="6"/>
+
+  <text class="blk" x="145" y="138" text-anchor="middle">B_ik · R_IC · p̄_ik</text>
+  <text class="blk" x="335" y="138" text-anchor="middle">−Δt_i · B_ik</text>
+  <text class="blk" x="525" y="138" text-anchor="middle">½ · Δt_i² · B_ik</text>
+
+  <path class="brk" d="M48,74 L40,74 L40,186 L48,186"/>
+  <path class="brk" d="M622,74 L630,74 L630,186 L622,186"/>
+
+  <text class="lab" x="145" y="212" text-anchor="middle" fill="#2d5f8a">乘 s　尺度</text>
+  <text class="lab" x="335" y="212" text-anchor="middle" fill="#8a5a2d">乘 v_0　初速度</text>
+  <text class="lab" x="525" y="212" text-anchor="middle" fill="#3f7d55">乘 g　重力</text>
+
+  <text class="blk" x="648" y="138">= b_ik</text>
+
+  <rect x="60" y="248" width="800" height="72" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="m" x="82" y="278">三块互不重叠，7 个未知数各自有独立的一列，这就是线性化能成立的原因。</text>
+  <text class="m" x="82" y="302">点再多，也只是把每一块的行数堆高，块的个数不变，所以秩不涨。</text>
+</svg>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" width="920" height="440" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .t{fill:#1b1b1f;font-size:13.5px}
+    .m{fill:#6b6b78;font-size:12px}
+    .a{fill:#2d5f8a;font-size:14px;font-weight:700}
+    .box{fill:#faf9f7;stroke:#ddd9d2;stroke-width:1.5}
+    .wbox{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.5}
+    .dot{fill:#9a9aa6}
+    .arr{stroke:#c2beb6;stroke-width:1.6;fill:none;marker-end:url(#ah)}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2beb6"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="30">秩的账：每帧几百个点，最多换来 3 个独立方程</text>
+
+  <!-- 五帧 -->
+  <g>
+    <rect class="box" x="40"  y="52" width="130" height="96" rx="8"/>
+    <circle class="dot" cx="64"  cy="78" r="3"/><circle class="dot" cx="104" cy="72" r="3"/>
+    <circle class="dot" cx="144" cy="84" r="3"/><circle class="dot" cx="76"  cy="106" r="3"/>
+    <circle class="dot" cx="116" cy="102" r="3"/><circle class="dot" cx="152" cy="118" r="3"/>
+    <circle class="dot" cx="92"  cy="130" r="3"/>
+    <text class="m" x="105" y="168" text-anchor="middle">帧 1　几百个点</text>
+    <path class="arr" d="M105,178 L105,204"/>
+    <rect class="wbox" x="59" y="208" width="92" height="40" rx="7"/>
+    <text class="a" x="105" y="234" text-anchor="middle">w₁</text>
+  </g>
+  <g>
+    <rect class="box" x="195" y="52" width="130" height="96" rx="8"/>
+    <circle class="dot" cx="219" cy="72" r="3"/><circle class="dot" cx="259" cy="80" r="3"/>
+    <circle class="dot" cx="299" cy="70" r="3"/><circle class="dot" cx="231" cy="108" r="3"/>
+    <circle class="dot" cx="271" cy="112" r="3"/><circle class="dot" cx="307" cy="100" r="3"/>
+    <circle class="dot" cx="247" cy="130" r="3"/>
+    <text class="m" x="260" y="168" text-anchor="middle">帧 2　几百个点</text>
+    <path class="arr" d="M260,178 L260,204"/>
+    <rect class="wbox" x="214" y="208" width="92" height="40" rx="7"/>
+    <text class="a" x="260" y="234" text-anchor="middle">w₂</text>
+  </g>
+  <g>
+    <rect class="box" x="350" y="52" width="130" height="96" rx="8"/>
+    <circle class="dot" cx="374" cy="80" r="3"/><circle class="dot" cx="414" cy="70" r="3"/>
+    <circle class="dot" cx="454" cy="86" r="3"/><circle class="dot" cx="386" cy="110" r="3"/>
+    <circle class="dot" cx="426" cy="104" r="3"/><circle class="dot" cx="462" cy="120" r="3"/>
+    <circle class="dot" cx="402" cy="130" r="3"/>
+    <text class="m" x="415" y="168" text-anchor="middle">帧 3　几百个点</text>
+    <path class="arr" d="M415,178 L415,204"/>
+    <rect class="wbox" x="369" y="208" width="92" height="40" rx="7"/>
+    <text class="a" x="415" y="234" text-anchor="middle">w₃</text>
+  </g>
+  <g>
+    <rect class="box" x="505" y="52" width="130" height="96" rx="8"/>
+    <circle class="dot" cx="529" cy="74" r="3"/><circle class="dot" cx="569" cy="82" r="3"/>
+    <circle class="dot" cx="609" cy="72" r="3"/><circle class="dot" cx="541" cy="106" r="3"/>
+    <circle class="dot" cx="581" cy="110" r="3"/><circle class="dot" cx="617" cy="98" r="3"/>
+    <circle class="dot" cx="557" cy="130" r="3"/>
+    <text class="m" x="570" y="168" text-anchor="middle">帧 4　几百个点</text>
+    <path class="arr" d="M570,178 L570,204"/>
+    <rect class="wbox" x="524" y="208" width="92" height="40" rx="7"/>
+    <text class="a" x="570" y="234" text-anchor="middle">w₄</text>
+  </g>
+  <g>
+    <rect class="box" x="660" y="52" width="130" height="96" rx="8"/>
+    <circle class="dot" cx="684" cy="78" r="3"/><circle class="dot" cx="724" cy="70" r="3"/>
+    <circle class="dot" cx="764" cy="86" r="3"/><circle class="dot" cx="696" cy="110" r="3"/>
+    <circle class="dot" cx="736" cy="104" r="3"/><circle class="dot" cx="772" cy="118" r="3"/>
+    <circle class="dot" cx="712" cy="130" r="3"/>
+    <text class="m" x="725" y="168" text-anchor="middle">帧 5　几百个点</text>
+    <path class="arr" d="M725,178 L725,204"/>
+    <rect class="wbox" x="679" y="208" width="92" height="40" rx="7"/>
+    <text class="a" x="725" y="234" text-anchor="middle">w₅</text>
+  </g>
+
+  <text class="m" x="890" y="222" text-anchor="end">每帧 ≤ 3 个方程</text>
+  <text class="m" x="890" y="240" text-anchor="end">点再多也不增加</text>
+
+  <text class="m" x="105" y="272" text-anchor="middle">w₀ = 0，首帧不含新信息</text>
+  <text class="m" x="415" y="272" text-anchor="middle">深度分量被视线约束消掉</text>
+  <text class="m" x="725" y="272" text-anchor="middle">帧 5 只多出 1 帧冗余</text>
+
+  <!-- 结论 -->
+  <rect class="box" x="40" y="292" width="840" height="126" rx="10"/>
+  <text class="t" x="66" y="322">未知数一共 7 个　　[ s,  v₀,  g ]</text>
+  <text class="t" x="66" y="350">每帧最多贡献 3 个独立方程，而且 w₀ = 0</text>
+  <text class="a" x="66" y="382">于是至少需要 4 帧；五帧窗口只多出 1 帧冗余</text>
+  <text class="m" x="66" y="404">秩数的是独立方程有几个，和方程总数不是一回事。密点和置信度加权提高的是抗噪能力。</text>
+</svg>

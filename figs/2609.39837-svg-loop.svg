@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 448" width="920" height="448" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:12px}
+    .arr{stroke:#8a8a96;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+    .b4{fill:#f6f1f8;stroke:#c2a8cf;stroke-width:1.6}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a96"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="24" y="32">一步 TD 加一次镜像下降，一轮里发生了什么</text>
+  <text class="sm" x="24" y="54">四个方块是同一轮里的先后次序，下面那条回环把 critic 送回策略更新</text>
+
+  <rect class="b1" x="24" y="82" width="196" height="104" rx="8"/>
+  <text class="blk" x="40" y="108">策略更新，解式 (1)</text>
+  <text class="sm" x="40" y="130">每个状态一个子问题</text>
+  <text class="sm" x="40" y="150">输入 Q 与上一轮策略</text>
+  <text class="sm" x="40" y="170">输出 π 的下标加一</text>
+
+  <path class="arr" d="M222,134 L246,134"/>
+
+  <rect class="b3" x="250" y="82" width="196" height="104" rx="8"/>
+  <text class="blk" x="266" y="108">采一批连续转移</text>
+  <text class="sm" x="266" y="130">行为策略固定不动</text>
+  <text class="sm" x="266" y="150">批与批首尾相接</text>
+  <text class="sm" x="266" y="170">轨迹全程不重置</text>
+
+  <path class="arr" d="M448,134 L472,134"/>
+
+  <rect class="b2" x="476" y="82" width="196" height="104" rx="8"/>
+  <text class="blk" x="492" y="108">每个样本一条 TD 增量</text>
+  <text class="sm" x="492" y="130">目标里带下一步的 Q</text>
+  <text class="sm" x="492" y="150">带上正则项与折扣</text>
+  <text class="sm" x="492" y="170">动作上的期望精确算</text>
+
+  <path class="arr" d="M674,134 L698,134"/>
+
+  <rect class="b4" x="702" y="82" width="194" height="104" rx="8"/>
+  <text class="blk" x="718" y="108">一次 critic 更新</text>
+  <text class="sm" x="718" y="130">批内按确定性权重平均</text>
+  <text class="sm" x="718" y="150">乘上 critic 步长 α</text>
+  <text class="sm" x="718" y="170">只走一步 Bellman</text>
+
+  <path class="arr" d="M799,188 L799,216 L122,216 L122,190"/>
+
+  <rect x="24" y="240" width="872" height="184" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="blk" x="44" y="266">被更新的两个量，各自的初值、驱动量与兜底</text>
+  <text class="sm" x="44" y="292">策略 π 的初值来自上一轮策略，落在镜像映射定义域的内部；驱动量是正则化优势；兜底是那个近端项加上单纯形约束。</text>
+  <text class="sm" x="44" y="314">critic 的初值由使用者任意给定，只要有限；驱动量是一步 Bellman 残差；兜底是对角权重矩阵 W，它可逆，所以不动点没被改掉。</text>
+  <text class="sm" x="44" y="340">两处兜底性质不同。策略那处的近端项同时决定步长尺度；critic 那处的 W 只决定每个坐标走得快还是慢，走的都是同一个方向。</text>
+  <text class="sm" x="44" y="366">随机版本里 W 由行为策略的平稳状态动作分布决定，按 α 乘上 σ 得到，于是精确定理可以直接套过来。</text>
+  <text class="sm" x="44" y="392">批与批首尾相接这一点用掉了一个假设，行为链要不可约且非周期，否则批初态带来的偏差没法用混合时间压住。</text>
+</svg>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+  <rect width="900" height="440" fill="#ffffff"/>
+
+  <text x="226" y="30" text-anchor="middle" font-size="17" font-weight="600" fill="#1f3552">训练时　一份冻结权重，两套头各训各的</text>
+  <text x="674" y="30" text-anchor="middle" font-size="17" font-weight="600" fill="#1f3552">部署时　四张 NPU 图，编码器跑两遍</text>
+
+  <rect x="16" y="46" width="420" height="378" rx="10" fill="#fbfcfe" stroke="#c9d6e4"/>
+  <rect x="464" y="46" width="420" height="378" rx="10" fill="#fbfcfe" stroke="#c9d6e4"/>
+
+  <!-- ===== 左：训练 ===== -->
+  <rect x="76" y="66" width="300" height="56" rx="8" fill="#e6eef8" stroke="#7fa2c8"/>
+  <text x="226" y="90" text-anchor="middle" font-size="14" fill="#1f3552">冻结 SAM ViT-B 骨干</text>
+  <text x="226" y="110" text-anchor="middle" font-size="12.5" fill="#4a6b8a">89.7M 参数，不更新</text>
+
+  <path d="M226 122 L226 138 M226 138 L136 138 L136 152 M226 138 L316 138 L316 152" fill="none" stroke="#8ba6c2" stroke-width="1.6"/>
+  <path d="M136 158 L131 149 L141 149 Z M316 158 L311 149 L321 149 Z" fill="#8ba6c2"/>
+
+  <rect x="46" y="160" width="180" height="66" rx="8" fill="#fdf0e0" stroke="#d9a35e"/>
+  <text x="136" y="183" text-anchor="middle" font-size="13.5" fill="#7a4d12">孔隙头</text>
+  <text x="136" y="202" text-anchor="middle" font-size="12" fill="#8a5f28">Conv-LoRA M=2</text>
+  <text x="136" y="218" text-anchor="middle" font-size="12" fill="#8a5f28">解码器 4.06M</text>
+
+  <rect x="226" y="160" width="180" height="66" rx="8" fill="#fdf0e0" stroke="#d9a35e"/>
+  <text x="316" y="183" text-anchor="middle" font-size="13.5" fill="#7a4d12">夹杂物头</text>
+  <text x="316" y="202" text-anchor="middle" font-size="12" fill="#8a5f28">Conv-LoRA M=8</text>
+  <text x="316" y="218" text-anchor="middle" font-size="12" fill="#8a5f28">解码器 4.06M</text>
+
+  <line x1="46" y1="248" x2="406" y2="248" stroke="#e2e8ef"/>
+  <text x="226" y="274" text-anchor="middle" font-size="12.5" fill="#3c5570">两套头之间没有可训练参数的通道</text>
+  <text x="226" y="298" text-anchor="middle" font-size="12.5" fill="#3c5570">检查点里冻结权重只有一份</text>
+
+  <rect x="76" y="316" width="300" height="46" rx="8" fill="#f4f7fa" stroke="#d5dee8"/>
+  <text x="226" y="336" text-anchor="middle" font-size="12.5" fill="#3c5570">可训练参数合计 8.27M</text>
+  <text x="226" y="353" text-anchor="middle" font-size="12" fill="#5d7590">占 ViT-B 的 8.44%</text>
+
+  <rect x="60" y="382" width="14" height="14" rx="3" fill="#e6eef8" stroke="#7fa2c8"/>
+  <text x="82" y="394" font-size="12" fill="#4a6b8a">冻结</text>
+  <rect x="140" y="382" width="14" height="14" rx="3" fill="#fdf0e0" stroke="#d9a35e"/>
+  <text x="162" y="394" font-size="12" fill="#8a5f28">可训练</text>
+  <text x="240" y="394" font-size="12" fill="#8496a8">存储省在这一侧</text>
+
+  <!-- ===== 右：部署 ===== -->
+  <rect x="494" y="66" width="360" height="52" rx="8" fill="#e6eef8" stroke="#7fa2c8"/>
+  <text x="674" y="87" text-anchor="middle" font-size="13" fill="#1f3552">孔隙编码器图</text>
+  <text x="674" y="105" text-anchor="middle" font-size="11.5" fill="#4a6b8a">冻结权重一份 + M=2 适配器</text>
+
+  <rect x="494" y="130" width="360" height="46" rx="8" fill="#eef4f9" stroke="#a8c0d8"/>
+  <text x="674" y="150" text-anchor="middle" font-size="13" fill="#1f3552">孔隙解码器图</text>
+  <text x="674" y="166" text-anchor="middle" font-size="11.5" fill="#4a6b8a">不含编码器权重</text>
+
+  <rect x="494" y="196" width="360" height="52" rx="8" fill="#e6eef8" stroke="#7fa2c8"/>
+  <text x="674" y="217" text-anchor="middle" font-size="13" fill="#1f3552">夹杂物编码器图</text>
+  <text x="674" y="235" text-anchor="middle" font-size="11.5" fill="#4a6b8a">冻结权重一份 + M=8 适配器</text>
+
+  <rect x="494" y="260" width="360" height="46" rx="8" fill="#eef4f9" stroke="#a8c0d8"/>
+  <text x="674" y="280" text-anchor="middle" font-size="13" fill="#1f3552">夹杂物解码器图</text>
+  <text x="674" y="296" text-anchor="middle" font-size="11.5" fill="#4a6b8a">不含编码器权重</text>
+
+  <line x1="494" y1="322" x2="854" y2="322" stroke="#e2e8ef"/>
+  <text x="674" y="346" text-anchor="middle" font-size="12.5" fill="#3c5570">冻结权重各带一份，设备上不共享</text>
+  <text x="674" y="370" text-anchor="middle" font-size="12" fill="#3c5570">编码器每个头跑一遍</text>
+  <text x="674" y="389" text-anchor="middle" font-size="12" fill="#3c5570">512² 下 1980.8 ms 与 8134.3 ms</text>
+  <text x="674" y="408" text-anchor="middle" font-size="12" fill="#3c5570">1024² 下解码器 15.4 ms 与 15.3 ms</text>
+  <text x="674" y="419" text-anchor="middle" font-size="11" fill="#8496a8">峰值内存 11.8 与 13.9 MB</text>
+</svg>

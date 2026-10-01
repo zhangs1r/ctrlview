@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:12px}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+  </style>
+
+  <text class="tb" x="30" y="34">两层概率，随机性分别算在哪一层</text>
+  <text class="sm" x="30" y="56">左列管算法，右列管机器人，中间那个上界把两层接起来</text>
+
+  <rect class="b1" x="30" y="78" width="300" height="176" rx="8"/>
+  <text class="blk" x="50" y="106">外层，算法自身的随机性</text>
+  <text class="sm" x="50" y="132">来源是候选策略的采样</text>
+  <text class="sm" x="50" y="154">以及每条轨迹的 dropout mask</text>
+  <text class="sm" x="50" y="184">置信度写成 1 − δ_ S</text>
+  <text class="sm" x="50" y="206">δ 由用户给，两组实验取 0.05</text>
+  <text class="sm" x="50" y="234">它管的是这句话本身成立的概率</text>
+
+  <rect class="b3" x="590" y="78" width="300" height="176" rx="8"/>
+  <text class="blk" x="610" y="106">内层，动力学噪声</text>
+  <text class="sm" x="610" y="132">给定当前状态，未来 N_T 步</text>
+  <text class="sm" x="610" y="154">每一步都留在安全集里</text>
+  <text class="sm" x="610" y="184">条件概率写成 1 − β_ S</text>
+  <text class="sm" x="610" y="206">β_ S 由违反概率的 PAC 上界给出</text>
+  <text class="sm" x="610" y="234">上界再被硬约束压到 ε_ c 以下</text>
+
+  <path d="M330,166 L440,166" stroke="#8a8a96" stroke-width="1.8" fill="none"/>
+  <path d="M590,166 L480,166" stroke="#8a8a96" stroke-width="1.8" fill="none"/>
+  <path d="M480,150 L470,166 L480,182" stroke="#8a8a96" stroke-width="1.8" fill="none"/>
+  <text class="sm" x="460" y="146" text-anchor="middle">上界</text>
+
+  <text class="blk" x="460" y="106" text-anchor="middle">两个参数来自两处</text>
+  <text class="sm" x="460" y="206" text-anchor="middle">样本量</text>
+  <text class="sm" x="460" y="228" text-anchor="middle">收紧上界</text>
+
+  <rect x="30" y="276" width="860" height="82" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="sm" x="52" y="302">集中项等于 log(1/δ) 除以 α 乘 L 乘 M。样本量翻倍，集中项减半，上界就更紧。</text>
+  <text class="sm" x="52" y="324">δ_S 取 0 时退化成文献里的 Safety Level II，这只管概率不管置信度。</text>
+  <text class="sm" x="52" y="346">两层都只对当前观测和有限时域成立，闭环无限时长的安全性没有保证。</text>
+</svg>

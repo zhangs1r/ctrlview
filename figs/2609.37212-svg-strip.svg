@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" font-family="DejaVu Sans, Source Han Sans SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="960" height="400" fill="#ffffff"/>
+  <text x="24" y="34" font-size="20" font-weight="bold" fill="#111111">0.50 m 的宽度门槛把一条可用面积切成两段</text>
+  <text x="24" y="58" font-size="14" fill="#555555">面积收益按面积平方计价，切开之后同样的总面积换来的收益变少</text>
+
+  <text x="40" y="98" font-size="16" font-weight="bold" fill="#1f9d55">缺口不小于 0.50 m</text>
+  <rect x="40" y="110" width="400" height="230" fill="#fbfdff" stroke="#333333" stroke-width="3"/>
+  <rect x="40" y="110" width="400" height="46" fill="#8fe0a8" stroke="#1f9d55"/>
+  <text x="240" y="140" font-size="15" text-anchor="middle" fill="#0d3d1f">一条连续可用面积 A，与边界共用 400 mm 以上的边</text>
+  <rect x="40" y="270" width="250" height="70" fill="#ffe873" stroke="#b8a02a" stroke-width="1.5"/>
+  <text x="165" y="312" font-size="15" text-anchor="middle" fill="#111111">设备</text>
+  <rect x="290" y="270" width="150" height="70" fill="#b9bdc4" stroke="#5c6169" stroke-width="1.5"/>
+  <text x="365" y="312" font-size="15" text-anchor="middle" fill="#111111">障碍</text>
+  <line x1="240" y1="210" x2="240" y2="266" stroke="#111111" stroke-width="2"/>
+  <line x1="200" y1="238" x2="310" y2="238" stroke="#1f9d55" stroke-width="0"/>
+  <text x="240" y="232" font-size="14" text-anchor="middle" fill="#111111">缺口宽度达标</text>
+
+  <text x="510" y="98" font-size="16" font-weight="bold" fill="#d0342c">缺口小于 0.50 m</text>
+  <rect x="510" y="110" width="400" height="230" fill="#fbfdff" stroke="#333333" stroke-width="3"/>
+  <rect x="510" y="110" width="150" height="46" fill="#8fe0a8" stroke="#1f9d55"/>
+  <text x="585" y="140" font-size="15" text-anchor="middle" fill="#0d3d1f">A₁</text>
+  <rect x="700" y="110" width="210" height="46" fill="#8fe0a8" stroke="#1f9d55"/>
+  <text x="805" y="140" font-size="15" text-anchor="middle" fill="#0d3d1f">A₂</text>
+  <rect x="660" y="110" width="40" height="46" fill="#f6b0ab"/>
+  <text x="680" y="98" font-size="13" text-anchor="middle" fill="#d0342c">缺口 0.28 m</text>
+  <rect x="510" y="270" width="250" height="70" fill="#ffe873" stroke="#b8a02a" stroke-width="1.5"/>
+  <text x="635" y="312" font-size="15" text-anchor="middle" fill="#111111">设备</text>
+  <rect x="760" y="270" width="150" height="70" fill="#b9bdc4" stroke="#5c6169" stroke-width="1.5"/>
+  <text x="835" y="312" font-size="15" text-anchor="middle" fill="#111111">障碍</text>
+  <line x1="680" y1="210" x2="680" y2="266" stroke="#d0342c" stroke-width="2"/>
+  <text x="680" y="200" font-size="14" text-anchor="middle" fill="#d0342c">门槛以下不计入可用面积</text>
+
+  <text x="40" y="378" font-size="14" fill="#333333">同样的总面积下，A² 大于 A₁² 加 A₂²，差额是 2·A₁·A₂ 乘上面积收益系数 0.67 €/m⁴</text>
+</svg>

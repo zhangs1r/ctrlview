@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 370" width="920" height="370" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .good{fill:#3f7d55;font-size:13px;font-weight:700}
+    .acc{fill:#2d5f8a;font-size:12.5px;font-weight:700}
+    .gate{fill:#8a5a2d;font-size:12.5px;font-weight:700}
+  </style>
+
+  <text class="ttl" x="30" y="30">回访门控：漂移量先超过约束自身的不确定度，才允许它改位姿</text>
+
+  <!-- 两个区域 -->
+  <rect x="90" y="70" width="770" height="100" fill="#eef6f0"/>
+  <rect x="90" y="170" width="770" height="110" fill="#f4f2ee"/>
+
+  <text class="good" x="110" y="100">点组放行，可以移动位姿</text>
+  <text class="m"   x="110" y="244">只进尺度约束集合，不动位姿</text>
+
+  <!-- 坐标轴 -->
+  <line x1="90" y1="70" x2="90" y2="280" stroke="#ddd9d2" stroke-width="1.5"/>
+  <line x1="90" y1="280" x2="860" y2="280" stroke="#ddd9d2" stroke-width="1.5"/>
+
+  <!-- 门槛线 -->
+  <line x1="90" y1="170" x2="860" y2="170" stroke="#8a5a2d" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text class="gate" x="100" y="163">这条回访约束自身的不确定度</text>
+
+  <!-- 漂移曲线 -->
+  <polyline fill="none" stroke="#2d5f8a" stroke-width="2.5"
+    points="110,268 200,262 290,254 380,242 470,226 540,206 600,184 660,160 730,138 800,120 840,110"/>
+  <text class="acc" x="852" y="104" text-anchor="end">累积漂移</text>
+
+  <!-- 过门点 -->
+  <circle cx="635" cy="170" r="6.5" fill="#8a5a2d"/>
+  <text class="gate" x="650" y="192">漂移追上不确定度，门开</text>
+
+  <!-- 轴题 -->
+  <text class="m" x="475" y="308" text-anchor="middle">子图间距与观测一起推进</text>
+  <text class="m" x="60" y="175" text-anchor="middle" transform="rotate(-90 60 175)">累积漂移</text>
+
+  <text class="m" x="90" y="344">同一条回访通常会被多次观测。漂移还没涨上来就把它当硬约束，等于往解里掺偏差。</text>
+</svg>

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 336" width="960" height="336" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .t{fill:#1b1b1f;font-size:12.5px}
+    .m{fill:#6b6b78;font-size:11px}
+    .box{fill:#faf9f7;stroke:#ddd9d2;stroke-width:1.5}
+    .abox{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.8}
+    .hbox{fill:#fdf0e2;stroke:#e0a960;stroke-width:1.8}
+    .arr{stroke:#c2beb6;stroke-width:1.6;fill:none;marker-end:url(#ah)}
+    .ar2{stroke:#e0a960;stroke-width:2;fill:none;marker-end:url(#ah2)}
+    .dash{stroke:#9dbcd4;stroke-width:1.4;stroke-dasharray:5 4;fill:none}
+    .div{stroke:#c9c5bd;stroke-width:1.4;stroke-dasharray:4 5;fill:none}
+    .brk{stroke:#b9b4ab;stroke-width:1.4;fill:none;marker-start:url(#ah3);marker-end:url(#ah3)}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c2beb6"/>
+    </marker>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e0a960"/>
+    </marker>
+    <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b9b4ab"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="28" y="30">锚点快照与再锚定，因果状态怎么被顶住</text>
+  <text class="m" x="28" y="54">横轴是 rig 到达的顺序，每个方块是一套同步相机图像。方块之间只许向左看，橙色方块是块边界的交接 rig。</text>
+
+  <path class="brk" d="M104,84 L422,84"/>
+  <text class="m" x="263" y="76" text-anchor="middle">块长 N 个 rig</text>
+
+  <rect class="abox" x="60" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="104" y="129" text-anchor="middle">锚点 a₁</text>
+
+  <rect class="box" x="166" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="210" y="129" text-anchor="middle">a₁+1</text>
+
+  <rect class="box" x="272" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="316" y="129" text-anchor="middle">a₁+2</text>
+
+  <rect class="hbox" x="378" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="422" y="129" text-anchor="middle">a₁+3</text>
+
+  <rect class="hbox" x="510" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="554" y="129" text-anchor="middle">锚点 a₂</text>
+
+  <rect class="box" x="616" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="660" y="129" text-anchor="middle">a₂+1</text>
+
+  <rect class="box" x="722" y="96" width="88" height="56" rx="6"/>
+  <text class="t" x="766" y="129" text-anchor="middle">a₂+2</text>
+
+  <path class="arr" d="M165,124 L151,124"/>
+  <path class="arr" d="M271,124 L257,124"/>
+  <path class="arr" d="M377,124 L363,124"/>
+  <path class="arr" d="M615,124 L601,124"/>
+  <path class="arr" d="M721,124 L707,124"/>
+
+  <path class="div" d="M488,76 L488,166"/>
+  <path class="ar2" d="M468,124 L507,124"/>
+
+  <path class="dash" d="M104,152 L104,178 L422,178"/>
+  <path class="dash" d="M210,178 L210,153"/>
+  <path class="dash" d="M316,178 L316,153"/>
+  <path class="dash" d="M422,178 L422,153"/>
+  <text class="m" x="436" y="182">每个 query rig 各拿一份锚点 token 的拷贝</text>
+
+  <text class="m" x="488" y="212" text-anchor="middle">块边界</text>
+  <text class="m" x="488" y="230" text-anchor="middle">上一块的最后一个 rig 成为下一块的锚点</text>
+
+  <text class="m" x="28" y="272">状态上限，最多 N 个压缩 rig，即 N·C·L 个 token，与序列长度无关。</text>
+  <text class="m" x="28" y="296">权衡，块太短则多跳累积单次估计的噪声，块太长则超出训练覆盖的位移范围。</text>
+</svg>

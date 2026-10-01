@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 470" width="860" height="470" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .c0{fill:#2d5f8a;font-size:13px;font-weight:700}
+    .c1{fill:#a8562d;font-size:13px;font-weight:700}
+    .pts{fill:#1b1b1f;font-size:12.5px;font-weight:700}
+    .sub{fill:#6b6b78;font-size:11.5px}
+  </style>
+
+  <text class="ttl" x="26" y="28">扰动的两维判据，横轴看选中的任务键变不变，纵轴看成功所需的动作变不变</text>
+
+  <!-- 两个横向带 -->
+  <rect x="150" y="70" width="640" height="130" fill="#fbf1e8"/>
+  <rect x="150" y="200" width="640" height="130" fill="#eef3f8"/>
+
+  <text class="c1" x="164" y="90">Δa = 1　所需动作必须重算，选错轨迹族就完不成任务</text>
+  <text class="c0" x="164" y="220">Δa = 0　所需动作没变，熟悉的那条轨迹仍然有效</text>
+
+  <!-- 坐标轴 -->
+  <line x1="150" y1="70" x2="150" y2="330" stroke="#ddd9d2" stroke-width="1.5"/>
+  <line x1="150" y1="330" x2="820" y2="330" stroke="#ddd9d2" stroke-width="1.5"/>
+
+  <!-- 列分界 -->
+  <line x1="485" y1="70" x2="485" y2="345" stroke="#cfc8bd" stroke-width="1.6" stroke-dasharray="7 5"/>
+  <text class="m" x="317" y="366" text-anchor="middle">Δk = 0　选中的还是原来那个熟悉任务</text>
+  <text class="m" x="652" y="366" text-anchor="middle">Δk = 1　换到了另一个熟悉任务</text>
+
+  <!-- 轴题 -->
+  <text class="m" x="88" y="200" text-anchor="middle" transform="rotate(-90 88 200)">成功所需动作是否改变　Δa</text>
+  <text class="m" x="485" y="405" text-anchor="middle">被选中的任务键是否改变　Δk</text>
+
+  <!-- 四个格的点 -->
+  <circle cx="268" cy="265" r="9" fill="#2d5f8a"/>
+  <text class="pts" x="284" y="270">Sem. 换个说法</text>
+  <circle cx="268" cy="300" r="9" fill="#2d5f8a"/>
+  <text class="pts" x="284" y="305">Obj. 换个外观</text>
+
+  <circle cx="268" cy="135" r="9" fill="#a8562d"/>
+  <text class="pts" x="284" y="140">Swap 对调位置</text>
+
+  <circle cx="480" cy="135" r="9" fill="#a8562d"/>
+  <circle cx="512" cy="135" r="9" fill="none" stroke="#a8562d" stroke-width="2" stroke-dasharray="4 3"/>
+  <text class="pts" x="530" y="140">Task 换目标</text>
+  <text class="sub" x="530" y="158">两个位置都算，Δk 取 0 或 1</text>
+
+  <text class="sub" x="164" y="188">这一类里两条路都能过</text>
+  <text class="sub" x="164" y="318">这一类才是分水岭</text>
+
+  <!-- 底部说明 -->
+  <text class="m" x="150" y="436">蓝格是论文说的 nuisance 扰动，橙格是 counterfactual 扰动。Task 落在两个位置之间，取 Δk = 1 时是换了一个熟悉任务，</text>
+  <text class="m" x="150" y="455">并不等于学会了跟随指令，这一条正是表 1 容易被读错的地方。</text>
+</svg>

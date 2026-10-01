@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" width="880" height="440" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .ax{fill:#6b6b78;font-size:12px}
+    .da{fill:#2d5f8a;font-size:12.5px;font-weight:700}
+    .zs{fill:#a8562d;font-size:12.5px;font-weight:700}
+    .tag{fill:#1b1b1f;font-size:12px}
+    .sub{fill:#6b6b78;font-size:11.5px}
+  </style>
+
+  <text class="ttl" x="26" y="26">一条候选射线和一个祖先的深度缓冲比一次，比出哪些段算已经看过</text>
+
+  <!-- 上：屏幕空间的深度比较 -->
+  <rect x="100" y="70" width="720" height="180" fill="#fbfbfc"/>
+
+  <!-- 已看过 / 未看过 竖条 -->
+  <rect x="100" y="70" width="135" height="180" fill="#f3d9d4" opacity="0.75"/>
+  <rect x="235" y="70" width="90" height="180" fill="#d8ecdc" opacity="0.75"/>
+  <rect x="325" y="70" width="225" height="180" fill="#f3d9d4" opacity="0.75"/>
+  <rect x="550" y="70" width="135" height="180" fill="#d8ecdc" opacity="0.75"/>
+  <rect x="685" y="70" width="135" height="180" fill="#f3d9d4" opacity="0.75"/>
+
+  <text class="sub" x="167" y="86" text-anchor="middle">已看过</text>
+  <text class="sub" x="280" y="86" text-anchor="middle">没看过</text>
+  <text class="sub" x="437" y="86" text-anchor="middle">已看过</text>
+  <text class="sub" x="617" y="86" text-anchor="middle">没看过</text>
+  <text class="sub" x="752" y="86" text-anchor="middle">已看过</text>
+
+  <!-- 坐标框 -->
+  <line x1="100" y1="70" x2="100" y2="250" stroke="#c9c6c0" stroke-width="1.4"/>
+  <line x1="100" y1="250" x2="820" y2="250" stroke="#c9c6c0" stroke-width="1.4"/>
+
+  <!-- z 刻度，z=0 在上，z=5 m 在下 -->
+  <g class="ax" text-anchor="end">
+    <text x="94" y="84">0</text>
+    <text x="94" y="116">1</text>
+    <text x="94" y="148">2</text>
+    <text x="94" y="180">3</text>
+    <text x="94" y="212">4</text>
+    <text x="94" y="244">5</text>
+  </g>
+  <g stroke="#e6e3de" stroke-width="1">
+    <line x1="100" y1="112" x2="820" y2="112"/>
+    <line x1="100" y1="144" x2="820" y2="144"/>
+    <line x1="100" y1="176" x2="820" y2="176"/>
+    <line x1="100" y1="208" x2="820" y2="208"/>
+  </g>
+
+  <!-- 祖先深度缓冲：阶跃折线 -->
+  <polyline points="100,240 235,240 235,131.2 325,131.2 325,240 550,240 550,182.4 685,182.4 685,240 820,240"
+            fill="none" stroke="#2d5f8a" stroke-width="2.6"/>
+  <text class="da" x="330" y="126">Dₐ(u)　祖先射线打到的第一个占据体素深度，没打到就记 d_max</text>
+
+  <!-- 候选射线的投影深度：单调上升直线 -->
+  <line x1="100" y1="118.4" x2="820" y2="227.2" stroke="#a8562d" stroke-width="2.6"/>
+  <text class="zs" x="122" y="112">z(s)　候选射线投到这张缓冲里的深度</text>
+
+  <!-- u 刻度 -->
+  <g class="ax" text-anchor="middle">
+    <text x="100" y="266">0</text>
+    <text x="280" y="266">16</text>
+    <text x="460" y="266">32</text>
+    <text x="640" y="266">48</text>
+    <text x="820" y="266">64</text>
+  </g>
+  <text class="m" x="460" y="286" text-anchor="middle">祖先图像平面的像素列 u　来源为祖先节点存的深度缓冲，宽 W_D</text>
+  <text class="ax" x="34" y="160" text-anchor="middle" transform="rotate(-90 34 160)">祖先相机坐标系下的深度 z　单位 m</text>
+
+  <!-- 判据标注 -->
+  <text class="tag" x="168" y="230" text-anchor="middle">z(s) ≤ Dₐ</text>
+  <text class="tag" x="280" y="230" text-anchor="middle">z(s) &gt; Dₐ</text>
+  <text class="tag" x="437" y="230" text-anchor="middle">z(s) ≤ Dₐ</text>
+  <text class="tag" x="617" y="230" text-anchor="middle">z(s) &gt; Dₐ</text>
+  <text class="tag" x="752" y="230" text-anchor="middle">z(s) ≤ Dₐ</text>
+
+  <!-- 下：射线参数轴 -->
+  <text class="m" x="100" y="318">同一条候选射线上的划分，沿射线参数 t 看</text>
+  <rect x="100" y="330" width="135" height="26" fill="#e8b6ad"/>
+  <rect x="235" y="330" width="90" height="26" fill="#a9d3b3"/>
+  <rect x="325" y="330" width="225" height="26" fill="#e8b6ad"/>
+  <rect x="550" y="330" width="135" height="26" fill="#a9d3b3"/>
+  <rect x="685" y="330" width="135" height="26" fill="#e8b6ad"/>
+  <text class="sub" x="167" y="348" text-anchor="middle">第 1 段</text>
+  <text class="sub" x="437" y="348" text-anchor="middle">第 2 段</text>
+  <text class="sub" x="752" y="348" text-anchor="middle">第 3 段</text>
+  <text class="ax" x="100" y="374">t = 0</text>
+  <text class="ax" x="820" y="374" text-anchor="end">t = d_max</text>
+  <text class="m" x="460" y="374" text-anchor="middle">候选射线参数 t　来源为体积射线投射，取值 0 到 d_max</text>
+  <text class="sub" x="100" y="404">红色三段是这条射线在这个祖先眼里已经看过的部分，合起来就是重叠区间集合 Sₐ(r)，这里有三段。</text>
+  <text class="sub" x="100" y="424">绿色两段是真正新增的部分，只有落在绿段里的未知体素才计入边际增益。位置按 u 与 t 的单调对应关系示意。</text>
+</svg>

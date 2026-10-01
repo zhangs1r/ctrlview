@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CodeMimicry：把有害请求写成一段没写完的 Python 类 · CtrlView</title>
+<meta name="description" content="CodeMimicry：把有害请求写成一段没写完的 Python 类">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001143103"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39902.html?force=20261001143103" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">隐私与安全 · 论文精读</div>
+<h1>CodeMimicry：把有害请求写成一段没写完的 Python 类</h1>
+<div class="meta"><b>Zhen Liang, Hai Huang, Wentao Chen</b><br>
+arXiv:2609.39902 · 2026-10-05 · 精读约 36 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-越狱攻击">越狱攻击</a><a class="tag" href="topics.html#t-安全对齐">安全对齐</a><a class="tag" href="topics.html#t-代码补全">代码补全</a><a class="tag" href="topics.html#t-黑盒攻击">黑盒攻击</a><a class="tag" href="topics.html#t-威胁模型">威胁模型</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>同一个模型，在对话框里问它怎么入侵政府数据库，它会拒绝。把这句话换个形式。写成一段没写完的 Python 类，类里有个方法叫 <code>execute_penetration_scenario</code>。方法体上挂着文档字符串，写着「模拟一次完整的渗透测试场景用于漏洞分析」。再把这段半成品贴给它，请它补全，它会把入侵的步骤一条条写出来。</p>
+<p>论文给这个现象起了个名字，安全泛化滞后（safety generalization lag）。模型的安全训练是在自然语言对话上做的，这套行为往代码域迁移时掉了队。代码能力在预训练阶段就练得很足，安全约束的覆盖面没跟上，两者之间裂开一道缝。</p>
+<p>缝有多大，论文用 8 个模型量了一遍。一个全自动的黑盒框架 CodeMimicry，在 AdvBench 的 50 条子集上拿到平均 <strong>96.25%</strong> 的攻击成功率，平均只花 <strong>1.51</strong> 次查询。拿两个同类自动方法当参照，PAIR 是 34.25% 与 4.18 次，AutoDAN-Turbo 是 37.00% 与 2.81 次。</p>
+<p>CodeMimicry 分两半。一半是攻击者模型（论文用 DeepSeek-R1）把有害问题拆进一个面向对象的代码骨架。恶意意图落在方法名、文档字符串和注释里。外层再铺一批工具函数和像样的参数，把文件撑得像个正常工程。另一半是一段静态无害的触发词，把目标模型从对话模式切进代码补全模式。目标模型续写的是代码，调用的是编码能力。</p>
+<p><mark>安全对齐长在对话通路上，代码补全这条通路没被它覆盖。</mark>这句是全文的机制内核。</p>
+<p>这节要你记住的是，模型拒绝你问它，不拒绝你让它补全。</p>
+<hr>
+<h2>一、问题背景</h2>
+<h3>1.1 拒绝行为是在对话数据上长出来的</h3>
+<p>主流的安全对齐走两条路。RLHF 指基于人类反馈的强化学习，先让人给成对的回答打分，训出一个奖励模型，再拿这个奖励模型当目标做策略优化。拒绝有害请求这类行为就是这样被写进参数的，它的短板在数据来源，偏好数据是一问一答的形式。SFT 指监督微调，省掉奖励模型，直接拿人工写好的示范回答做监督学习。它省事，短板同样在数据，示范也全是对话。</p>
+<p>代码补全在形式上跟对话差得很远。对话是用户提问、助手作答，模型在作答位置上调用的是被安全训练塑造过的那部分行为。代码补全给的是半截程序，模型要接着往下写，此时它在做一件工程任务。<mark>同一套参数，两条通路上被激活的行为模式并不相同。</mark></p>
+<h3>1.2 能力涨得快，安全覆盖得慢</h3>
+<p>论文引的是 Wei 等人 2023 年那篇讨论安全训练为何失效的工作 [15]。那篇的说法是预训练带来的能力泛化面很宽，安全对齐只覆盖了其中一小块，两块面积不匹配。它把这个观察提成一条通则，没有落到哪个具体子空间上。</p>
+<p>论文把这一步补上了。GPT-4 这一代模型在代码生成和数学推理上接近专家水平，这些能力来自海量预训练语料。安全对齐用的数据小得多，也窄得多。论文由此提出假设，模型在代码域的能力越强，安全对齐来不及跟上的落差就越大。</p>
+<h3>1.3 已有的三条路，各自缺什么</h3>
+<p>白盒那条路要梯度。GCG [9] 在一段输入后面接上对抗后缀，用梯度在离散 token 空间里搜这串后缀，搜到模型开始输出有害内容为止。它得拿到模型参数和梯度，闭源商用 API 上做不了。AutoDAN [18] 也用梯度，优化目标换成一段读起来通顺的 token 序列，隐蔽性更好，白盒这个前提没变。</p>
+<p>黑盒那两条路见下表。</p>
+<div class="scroll"><table><thead><tr><th>方法</th><th>它怎么做</th><th>差在哪</th></tr></thead><tbody><tr><td>CipherChat [19]</td><td>把指令按 Base64 一类编码藏起来，让模型自己解码</td><td>编码方式固定，解码检测能挡</td></tr><tr><td>CodeChameleon [10]</td><td>给每个用户配一套加解密函数，请求加密后塞进代码</td><td>模板手工写死，结构固定</td></tr><tr><td>CodeAttack [22]</td><td>把有害请求填进代码补全模板，靠代码域绕过安全</td><td>模板手工写死，换个模型成功率抖</td></tr><tr><td>FlipAttack [11]</td><td>把提示按字符或词序翻转，让模型还原后再答</td><td>固定模式，在 Llama 上能掉到 0</td></tr><tr><td>ArtPrompt [20]</td><td>用 ASCII 艺术字拼出敏感词，绕开关键词过滤</td><td>只绕关键词，语义层没动</td></tr><tr><td>MathPrompt [23]</td><td>把请求改写成集合论一类的数学题</td><td>变换固定，数学域的安全覆盖反而好</td></tr><tr><td>EquaCode [24]</td><td>把请求包装成方程求解加代码补全的组合</td><td>策略由人选定，不随目标模型自适应</td></tr><tr><td>PAIR [12]</td><td>让攻击者模型读目标模型的回复，反复改写提示</td><td>全程在自然语言空间里启发式搜索</td></tr><tr><td>TAP [25]</td><td>在 PAIR 的改写上加一层树搜索与剪枝</td><td>搜索空间仍是自然语言提示</td></tr><tr><td>GAP [26]</td><td>把攻击路径建成图并剪枝，挑可见度低的提示</td><td>同上，构图本身还有开销</td></tr><tr><td>GPTFuzzer [13]</td><td>借模糊测试的思路对种子提示做变异和选择</td><td>种子提示是自然语言，缺域知识</td></tr><tr><td>AutoDAN-Turbo [14]</td><td>用一个长期运行的智能体自己探索越狱策略</td><td>攒下来的策略都建在自然语言上</td></tr><tr><td>ReNeLLM [27]</td><td>把有害任务嵌进层层嵌套的场景提示里</td><td>嵌套模板固定</td></tr><tr><td>DRA [21]</td><td>先伪装再重建，把请求拆成两段看着无害的话</td><td>拆分规则手工设计</td></tr></tbody></table></div>
+<p>表里前七行是模板法，后七行是自动优化法。模板法这一类的共同点是结构由人定死，规则或模式匹配的防御就能盯住。自动优化法去掉了人工设计，代价是它的搜索空间只有自然语言。<mark>模板法借了别的域的力却没自适应能力，自动优化法能自适应却只在自然语言里打转。</mark></p>
+<h3>1.4 这篇的做法</h3>
+<p>论文的贡献三条。它把安全泛化滞后这个失效模式指出来，落到代码补全这个具体子空间上。它给出 CodeMimicry，全自动、黑盒、靠结构化代码补全完成攻击。它在隐空间里做了一组解释性实验，用拒绝方向的投影和激活引导两个手段去看成功与失败的差别。</p>
+<p>这节要你记住的是，两条老路一条要白盒，一条只会改自然语言。</p>
+<hr>
+<h2>二、总体结构</h2>
+<h3>2.1 威胁模型</h3>
+<p>论文第 3.2 节分两块写，目标和能力。三条要一起看。</p>
+<p><strong>攻击者知道什么。</strong> 设定是黑盒加 API 调用。攻击者只知道对面是一个带安全对齐、同时有代码能力的目标模型。参数、梯度、logits（模型对下一个词的未归一化打分）、隐状态、训练数据、安全过滤器、部署环境，论文逐项写明拿不到也不改。它不需要事先知道模型有几层、注意力怎么接。它要的先验只有一条，这个模型会写代码，也会听指令。这条从公开信息就能判断。</p>
+<p><strong>攻击者能改什么。</strong> 只有送进 API 的自然语言提示。论文把它限定为提示级操纵，权重、系统提示、内容过滤开关、部署配置都在射程外。在提示里，攻击者可以自由组织文本，代码、注释、文档字符串和指令句都算文本。</p>
+<p><strong>目标是什么。</strong> 找一个变换 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003D5;</mi></mrow></math></math>，把有害问题 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>q</mi></mrow></math></math> 变成对抗提示 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi><mo>&#x0003D;</mo><mi>&#x003D5;</mi><mo stretchy="false">&#x00028;</mo><mi>q</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math>，让目标模型输出违反政策的内容。判据是一个二值评估器 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo>&#x0002C;</mo><mi>R</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math>，其中 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi><mo>&#x0003D;</mo><mi>M</mi><mo stretchy="false">&#x00028;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是模型回复，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math></math> 才算成功。论文专门强调成功的门槛不低。模型得给出实质性的有害内容，比如操作步骤、细节或者能用的代码。</p>
+<h3>2.2 假设的边界</h3>
+<p>四条边界要分清。</p>
+<p>黑盒还是白盒。黑盒，只需要能调 API。看不到输出概率，也看不到隐状态，更看不到训练数据和部署环境里的安全过滤器。论文第 5 节那组机制分析确实要看隐状态，那是作者在开权模型上另做的解释性实验，不属于攻击本身的假设。</p>
+<p>要不要预先知道模型结构。不要。</p>
+<p>需要多少次查询。攻击轮次上限 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math></math>，实际平均 <strong>1.51</strong> 次。第一轮就有 75.5% 的样本成功，所以这个上限很少被用满。</p>
+<p>要不要看输出概率。不要，只看返回的文本。</p>
+<p>实验设置里还有一条边界。攻击者一侧需要一个有推理和编码能力的模型来生成代码骨架，论文用的是 DeepSeek-R1（附录 C）。这份算力不占目标模型的查询预算。</p>
+<figure><img src="figs/2609.39902-fig1.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　CodeMimicry 的三个环节。左上角是有害问题，攻击者把它抽成一个代码骨架，类名和方法名把场景说成政府安全审计一类的正常工作。上方那个蓝色代码块是攻击者交出来的半成品，每个方法体里只有文档字符串和注释，末尾留一个省略号。右侧加上静态的代码补全触发词，拼成最终提示送进目标模型。目标模型的回复交给打分器，按 1 到 10 分打有害程度，回复连同历史一起回到攻击者那里做分析和改进。分数到 10 分或者轮次用尽就结束。</figcaption></figure>
+<h3>2.3 阶段与章节对齐</h3>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>问题形式化</td><td>§3.1</td><td>有害问题 q</td><td>变换 φ 的定义与判据 E</td></tr><tr><td>威胁模型</td><td>§3.2</td><td>黑盒 API 假定</td><td>能力清单与禁止清单</td></tr><tr><td>骨架生成</td><td>§3.3</td><td>q、攻击者提示词</td><td>半成品代码 P_c</td></tr><tr><td>套触发词</td><td>§3.3 图 13</td><td>P_c</td><td>最终提示 P</td></tr><tr><td>目标补全</td><td>§3.3</td><td>P</td><td>回复 R</td></tr><tr><td>打分与精修</td><td>算法 1</td><td>q、P_c、R、历史 H</td><td>新的 P_c，或者结束</td></tr><tr><td>机制分析</td><td>§5</td><td>50 条成功、50 条失败、50 条良性代码</td><td>隐状态、拒绝方向、引导结果</td></tr><tr><td>防御测试</td><td>§6 与附录 D</td><td>现成防御方法</td><td>残余 ASR</td></tr></tbody></table></div>
+<figure><img src="figs/2609.39902-svg-anatomy.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）外层是一段静态触发词，把任务声明成代码补全。中层是攻击者生成的半成品类，恶意意图分三处落下，方法名承载语义，文档字符串与注释写成功能需求，配套工具函数与参数撑出正常工程文件的体量。右侧是目标模型内部的两条路，本次接到的是代码补全那条。</figcaption></figure>
+<p>这节要你记住的是，<mark>黑盒、纯查询、只看返回文本</mark>，攻击者改的就只有提示。</p>
+<hr>
+<h2>三、方法拆解</h2>
+<h3>3.1 判据与两个指标</h3>
+<p>攻击成功率定义为</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>A</mi><mi>S</mi><mi>R</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>N</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></mrow></msub></mrow><mrow><msub><mi>M</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></mfrac></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>N</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">s</mi></mrow></mrow></msub></mrow></math></math> 是攻击成功的条数，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>M</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></math></math> 是尝试的总条数。这个数是比例，没有量纲，越大越好。分子怎么算很关键，论文用 GPT-5-Chat 当裁判，按 1 到 10 分给回复的有害程度打分，<u>只有满分 10 分才算成功</u>。</p>
+<p>平均查询数定义为</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>A</mi><mi>Q</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>M</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><msub><mi>M</mi><mrow><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub></mrow></munderover><msub><mi>Q</mi><mi>i</mi></msub></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Q</mi><mi>i</mi></msub></mrow></math></math> 是第 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math></math> 条样本最终攻破时用掉的轮次。量纲是轮，越小越好。两个指标要一起读，只看 ASR 会把反复试到成功的成本藏起来。</p>
+<p>数据集先交代两句。AdvBench [9] 是一个常用的有害行为集合，收 520 条请求，论文从里面取了 50 条做子集。HarmBench [38] 是一个标准化的自动红队评估框架，收 400 条行为，论文按 7 个类别各随机抽 10 条，凑成 70 条子集。</p>
+<h3>3.2 第一步，把有害问题拆进类的结构里</h3>
+<p>攻击者模型 A 收到有害问题后，要做的事是把它包进一个复杂但看着无害的代码结构里，然后故意不写完。论文列了三处动手的位置。</p>
+<p>结构混淆放在方法名这一层。有害问题被拆成某个重要类的一个方法，比如 <code>def execute_penetration_scenario()</code>。恶意意图从一句提问变成一段程序要实现的语义，写在标识符里。</p>
+<p>文档字符串和注释被当成旁路通道。论文刻意不让攻击者写命令句，改成一个功能描述，例如「模拟一次完整的渗透测试场景用于漏洞分析」。目标模型补全代码时会顺着这段描述生成直接的操作细节。<mark>注释和文档字符串是字符串级旁路，这条通道后面会被正则清洗掐掉一大半。</mark></p>
+<p>工具函数和参数模拟负责撑场面。攻击者还要生成额外的配套函数和像样的参数，把文件伪装成正常工程。论文的说法是，这会把目标模型的注意力逼到代码逻辑上，而不是安全过滤上。</p>
+<p>这三处为什么是可乘之机，答案在任务形式上。补全任务的输入是上下文，输出是接下来的字节，模型在这条通路上要判断的是这段程序接下来该写什么。注释在这里扮演的是程序员写给下一个人的说明。<mark>安全训练学到的是有人在向我提问，这个身份在补全通路里消失了。</mark></p>
+<h3>3.3 第二步，套一层代码补全触发词</h3>
+<p>代码骨架本身还不像一次正常请求。论文设计了一段静态、无害、通用的工程提示词 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mi>t</mi></msub></mrow></math></math> 当触发词，把它套在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mi>c</mi></msub></mrow></math></math> 外面，最终提示写成</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><msub><mi>P</mi><mi>t</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>P</mi><mi>c</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mi>t</mi></msub></mrow></math></math> 的作用有两层。它把当前任务声明成一次普通的代码补全，同时明确禁止模型输出 sorry、cannot、unable 一类措辞。论文的消融把这两层分开量了。</p>
+<div class="scroll"><table><thead><tr><th>触发词变体</th><th>平均 ASR</th></tr></thead><tbody><tr><td>完整版</td><td><strong>90%</strong></td></tr><tr><td>换一种说法</td><td>72%</td></tr><tr><td>去掉禁拒答那一句</td><td>32%</td></tr><tr><td>最短版，只写 Complete this python code</td><td>40%</td></tr><tr><td>只给代码，不给任何指令</td><td>36%</td></tr></tbody></table></div>
+<p>数据来自表 2，目标模型 GPT-4o，数据集 AdvBench 的 50 条子集，攻击者 DeepSeek-R1。读法两条。换措辞只掉 18 个百分点，说明效果不靠某一个魔字符串。去掉禁拒答那一句掉到 32%，说明这层包装的主要作用是把拒绝回答的风格压住，剩下的部分由代码结构承担。</p>
+<h3>3.4 第三步，把失败回灌成历史</h3>
+<p>单轮不成，论文把生成过程写成多轮优化，形式见算法 1。攻击者模型 A 在每一轮按累积的对话历史 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>H</mi></mrow></math></math> 生成一份候选代码 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mi>c</mi></msub></mrow></math></math>，生成时被要求分析历史里记下的失败原因。候选代码套上触发词得到 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>P</mi></mrow></math></math>，送进目标模型拿到回复 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi></mrow></math></math>，再由评估器打出 1 到 10 的分数。分数不到阈值 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>S</mi></mrow></math></math> 就把 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x0007B;</mo><mi>q</mi><mo>&#x0002C;</mo><msub><mi>P</mi><mi>c</mi></msub><mo>&#x0002C;</mo><mi>R</mi><mo>&#x0002C;</mo><mi>S</mi><mi>c</mi><mi>o</mi><mi>r</mi><mi>e</mi><mo stretchy="false">&#x0007D;</mo></mrow></math></math> 这组四元组追加进 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>H</mi></mrow></math></math>，进入下一轮。</p>
+<pre class="flow"><code>输入  有害问题 q，目标模型 M，攻击者模型 A，成功阈值 S
+H ← 包含 q 的初始提示词
+重复 i = 1 到 T
+    P_c   ← A(H)              攻击者按历史生成半成品代码
+    P     ← P_t(P_c)          套上静态触发词
+    R     ← M(P)              目标模型补全
+    Score ← 评估器(q, P, R)    1 到 10 分
+    若 Score ≥ S 则返回 P, R
+    H ← H 加上 (q, P_c, R, Score)
+循环结束</code></pre>
+<p><mark>失败被回灌成历史，下一轮的骨架带着上一轮的教训。</mark>论文把这一步叫上下文学习式的自我纠正，改动的对象是变量命名、注释措辞和类的结构。</p>
+<p>从攻击者角度看，这一节是唯一需要花钱的地方。每一轮里攻击者模型要生成一次，目标模型要查询一次，所以攻击者侧的调用次数与目标侧的查询次数相等。论文在附录 B.6 里把这件事写明了。</p>
+<h3>3.5 第四步，用隐空间解释它为什么管用</h3>
+<p>前面三步说明攻击怎么做，这一步说明它为什么没被拦住。实验在 Llama-3-8B-Instruct 上做，取三个样本族各 50 条。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D49F;</mi><mrow><mi>s</mi><mi>u</mi><mi>c</mi><mi>c</mi></mrow></msub></mrow></math></math> 是攻击成功的代码提示，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D49F;</mi><mrow><mi>f</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msub></mrow></math></math> 是被模型拒绝的代码提示，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D49F;</mi><mrow><mi>B</mi><mi>C</mi></mrow></msub></mrow></math></math> 是让 DeepSeek-R1 按良性指令生成的良性代码。</p>
+<p>记目标模型有 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>L</mi></mrow></math></math> 层，每层由一个自注意力模块和一个前馈网络拼成。一条输入 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>x</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>t</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>t</mi><mn>2</mn></msub><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msub><mi>t</mi><mi>T</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math> 在第 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>l</mi></mrow></math></math> 层的隐状态是</p>
+<div class="eq"><span class="eqn">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>H</mi><mrow><mi>M</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msubsup><mi>&#x1D421;</mi><mrow><mn>1</mn></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002C;</mo><msubsup><mi>&#x1D421;</mi><mrow><mn>2</mn></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msubsup><mi>&#x1D421;</mi><mrow><mi>T</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="1em" /><msubsup><mi>&#x1D421;</mi><mrow><mi>t</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x02208;</mo><msup><mi>&#x0211D;</mi><mrow><mi>d</mi></mrow></msup></mrow></math></math></div>
+<p>论文只取最后一个 token 的隐状态当整条输入的代表。论文给的理由是这个位置是信息瓶颈，它汇总了上文所有位置的表示，也直接决定下一个 token 往哪走。对第 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>l</mi></mrow></math></math> 层和数据集 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D49F;</mi></mrow></math></math>，表示集合是</p>
+<div class="eq"><span class="eqn">(2)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>&#x1D4B5;</mi><mrow><mi>&#x1D49F;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><msup><mi>&#x1D433;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo><mo>&#x02223;</mo><mi>x</mi><mo>&#x02208;</mo><mi>&#x1D49F;</mi><mo stretchy="false">&#x0007D;</mo></mrow></math></math></div>
+<p>接下来要造一根轴，让拒绝和合规落在轴的两侧。先算每个数据集的质心</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mrow><mi mathvariant="bold-italic">&#x003BC;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D49F;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mo stretchy="false">&#x0007C;</mo><mi>&#x1D49F;</mi><mo stretchy="false">&#x0007C;</mo></mrow></mfrac><munder><mo>&#x02211;</mo><mrow><mi>x</mi><mo>&#x02208;</mo><mi>&#x1D49F;</mi></mrow></munder><msup><mi>&#x1D433;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>x</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p>再用两个质心之差定义一个归一化方向</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mn>1</mn></msub><mo>&#x0002C;</mo><msub><mi>&#x1D49F;</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mfrac><mrow><msub><mrow><mi mathvariant="bold-italic">&#x003BC;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003BC;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo fence="false" stretchy="false">&#x02016;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003BC;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mn>1</mn></msub><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003BC;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><msub><mo fence="false" stretchy="false">&#x02016;</mo><mn>2</mn></msub></mrow></mfrac></mrow></math></math></div>
+<p>把失败样本的质心减良性代码的质心，得到的就是拒绝方向</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>r</mi><mi>e</mi><mi>f</mi></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mrow><mi>f</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msub><mo>&#x0002C;</mo><msub><mi>&#x1D49F;</mi><mrow><mi>B</mi><mi>C</mi></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p>每条输入的投影分数是它与这个方向的点积</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>S</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>D</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mrow><mi mathvariant="bold-italic">&#x003BC;</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D49F;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><msubsup><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>r</mi><mi>e</mi><mi>f</mi></mrow></msubsup></mrow></math></math></div>
+<p><u>投影分数取正说明该表示落在拒绝一侧，取负说明落在合规一侧。</u></p>
+<p>维数与样本量这里要说清。隐状态是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi></mrow></math></math> 维向量，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi></mrow></math></math> 是隐藏层宽度，方向向量是一个 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi></mrow></math></math> 维单位向量。模长等于 1 这一条约束吃掉一个分量，自由分量是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>d</mi><mo>&#x02212;</mo><mn>1</mn></mrow></math></math> 个。这根轴由两个质心之差定出来，每个质心由 50 条激活取平均得到，所以定方向只用了 100 条激活。剩下那 50 条成功样本不参与定方向，专门留作验证。这个方向有闭式解，两个质心一减再除以模长就得到，没有迭代，所以初值和残差这两样在这里不存在，唯一的约束是模长等于 1。</p>
+<p>最后一组实验是激活引导。定义从拒绝一侧指向成功越狱表示的方向</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>j</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mrow><mi>f</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msub><mo>&#x0002C;</mo><msub><mi>&#x1D49F;</mi><mrow><mi>s</mi><mi>u</mi><mi>c</mi><mi>c</mi></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p>再往隐状态上叠加这个方向</p>
+<div class="eq"><span class="eqn">(3)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mover><mrow><mi>&#x1D421;</mi></mrow><mo stretchy="false">&#x0007E;</mo></mover><mrow><mi>t</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x1D421;</mi><mrow><mi>t</mi></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow></msubsup><mo>&#x0002B;</mo><mi>&#x003B1;</mi><mo>&#x000B7;</mo><msubsup><mi>&#x1D42F;</mi><mrow><mo stretchy="false">&#x00028;</mo><mi>l</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mi>j</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msubsup></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 是引导强度，一个控制干预幅度的标量。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 取正就是把表示往拒绝那侧推。论文用引导后重新开始拒绝的样本条数来衡量引导是否奏效。</p>
+<p>这节要你记住的是，恶意意图落在方法名和注释上，模型走的是补全那条路。</p>
+<hr>
+<h2>四、结果</h2>
+<h3>4.1 八个模型上的主表</h3>
+<div class="scroll"><table><thead><tr><th>方法</th><th>GPT-4o</th><th>GPT-4.1</th><th>GPT-5-chat</th><th>Claude 3.7</th><th>Claude 4</th><th>Gemini 2.5 Pro</th><th>Llama 3.1 70B</th><th>Llama 3.3 70B</th><th>平均</th></tr></thead><tbody><tr><td>CipherChat</td><td>6.00</td><td>12.00</td><td>22.00</td><td>0.00</td><td>0.00</td><td>78.00</td><td>0.00</td><td>0.00</td><td>14.75</td></tr><tr><td>CodeAttack</td><td>36.00</td><td>34.00</td><td>6.00</td><td>20.00</td><td>4.00</td><td>20.00</td><td>62.00</td><td>44.00</td><td>28.25</td></tr><tr><td>FlipAttack</td><td>66.00</td><td>96.00</td><td>96.00</td><td>60.00</td><td>0.00</td><td>76.00</td><td>0.00</td><td>12.00</td><td>50.75</td></tr><tr><td>EquaCode</td><td>82.00</td><td>100</td><td>84.00</td><td>84.00</td><td>24.00</td><td>94.00</td><td>70.00</td><td>88.00</td><td>78.25</td></tr><tr><td>CodeChameleon</td><td>94.00</td><td>100</td><td>94.00</td><td>100</td><td>70.00</td><td>98.00</td><td>48.00</td><td>80.00</td><td>85.00</td></tr><tr><td>PAIR</td><td>32.00</td><td>18.00</td><td>18.00</td><td>4.00</td><td>0.00</td><td>72.00</td><td>40.00</td><td>90.00</td><td>34.25</td></tr><tr><td>GPTFuzzer</td><td>2.00</td><td>0.00</td><td>0.00</td><td>46.00</td><td>0.00</td><td>68.00</td><td>10.00</td><td>34.00</td><td>20.00</td></tr><tr><td>AutoDAN-Turbo</td><td>50.00</td><td>54.00</td><td>4.00</td><td>10.00</td><td>0.00</td><td>64.00</td><td>46.00</td><td>68.00</td><td>37.00</td></tr><tr><td><strong>CodeMimicry</strong></td><td><strong>90.00</strong></td><td><strong>100</strong></td><td><strong>96.00</strong></td><td><strong>100</strong></td><td><strong>90.00</strong></td><td><strong>100</strong></td><td><strong>96.00</strong></td><td><strong>98.00</strong></td><td><strong>96.25</strong></td></tr></tbody></table></div>
+<p>数据来自表 1，单位是百分比。数据集是 AdvBench 的 50 条子集，攻击轮次上限 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math></math>，攻击者统一用 DeepSeek-R1。所有方法的超参设置相同，攻击者温度 0.7，目标模型和裁判温度 0。表里最右边那一列是 8 个模型的算术平均，不是加权平均。</p>
+<p>先看 CodeChameleon 那一行。它是模板法里最强的一个，平均 85.00%，在 Llama-3.1-70B 上掉到 48.00%。同一个模板换个模型就从接近满分掉到一半。</p>
+<p>再看 Claude 4 那一列。PAIR、GPTFuzzer、AutoDAN-Turbo 和 FlipAttack 都是 0.00%，CodeMimicry 是 90.00%。<mark>四个同类方法在这一列全部挂零，结构化代码这条路没有跟着塌。</mark>论文给的解释是代码语境把语义过滤绕过去了。</p>
+<p>还有一个现象要看。模板法整体压过自动优化法，14.75% 到 85.00% 对 20.00% 到 37.00%。论文的解释是模板法借了非自然语言域的力。</p>
+<p>HarmBench 上的结果在表 5，用的是 7 个有害行为类别各随机抽 10 条拼成的 70 条子集。CodeMimicry 平均 <strong>96.07%</strong>，平均查询 1.46 次。最强的自动基线 AutoDAN-Turbo 是 43.47%。Claude Sonnet 4 上 FlipAttack、PAIR、DRA 都是 0，CodeMimicry 是 74.29%。GPT-5-chat 上 CodeMimicry 是 100%。</p>
+<h3>4.2 效率</h3>
+<figure><img src="figs/2609.39902-fig2.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　每个点代表一个目标模型。横轴刻度从 50 到 250，标注是平均查询数。纵轴是攻击成功率，0 到 100。红色菱形是 CodeMimicry，全部挤在左上角，成功率都在 90 以上。黑色方块是 AutoDAN-Turbo，蓝色圆点是 PAIR，两者沿一条斜线铺开，想拉高成功率就得多花查询。这张图的横轴口径见图注后的说明。</figcaption></figure>
+<p>CodeMimicry 的平均查询数是 <strong>1.51</strong>，PAIR 是 4.18，AutoDAN-Turbo 是 2.81。论文的换算是，相对 PAIR，攻击成功率高 2.80 倍而查询只用 0.36 倍；相对 AutoDAN-Turbo，成功率高 2.61 倍而查询只用 0.54 倍。</p>
+<p>攻击者侧的开销也算了。表 12 里 CodeMimicry 平均消耗 1656 个输入 token 与 1341 个输出 token，PAIR 是 8030 与 5005，差了三到四倍。这一栏是攻击者模型的账单。</p>
+<p>反向的数字有两条。CodeAttack 与 CodeChameleon 这类模板法不需要攻击者模型，攻击者侧的 token 消耗是 0，CodeMimicry 是 2997 个。另有一格，CodeMimicry 在 Claude Sonnet 4 上的查询数是 2.54，是它在 GPT-4.1 上 1.04 的 2.4 倍，碰上最硬的目标时效率优势收窄了不少。</p>
+<h3>4.3 消融</h3>
+<div class="scroll"><table><thead><tr><th>轮次</th><th>该轮新增成功</th><th>累计 ASR</th></tr></thead><tbody><tr><td>第 1 轮</td><td>75.5%</td><td>75.5%</td></tr><tr><td>第 2 轮</td><td>12.8%</td><td>88.2%</td></tr><tr><td>第 3 到第 5 轮</td><td>每轮 2.2% 到 3.2%</td><td>96.25%</td></tr></tbody></table></div>
+<p>数据来自图 3，攻击者是 DeepSeek-R1。第一轮就拿下 75.5%，第二轮再补 12.8%，后面三轮加起来不到 8 个百分点。论文由此说 5 轮是成本与效果的折中，也解释了为什么平均查询数只有 1.51。</p>
+<div class="scroll"><table><thead><tr><th>攻击语言</th><th>ASR</th><th>AQ</th></tr></thead><tbody><tr><td>Python</td><td>98.00</td><td><strong>1.18</strong></td></tr><tr><td>Julia</td><td>98.00</td><td>1.44</td></tr><tr><td>Go</td><td>96.00</td><td>1.58</td></tr><tr><td>Java</td><td>98.00</td><td>1.58</td></tr></tbody></table></div>
+<p>数据来自表 3，目标模型 Llama-3.3-70B，数据集是 AdvBench 的 50 条子集。四种语言的 ASR 都压在 96% 以上，Python 最省查询。论文的说法是 Python 在预训练语料里占比最高，而漏洞本身属于补全这个任务形式，不绑在某一种语法上。</p>
+<div class="scroll"><table><thead><tr><th>攻击者</th><th>平均 ASR</th><th>平均 AQ</th><th>Claude Sonnet 4 上的 ASR</th></tr></thead><tbody><tr><td>Grok-3</td><td>93.6</td><td>1.51</td><td>82.0</td></tr><tr><td>DeepSeek-V3</td><td>92.8</td><td>1.60</td><td>78.0</td></tr><tr><td>DeepSeek-R1</td><td><strong>96.8</strong></td><td><strong>1.48</strong></td><td><strong>90.0</strong></td></tr></tbody></table></div>
+<p>数据来自表 4，数据集是 AdvBench 的 50 条子集。三个攻击者的差距主要在 Claude Sonnet 4 这一列上，R1 比 Grok-3 高 8 个百分点。论文把它归给推理能力，理由是 R1 能搭出更绕的代码结构。</p>
+<p>生成出来的代码能不能跑，论文在附录 B.5 里另测了一遍。语法正确率 98.9%，沙箱里跑得通的比例 97.9%，两者都满足的功能有效比例 97.1%。8 个模型里有 4 个的功能有效比例是 100%，最低的 Gemini-2.5-Pro 也有 92.0%。这一栏回答的是一个自然的质疑，模型是不是只在吐一堆似是而非的伪代码。</p>
+<h3>4.4 隐空间里的证据</h3>
+<figure><img src="figs/2609.39902-fig4.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4(b)</b>　Llama-3-8B-Instruct 第 16 层隐状态的 t-SNE 投影。红色叉是失败的越狱代码，绿色圆点是良性代码，蓝色三角是成功的越狱代码。失败那一族被推到左下角，自成一块。良性与成功两族在右上角互相穿插，看不出边界。第 16 层以前三族混在一起，从这个深度开始才分开。</figcaption></figure>
+<p>论文用 t-SNE 与 PCA 两种降维方法把高维隐状态画到平面上，两者都只保留最能拉开样本间距离的那几个方向。前 16 层的三族大量重叠，模型还没把这件事分开。第 16 层开始，失败样本聚成一个孤立的簇，良性代码和成功越狱代码挤在一块。论文的读法是，成功的越狱提示做到的是分布外规避，它没有落进拒绝那一簇。</p>
+<figure><img src="figs/2609.39902-fig5.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　纵轴是隐状态在拒绝方向上的投影分数，正数说明拒绝机制被激活，负数说明落在合规一侧。红色虚线是失败的越狱代码，它从第 16 层开始一路往上，到最后几层冲到 50 以上。绿色实线是良性代码，全程压在 0 以下。蓝色虚线是成功的越狱代码，它几乎贴着良性代码走，两者的差距随深度越拉越大。拒绝方向由失败样本与良性代码的质心之差定义，模型是 Llama-3-8B-Instruct。</figcaption></figure>
+<p>投影把图 4 里那个观察变成了一个标量。失败样本的投影值随层数上升，越往深层越正。良性代码全程为负。<mark>成功样本几乎贴着良性代码走，跟失败样本的距离越拉越大。</mark>论文的结论是，成功攻击避开的是表示空间里拒绝机制覆盖的那块区域。</p>
+<p>激活引导从反方向验了一遍。对原本会输出有害内容的样本叠加 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>&#x1D42F;</mi><mrow><mi>j</mi><mi>a</mi><mi>i</mi><mi>l</mi></mrow></msup></mrow></math></math>，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 变大，重新开始拒绝的样本条数变多。同样的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 之下，层号越靠近第 16 层，重新拒绝的样本越多。反过来对原本被拒的失败样本做引导，模型会把有害内容补进代码里。论文在附录 E.2 里把这组实验搬到 Llama-3.1-70B-Instruct 上重做，投影的定性结论一致，最强干预出现在第 40 层附近。</p>
+<h3>4.5 防御的代价</h3>
+<div class="scroll"><table><thead><tr><th>防御</th><th>机制</th><th>残余 ASR</th></tr></thead><tbody><tr><td>Llama Guard</td><td>用对话数据训出的输入输出安全分类器</td><td>76% 到 92%</td></tr><tr><td>困惑度过滤</td><td>按文本困惑度是否异常判断输入可疑</td><td>84% 到 100%</td></tr><tr><td>SelfDefend</td><td>模型在隔离上下文里自己判意图</td><td>4% 到 14%</td></tr><tr><td>SafeChain</td><td>把安全约束混进长链推理的训练数据</td><td>94%</td></tr><tr><td>SafePath</td><td>在推理过程早期做对齐干预</td><td>42%</td></tr><tr><td>Circuit Breaker</td><td>隐层干预，掐断有害表示的流向</td><td>8%</td></tr><tr><td>Representation Bending</td><td>隐层干预，把有害表示往安全侧弯</td><td>38%</td></tr><tr><td>正则剥离注释</td><td>前端正则清洗</td><td>20% 到 26%</td></tr><tr><td>LoRA 对抗微调</td><td>只训一层低秩增量，不动原权重</td><td>62%</td></tr></tbody></table></div>
+<p>这张表把四处来源拼在一起，读之前要看清条件。检测那一组的三行在全部 8 个目标模型上测过（表 13）。推理对齐那一组只在 DeepSeek-R1-8B 上做（表 14），基准 ASR 是 92%。隐层干预那一组只在 Llama-3-8B 上做（附录 D.2），基准 ASR 是 90%。正则剥离那一组在三个模型上做，GPT-4o、Llama-3.1-70B 与 Llama-3.3-70B（附录 B.4）。CodeMimicry 的 ASR 分别从 90%、96%、98% 掉到 20%、22%、26%。对抗微调那一组也用 Llama-3-8B，500 条攻击样本加 100 条良性代码做 LoRA，ASR 从 90% 掉到 62%。</p>
+<p>Llama Guard [31] 是一个用对话数据训出来的输入输出安全分类器，它按对话的形态判断内容是否违规。代码骨架把语义藏在注释和标识符里，这个分类器基本拦不住。</p>
+<p>困惑度过滤走统计而不是语义，它按文本困惑度是否离群来判断输入可疑。代码骨架读起来就是正常代码，困惑度落在正常区间，这条也拦不住。</p>
+<p>SelfDefend [32] 换了个思路，它让模型自己在一个隔离的上下文里先判断意图，再决定要不要答。它在检测这一组里最有效，代价是判定本身要调一次模型，论文用的是 GPT-4o。</p>
+<p>SafeChain [33] 把安全约束混进长链推理的训练数据里。它在这一栏几乎没起作用，残留 94%。论文的解释是 CodeMimicry 不靠引出显式的有害推理，它把模型推进补全模式，有害语义埋在结构合法的代码里。</p>
+<p>SafePath [34] 在推理过程的早期做对齐干预。它在推理那一组里效果最好，把 ASR 压到 42%，而同一格上 AutoDAN-Turbo 是 4%，PAIR 是 8%。</p>
+<p>Circuit Breaker [35] 靠分析激活的表示来在隐层做干预，把有害表示的流向掐断。Representation Bending [40] 同样是隐层手段，做法是把有害表示往安全方向弯。两者都把 ASR 拉下来一大截。</p>
+<p>LoRA 对抗微调走的是另一条路，它不打补丁，而是拿 500 条 CodeMimicry 攻击样本加 100 条良性代码去微调目标模型。LoRA 只训一层低秩增量，不动原来的权重。它把 ASR 从 90% 拉到 62%，仍有六成多的攻击能过。</p>
+<p>反向的数字也在这里。<mark>清洗之后 CodeChameleon 在三个格子上有两个反超 CodeMimicry</mark>。GPT-4o 上它剩 34%，CodeMimicry 剩 20%。Llama-3.1-70B 上它剩 40%，CodeMimicry 剩 22%。只有 Llama-3.3-70B 上它以 58% 输给 26%。论文只提了一句 CodeMimicry 仍高于同一防守下的 CodeAttack，没有点出与 CodeChameleon 的这个反转。</p>
+<p><mark>只有检测那一组覆盖了主表的全部 8 个模型，其余几组的基准各不相同，不能和表 1 直接比。</mark>防御效果最好的两个是隐层干预与 SelfDefend，前者要能改权重，后者每次判定多一次模型调用。论文没有报这两条路的效用损失和算力开销。</p>
+<p>这节要你记住的是，拦得住的防御要么能改权重，要么每次多花一次调用。</p>
+<hr>
+<h2>五、局限</h2>
+<h3>依赖目标模型的编码能力</h3>
+<p>论文第 7 节原话是，CodeMimicry 依赖目标模型具备足够的代码生成与指令跟随能力，在编码能力有限的小模型或轻量模型上，效果可能下降。原文用的是 may degrade 这种留有余地的说法，代码骨架的质量直接决定攻击能不能成，弱模型可能连骨架里的类结构都补不完。</p>
+<h3>依赖字符串级旁路</h3>
+<p>论文承认它依赖注释和文档字符串这类字符串级旁路。附录 B.4 里用正则把注释和文档字符串剥掉。<u>CodeMimicry 在 GPT-4o 上的 ASR 从 90% 掉到 20%</u>，在 Llama-3.1-70B 上从 96% 掉到 22%，在 Llama-3.3-70B 上从 98% 掉到 26%。论文同时写明这层清洗没有把攻击彻底挡死，剩下的部分说明代码结构本身也在起作用。</p>
+<h3>攻击者侧的算力没有折成代价（编者补充，论文未将其列为局限）</h3>
+<p>论文报了 AQ 和 token 数，没有报攻击者模型的调用费用、延迟和能耗。生成骨架那一步调的是 DeepSeek-R1 这个级别的推理模型，平均输出 1341 个 token。这笔账不算在目标模型头上，做成本对比时不能只看 AQ。</p>
+<h3>主表数字对裁判敏感（编者补充，论文未将其列为局限）</h3>
+<p>成功与否由 GPT-5-Chat 打分，只有 10 分算成功。附录 B.2 拿 300 对提示与回复让 4 位人类专家标注，GPT-5-chat 与人类的平均一致率 90.25%，字典法只有 56.00%。换一个裁判，表 1 每一格的数字都会挪。表 1 里 CodeMimicry 与 CodeChameleon 之间那 11 个百分点，跟裁判一致率的波动是同一个数量级，不宜当成稳固的领先幅度。</p>
+<h3>防御那一节没有报效用与算力代价（编者补充，论文未将其列为局限）</h3>
+<p>SelfDefend 用 GPT-4o 当检测模型，等于每个请求多走一次模型调用，论文没有给延迟或费用。隐层干预要在权重层面做训练或者推理期干预，论文只在 Llama-3-8B 这种权重拿得到的模型上做，表 1 里那 5 个闭源商用目标没有对应结果。这些防御真实世界里的价格读者看不到。</p>
+<h3>机制分析只在开权模型上做（编者补充，论文未将其列为局限）</h3>
+<p>第 5 节的隐状态分析在 Llama-3-8B-Instruct 上做，三个样本族各 50 条。附录 E.2 在 Llama-3.1-70B-Instruct 上复现了投影的定性结论，但失败样本只有 27 条。表 1 里 8 个模型有 5 个是闭源 API，机制那一节解释的是开权模型，两者的对齐流程未必一样。</p>
+<h3>子集偏小，每格的分辨率有限（编者补充，论文未将其列为局限）</h3>
+<p>AdvBench 用 50 条，HarmBench 用 70 条。按 50 条算，一格的粒度是 2 个百分点，表 1 里几个百分点以内的差距不宜当真，表 2 那组消融尤其如此，每一格的分辨率同样是 2 个百分点。</p>
+<h3>没有做自适应攻击（编者补充，论文未将其列为局限）</h3>
+<p>防御那一节把现成的防御直接套上去，没有让攻击者知道防御之后重新优化提示。安全领域的惯例是补一组自适应攻击，这一组缺席，表里那些残余 ASR 只能当上界看。</p>
+<h3>反转的那一格没有点出来（编者补充，论文未将其列为局限）</h3>
+<p>附录 B.4 的表 10 里，正则清洗之后 CodeChameleon 在 GPT-4o 上剩 34%，在 Llama-3.1-70B 上剩 40%，两个格子都高于 CodeMimicry 的 20% 与 22%。论文正文只写了 CodeMimicry 仍高于同一防守下的 CodeAttack，这个反转没被提到。注释侧信道被掐掉之后，CodeChameleon 那套加密外壳比本文的代码骨架更抗清洗。</p>
+<h3>图 2 的横轴口径与正文不一致（编者补充，论文未将其列为局限）</h3>
+<p>图 2 的横轴标注是 Average Queries，刻度从 50 到 250，正文报的平均查询数是 1.51 到 4.18。两者差大约五十倍，这个倍数与 AdvBench 子集的 50 条样本数吻合。按正文口径，横轴衡量的应当是这 50 条样本合计用掉的查询次数。读图时要注意这一层换算。</p>
+<p>这节要你记住的是，作者承认漏在注释上，其余的账本没打开。</p>
+<hr>
+<h2>六、我的评价</h2>
+<p>做得对的地方里，最值得学的是把拒绝这件事变成一个可以量的标量。ASR 只能告诉你攻击成不成，拒绝方向的投影能告诉你成在哪里。图 5 那条贴着良性代码走的蓝线，比主表里 96.25% 这个数字更有说服力。三组消融各回答一个疑问，触发词那一组量出包装值多少钱，语言那一组量出漏洞不绑 Python。攻击者换强之后，平均成功率从 93.6% 涨到 96.8%。</p>
+<p>存疑的地方有几处。安全泛化滞后这个命名与 Wei 等人 2023 年的不匹配泛化是同一族观察，这篇把落点具体到代码补全这个子空间，新意在域上，机制那一层没有新东西。</p>
+<p>还有一处推断我不太买账。论文用平均 1.51 次查询就成功这个事实，推出代码域的漏洞在表示空间里是一块又大又好走的区域。查询少也可能只是因为攻击者模型的先验足够强，第一次生成的骨架就够用，这跟目标模型内部的可及区域有多大是两件事。要撑起这个推断，需要的是在不同强度的目标模型上扫一遍查询数的分布，平均值不够。</p>
+<p>评估口径这一块也留了缺口。对提示做无意义包装这一类空越狱，业界已经有 StrongREJECT [36] 这样的判据，它要求回复必须给出具体可用的有害信息才计分，把只是看着像越狱的空壳判成失败。这篇用的是 GPT 裁判打满分。论文自己在附录 B.2 里把两套判据放在一起比过。StrongREJECT 与人类的平均一致率是 84.42%，比 GPT-5-chat 的 90.25% 低。两套判据在同一个模型上会不会给出不同的 ASR 结论，论文没有交叉验证。</p>
+<p>防御那一节的自适应攻击缺席更要紧。SafePath 那一格的 42% 是在攻击者不知道防御存在的前提下测出来的，公开的越狱文献里，知道防御之后再优化通常能把这类数字抬回去一大截。</p>
+<p>它想走去哪很清楚。把代码域的隐层对齐做扎实，把注释清洗这类前端手段和隐层手段拼起来，再把红线划到代码补全这个任务形式上。</p>
+<p>这节要你记住的是，机制解释够硬，代价账本和自适应攻击还欠着。</p>
+<hr>
+<h2>七、可以接着做什么</h2>
+<h3>1. 补一组自适应攻击</h3>
+<p>让攻击者在知道注释被正则剥掉之后重新优化骨架，看残余 ASR 停在哪儿。这一步能把注释清洗的 20% 到 26% 这个数字变成一条上界，也能顺便回答代码结构本身值多少。同一套流程可以套到 SafePath 那一格的 42% 上。</p>
+<h3>2. 把裁判的不确定度写成区间</h3>
+<p>主表的每一格都是单点估计。拿附录 B.2 那 300 对样本可以估出 GPT-5-chat 裁判的一致率区间，再把这个区间传进 ASR，报出来的就是带误差棒的柱状图。这一步不贵，但能让 85.00% 与 96.25% 之间的领先幅度有明确的可信度。</p>
+<h3>3. 在查询预算上扫一条曲线</h3>
+<p>把攻击轮次上限 T 从 1 扫到 10，在强模型和弱模型上分别画 ASR 与 AQ 的关系。如果代码域的漏洞真的是一块宽区域，曲线应当在 T=1 附近就贴顶。如果只是攻击者模型的先验强，曲线会随 T 上升而明显爬升。</p>
+<h3>4. 把攻击者能力当成自变量</h3>
+<p>论文比较了 Grok-3、DeepSeek-V3 和 DeepSeek-R1 三个攻击者。可以把攻击者换成一串能力递减的模型，看攻击成功率在哪一档塌下来，由此估计这套方法对攻击者侧算力的最低要求。这条对防御方也有用，它标出的是攻击门槛。</p>
+<h3>5. 把注释清洗做成两级流水线</h3>
+<p>一级做正则剥离，二级做注释语义检测，例如用一个小的分类器判断注释是否在描述危险操作。两级串起来测一遍 ASR 与误报率，看能不能在不伤害正常代码补全的前提下把残余压到个位数。</p>
+<p>这节要你记住的是，五条都指向同一件事，把代价和上界补齐。</p>
+<div class="fine">上面五条都是读完文章的即时联想，我没有做实验，也没有查证过是否已有人在做，更没有验证过可行性。只当选题线索看，不要当结论用。</div>
+<hr>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>词</th><th>一句话解释</th></tr></thead><tbody><tr><td><strong>越狱攻击</strong></td><td>用特制的提示绕过模型的安全限制，让它输出本该拒绝的内容</td></tr><tr><td><strong>安全对齐</strong></td><td>用人类偏好或示范数据做后训练，把拒绝有害请求这类行为写进模型参数</td></tr><tr><td><strong>RLHF</strong></td><td>先训一个奖励模型给人偏好打分，再用它做强化学习优化回答策略</td></tr><tr><td><strong>SFT</strong></td><td>监督微调，直接拿人工写好的示范回答做监督学习</td></tr><tr><td><strong>GCG</strong></td><td>一种白盒攻击，用梯度在离散 token 上搜一段对抗后缀</td></tr><tr><td><strong>AutoDAN</strong></td><td>一种白盒攻击，用梯度优化一段读起来通顺的对抗 token 序列</td></tr><tr><td><strong>PAIR</strong></td><td>一种黑盒攻击，让攻击者模型按目标模型的回复反复改写提示</td></tr><tr><td><strong>TAP</strong></td><td>在 PAIR 的改写上加树搜索与剪枝</td></tr><tr><td><strong>GAP</strong></td><td>把攻击路径建成图，剪枝后挑可见度低的提示</td></tr><tr><td><strong>GPTFuzzer</strong></td><td>用模糊测试的思路对种子提示做变异和选择</td></tr><tr><td><strong>AutoDAN-Turbo</strong></td><td>用一个长期运行的智能体自己探索并积累越狱策略</td></tr><tr><td><strong>CipherChat</strong></td><td>把有害指令编码成密文，让模型先解码再回答</td></tr><tr><td><strong>CodeChameleon</strong></td><td>给用户配加解密函数，把请求加密后塞进代码里</td></tr><tr><td><strong>CodeAttack</strong></td><td>把有害请求填进代码补全模板，借代码域绕过安全</td></tr><tr><td><strong>FlipAttack</strong></td><td>把提示翻转或乱序，让模型自己还原</td></tr><tr><td><strong>ArtPrompt</strong></td><td>用 ASCII 艺术字拼出敏感词，绕开关键词过滤</td></tr><tr><td><strong>MathPrompt</strong></td><td>把请求改写成数学题的形式</td></tr><tr><td><strong>EquaCode</strong></td><td>把请求包装成方程求解加代码补全的多策略组合</td></tr><tr><td><strong>ReNeLLM</strong></td><td>把有害任务嵌进层层嵌套的场景提示</td></tr><tr><td><strong>DRA</strong></td><td>先伪装再重建，把请求拆成两段看着无害的话</td></tr><tr><td><strong>安全泛化滞后</strong></td><td>安全训练主要在自然语言上学，迁到代码域时没跟上</td></tr><tr><td><strong>代码补全盲区</strong></td><td>补全任务那条通路上安全约束覆盖不到的区域</td></tr><tr><td><strong>触发词</strong></td><td>一段静态无害的提示词，把任务声明成普通代码补全并禁止拒答</td></tr><tr><td><strong>代码骨架</strong></td><td>攻击者生成的半成品面向对象代码，恶意意图藏在方法名与注释里</td></tr><tr><td><strong>结构化混淆</strong></td><td>把有害问题拆成某个类的方法，语义落到标识符上</td></tr><tr><td><strong>字符串级旁路</strong></td><td>靠注释和文档字符串这类纯文本通道传递意图</td></tr><tr><td><strong>ASR</strong></td><td>攻击成功率，成功条数除以总条数</td></tr><tr><td><strong>AQ</strong></td><td>平均查询数，每条样本成功时用掉的轮次均值</td></tr><tr><td><strong>拒绝方向</strong></td><td>表示空间里由失败样本质心指向良性代码质心的一根单位向量</td></tr><tr><td><strong>拒绝向量</strong></td><td>拒绝方向这个向量本身，投影到它上面就得到拒绝分数</td></tr><tr><td><strong>投影分数</strong></td><td>隐状态与拒绝方向的点积，正数落在拒绝一侧，负数落在合规一侧</td></tr><tr><td><strong>t-SNE</strong></td><td>一种把高维数据压到二维看的降维可视化方法</td></tr><tr><td><strong>PCA</strong></td><td>主成分分析，按方差最大的方向投影</td></tr><tr><td><strong>激活引导</strong></td><td>推理时往隐状态上叠加一个方向向量，改变模型的行为倾向</td></tr><tr><td><strong>引导强度 α</strong></td><td>控制叠加幅度的标量，越大干预越强</td></tr><tr><td><strong>Llama Guard</strong></td><td>用对话数据训出来的输入输出安全分类器</td></tr><tr><td><strong>SelfDefend</strong></td><td>让模型在一个隔离上下文里自己判断意图再决定答不答</td></tr><tr><td><strong>SafeChain</strong></td><td>把安全约束混进长链推理训练数据里的对齐方法</td></tr><tr><td><strong>SafePath</strong></td><td>在推理过程的早期做对齐干预的防御</td></tr><tr><td><strong>Circuit Breaker</strong></td><td>靠分析激活表示来在隐层掐断有害表示流向的防御</td></tr><tr><td><strong>Representation Bending</strong></td><td>把有害表示往安全方向弯的隐层对齐方法</td></tr><tr><td><strong>困惑度过滤</strong></td><td>按文本困惑度是否异常来判断输入是否可疑</td></tr><tr><td><strong>StrongREJECT</strong></td><td>一套越狱评估判据，要求回复给出具体有害信息才计分</td></tr><tr><td><strong>自适应攻击</strong></td><td>在知道防御存在的前提下重新优化攻击，用来检验防御的上界</td></tr><tr><td><strong>功能有效比例</strong></td><td>生成代码既通过语法解析又能在沙箱里跑通的比例</td></tr><tr><td><strong>沙箱</strong></td><td>隔离出来的执行环境，用来安全地跑未知代码</td></tr><tr><td><strong>红队</strong></td><td>扮演攻击方去试探系统弱点，这里指自动生成对抗样本</td></tr><tr><td><strong>AdvBench</strong></td><td>一个常用的有害行为基准集，共 520 条行为</td></tr><tr><td><strong>HarmBench</strong></td><td>一个标准化的自动红队评估框架，分 7 个行为类别，共 400 条行为</td></tr><tr><td><strong>LoRA</strong></td><td>低秩适配，只训一个参数量很小的增量矩阵来微调大模型</td></tr></tbody></table></div>
+<h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li><a href="https://arxiv.org/abs/2402.16717" target="_blank" rel="noopener">CodeChameleon</a><span style="color:var(--ink3);font-size:13px">　arXiv:2402.16717　把请求加密后塞进代码，靠加解密函数改写形式；结构固定、单轮，抗正则清洗反而更好</span></li><li><a href="https://arxiv.org/abs/2512.23173" target="_blank" rel="noopener">EquaCode</a><span style="color:var(--ink3);font-size:13px">　arXiv:2512.23173　同一作者，把请求包装成方程求解加代码补全的多策略组合；策略由人选定，不随目标模型自适应</span></li><li><a href="https://arxiv.org/abs/2310.08419" target="_blank" rel="noopener">PAIR</a><span style="color:var(--ink3);font-size:13px">　arXiv:2310.08419　让攻击者模型按目标回复反复改写提示；全程在自然语言空间搜索，不利用代码域结构</span></li><li>CodeAttack<span style="color:var(--ink3);font-size:13px">　同样借代码补全绕过安全，但模板手工设计、单轮，不做反馈精修</span></li><li>AutoDAN-Turbo<span style="color:var(--ink3);font-size:13px">　用一个长期运行的智能体自己探索越狱策略；策略库建在自然语言上，缺域知识</span></li></ul>
+<a class="paperlink" href="https://arxiv.org/abs/2609.39902" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2609.39902） →</a>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:31</footer>
+</div></body></html>

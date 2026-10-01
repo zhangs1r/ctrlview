@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>IronMind：把一万小时第一人称视频，练成人形机器人的灵巧手 · CtrlView</title>
+<meta name="description" content="IronMind：把一万小时第一人称视频，练成人形机器人的灵巧手">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001143103"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39403.html?force=20261001143103" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">具身智能与 VLA · 论文精读</div>
+<h1>IronMind：把一万小时第一人称视频，练成人形机器人的灵巧手</h1>
+<div class="meta"><b>Huimin Pan, Yufan Ren, Kunpeng Song 等（小鹏机器人 World Model Team）</b><br>
+arXiv:2609.39403 · 2026-10-05 · 精读约 42 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-具身智能">具身智能</a><a class="tag" href="topics.html#t-人形机器人">人形机器人</a><a class="tag" href="topics.html#t-灵巧操作">灵巧操作</a><a class="tag" href="topics.html#t-第一人称视频">第一人称视频</a><a class="tag" href="topics.html#t-动作表示">动作表示</a><a class="tag" href="topics.html#t-VLA">VLA</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>灵巧操作要练出来，得先有大量&quot;手该怎么动&quot;的示范。真机上收这种示范很贵。一次抓取要有人戴着动捕、或者在遥操作台前一遍遍重复，慢，还有安全风险。机器人操作这一摊到今天也没攒出一个网络规模的语料库。</p>
+<p>第一人称视频是现成的替代品。眼镜上挂个相机，人干一天活就录下一天的手部动作。麻烦在于画面里是人的手，要控制的是铁做的手。</p>
+<p>两个坎。第一个叫具身差距，人手和机器人末端在运动学和关节数上都不一样，直接搬不动。低价的头戴录像设备还不测躯干，你不知道录像的人上身是怎么弯的。想把人的动作折算成机器人躯干坐标系下的关节角，就得假设一根&quot;刚性竖直脊柱&quot;之类的模型，假设错的地方直接变成标签里的噪声。第二个坎是数据质量，手部姿态估计会漂，文字标注和画面里的动作对不上，一整段录像里大半时间人在发呆。这两条不解决，拿第一人称视频预训练人形策略就是白烧算力。</p>
+<p>IronMind 的做法一句话说得完，别折算，两边都写成<mark>同一个相机坐标系下的动作</mark>。人的手相对相机怎么动，视频里本来就能估出来。机器人的轨迹用标定好的头部相机外参搬进同一个坐标系。剩下手指数目不匹配的问题，用按含义对齐来处理，输出头只认维度含义，不认关节结构。</p>
+<p>数据这边，作者用规则过滤、原子化重标注、逐帧质量加权三道工序，攒出超过一万小时的第一人称人类视频加异构机器人数据。然后按 250 小时到 10,000 小时五档预算训同一套结构，看能力随数据量怎么走。真机上六个后训练阶段没见过的任务，10,000 小时那档成功率 <strong>55.0%</strong>，5,000 小时及以下每一档都不超过 <strong>11.7%</strong>，完全不预训练是 <strong>5.0%</strong>。</p>
+<p>这节要你记住的是　把人的视频和机器人的动作写进同一个坐标系，就不用折算身体。</p>
+<hr>
+<h2>一、问题背景</h2>
+<h3>1.1 这篇要的东西有多贵</h3>
+<p>论文把目标定成一条统一策略，处理接触密集、自由度很高、手与物体频繁接触的操作。要学出这条策略，先得有&quot;手该往哪里去、什么时候闭合&quot;的示范数据。</p>
+<p>真机上收这类示范的代价写在论文引言里，慢，贵，而且机器人手的示范本身就稀缺。第一人称人类视频便宜得多，也丰富得多，代价是它记录的是人的手。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　这类工作的瓶颈可以类比系统辨识。要辨识一个复杂对象，先得有一批覆盖工作范围的数据。真机遥操作相当于自己造数据，成本是每次试验的机时和人工。人类视频相当于别人录好的现场数据，便宜，但采样条件和你手上的对象对不上。第一人称视频的整条管线，一大半工夫花在处理这个&quot;对不上&quot;。</p></blockquote>
+<h3>1.2 两处裂缝</h3>
+<p><strong>具身差距。</strong> <u>具身差距指人手与机器人末端在运动学和关节数上的结构差异。</u> 常规做法是重定向，把人手动作折算成机器人关节角。这条路要求你知道人身体各段的位姿。低成本头戴录像设备只给相机位姿和手部姿态，<mark>低成本头戴设备不测躯干</mark>。硬要折算，只能对没观测到的身体运动学做假设，例如一根刚性、竖直的脊柱。论文的判断是这类假设会灌进大量重定向噪声。</p>
+<p><strong>质量差距。</strong> 手部姿态估计本身带跟踪噪声。文本提示与对应动作只是弱对齐。未清洗的视频里有大段不含操作的片段。论文引了几项研究数据质量与多样性的工作来支撑这一条。数据时长和有效动作时长不是一回事。</p>
+<h3>1.3 前人几条路，各自的短板</h3>
+<p><strong>显式重定向那一路。</strong> EgoScale 先把手腕的相对运动重定向进机器人关节空间，再拿去训练。差别落在时序上，转换发生在训练之前，人体折算的假设一旦错了，误差在进网络之前就固化进标签。这条路的长处是动作标签天然落在机器人关节空间，输出头不用处理跨本体的维度对应。</p>
+<p><strong>相机系那一路。</strong> VITRA 用相机系的手部轨迹做大规模预训练。本文把相机系从&quot;人类数据该怎么表示&quot;这一步，扩成&quot;人类与机器人共用一个动作接口&quot;，并把按含义对齐和清洗管线一起做进去。</p>
+<p><strong>留在各自原生空间、按含义对齐那一路。</strong> Qwen-RobotManip 让不同来源的数据留在自己的动作空间里，按含义把动作维度对上。本文沿用同一条原则。差别在顺序，IronMind 先用相机外参把人类轨迹和机器人轨迹送进同一个参考系，再谈维度对应。这样对齐只需要处理手指数目和关节结构的差别，不用同时处理参考系差别。</p>
+<p><strong>世界模型那一路。</strong> InternVLA-A1.5 把任务相关的未来视觉状态压成潜在预见 token，监督来自一个冻结的预训练视频生成器，部署时不做像素级的视频合成。本文沿用这个思路，视频生成器只在训练期当老师。EgoWAM 在第一人称人类数据上做世界动作模型，用三维运动光流这类超越像素的表征。本文把它当作动态监督的一种替代目标，在结果一节里和冻结视频生成器对比。</p>
+<p>论文的选择于是很明确。人类数据用相机系动作表示，机器人轨迹用可直接测量的标定参数搬进同一个相机系，剩下的维度差别按含义对上。这样一个输出头同时吃人类和机器人的动作监督，既不需要重定向，也不需要学一个潜在瓶颈。</p>
+<p>这节要你记住的是　两处裂缝各自对应一条设计，本体差距对相机系，质量差距对管线。</p>
+<hr>
+<h2>二、总体结构</h2>
+<figure><img src="figs/2609.39403-fig1.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　这是全文全景。六块拼成一条链。一是语料，一万小时以上的第一人称人类视频加异构机器人数据。二是清洗与表示，过滤、重标注，统一进相机系动作。三是结构，双专家加可选的先验分支。四是缩放，验证损失随小时数走对数线性。五是零样本开环预测。六是真机闭环。</figcaption></figure>
+<p>把图上的六块和章节对起来。</p>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>论文位置</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>数据引擎</td><td>3.1</td><td>第一人称人类视频、异构机器人示教</td><td>相机系动作、原子任务标注、每帧采样权重</td></tr><tr><td>预训练</td><td>3.3 前半</td><td>上一行的混合语料加语言指令</td><td>理解专家与动作专家的权重</td></tr><tr><td>后训练</td><td>3.3 后半</td><td>IRON-R01 遥操作轨迹，外参转到相机系</td><td>适配 IRON-R01 的策略</td></tr><tr><td>开环评测</td><td>4.2.1</td><td>单张未见过的 RGB 图加指令</td><td>一段动作块，算 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math>、progress、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math></math>、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math></td></tr><tr><td>策略在环</td><td>4.2.2</td><td>同一批 970 例，链三段动作块</td><td>误差累积后的三个接近指标</td></tr><tr><td>真机闭环</td><td>4.2.3</td><td>IRON-R01，10 Hz 闭环</td><td>六个任务的二值成功率与里程碑进度</td></tr></tbody></table></div>
+<p>读这张表有一个地方要盯住。<mark>预训练和后训练用的是同一套动作接口</mark>，相机系动作表示从头到尾不变，这是论文反复强调的一条设计。</p>
+<p>这节要你记住的是　四个阶段共用一套动作接口，评测分三层逼近真机。</p>
+<hr>
+<h2>三、方法拆解</h2>
+<h3>3.1 数据从哪来</h3>
+<p>论文的数据管线本身就是贡献，所以先把账算清楚。</p>
+<p><strong>总量与构成。</strong> 预训练语料合计超过 <strong>10,000 小时</strong>，由第一人称人类视频和异构机器人数据两部分组成。人类视频是主料。机器人数据来自非目标本体，也就是用别的机器人或别的形态采的示教。论文对配比的表述只有两句，人类视频是主料、机器人数据是补充，五档预算之间的增量只来自人类视频那一部分。人类与机器人各自多少小时，论文没有给。</p>
+<p><strong>场景分布。</strong> 图 2 是整份语料的场景占比。</p>
+<figure><img src="figs/2609.39403-fig2.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　语料的场景分布。圆环里是一万小时以上语料在各场景类别上的占比，外圈是每一类的代表画面。家庭场景占比最大，接近三成。其余依次覆盖餐饮、实验与车间、酒店与医疗、零售、教育、办公。论文在图注里说明，这些数据全部用相机系动作表示。</figcaption></figure>
+<div class="scroll"><table><thead><tr><th>场景类别</th><th>小时占比</th></tr></thead><tbody><tr><td>家庭 Home</td><td><strong>29.5%</strong></td></tr><tr><td>餐饮 Food and beverage</td><td>11.4%</td></tr><tr><td>实验与车间 Lab and workshop</td><td>11.3%</td></tr><tr><td>酒店与医疗 Hospitality and health</td><td>10.4%</td></tr><tr><td>零售 Retail</td><td>10.2%</td></tr><tr><td>其他 Other</td><td>10.0%</td></tr><tr><td>教育 Education</td><td>9.4%</td></tr><tr><td>办公 Office</td><td>7.9%</td></tr></tbody></table></div>
+<p>围绕桌面的家庭场景占了将近三成，剩下七成摊在七个类别上，最少的办公也有 7.9%。论文在局限里承认，这份语料集中在家庭、厨房和车间，极端的场景多样性有限。</p>
+<p><strong>目标本体的示范不在预训练里。</strong> <mark>10,000 小时里没有一条 IRON-R01 的示范</mark>。IRON-R01 的数据只出现在后训练阶段，约 <strong>40,000 条</strong>过滤后的遥操作回合。</p>
+<p><strong>仿真占比为零。</strong> 论文没有用仿真数据，也没有报仿真成功率。三层评测分别落在第一人称视频域和真机域里。</p>
+<p><strong>有效帧大约只有一半。</strong> 图 3 第一栏画了一条数据漏斗，全量帧里 <strong>85.6%</strong> 落在某个原子片段内，最终判定为有效的只有 <strong>51%</strong>。这三个数只出现在图里，正文没有重复。<mark>时长只是采集量，有效帧才是监督量。</mark></p>
+<figure><img src="figs/2609.39403-fig3.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3（第一栏）</b>　规则过滤与数据漏斗。左边三道检查依次过手是否可见、相机内参是否有效、腕关节是否与画面里看得见的手一致。中间是两条被拒的录像，一条画面里根本没有手，一条骨骼手腕落在可见手之外。右边是从全量帧到有效帧的保留比例。</figcaption></figure>
+<h3>3.2 把两种本体写进同一个坐标系</h3>
+<p>人类这边，参数化三维手部姿态和轨迹直接在录制相机系里取出。机器人那边，量到的轨迹用外参变换到头戴相机的坐标系。</p>
+<p>相机系还有一个附带的好处，论文专门写了。头部相机装在机器人头上，装配总有偏差。在躯干系里表达动作时，头显歪一点，观测和动作之间就出现系统性的错配。观测和动作都在相机系里表达，这个错配被压下去。</p>
+<figure><img src="figs/2609.39403-svg-camspace.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　编者绘制。上边那条虚线是常规重定向，要把人的动作折算进躯干系 T，缺的量是脊柱姿态，只能靠假设。下边那条实线是本文路线，人的手部轨迹和机器人的关节轨迹都写进相机系 C，缺的量变成一次可标定的外参。</figcaption></figure>
+<p>对齐是按含义做的。手腕和手指的运动量映射到同一组目标机器人动作维度，<mark>含义上对应的量占据一致的输出维度，哪怕关节结构不同</mark>。论文强调这是语义对齐，落在含义上，不落在运动学结构上。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　这一步用控制的话说，改的是参考系。重定向要解一个带未知参数的映射，未知的是人的身体构型。换成相机系之后，映射里只剩一个由标定给出的刚体变换。误差来源从&quot;假设错了&quot;变成&quot;标定有偏&quot;，后者可测也可控。</p></blockquote>
+<h3>3.3 清洗管线四道工序</h3>
+<p><strong>规则过滤。</strong> 缺相机内参或内参无效的帧直接丢。手部姿态估计出错、或者遮挡严重导致的不可信三维手姿也丢。腕关节和画面里看得见的手对不上，同样丢。</p>
+<p><strong>原子任务标注。</strong> 连续录像先切成只有单一意图的短片段。每个片段用视觉语言模型 Qwen3.6-35B-A3B 重写标注，描述涉及的物体和动作。片段边界处把动作损失掩掉，训练窗口就不会把两个意图的监督混在一起。论文对原始标注的批评很具体，有标着&quot;拿起杯子&quot;的片段里实际在放东西。</p>
+<p><strong>运动学速度对齐。</strong> 人的手比机器人遥操作快得多，也灵活得多。按数据源分片算平均速度，再做时间重缩放，让人类轨迹的速度量级和真机遥操作数据接近。</p>
+<p><strong>逐帧质量加权。</strong> 二值过滤之上再加一层连续权重。每个候选帧都算一个质量分。</p>
+<div class="eq"><span class="eqn">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>p</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mo>&#x000B7;</mo><msub><mi>s</mi><mrow><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">m</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><msub><mi>s</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><msub><mi>b</mi><mrow><mrow><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo><mtext>&#x000A0;</mtext><mo>&#x02208;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><msub><mi>C</mi><mrow><mo>max</mo></mrow></msub><mo stretchy="false">]</mo></mrow></math></math></div>
+<p>逐项看。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>e</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 与 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>g</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是二值闸门，分别管手是否可见、相机跟踪是否稳定。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mrow><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">m</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是相机转动的平稳度，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mrow><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是手部有没有主动平移，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>b</mi><mrow><mrow><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是片段边界处停顿的加分项。五项相乘，落在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><msub><mi>C</mi><mrow><mo>max</mo></mrow></msub><mo stretchy="false">]</mo></mrow></math></math> 区间里。<u><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 越大，这一帧被抽进训练批次的概率越高。</u></p>
+<p>采样不按帧序走，而是按 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo stretchy="false">&#x00028;</mo><mi>f</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 诱导的累积分布做逆变换采样。动作平滑、操作意图清楚的帧被抽得更频繁，相邻帧仍然留在样本里提供上下文，而且不用重新生成数据集。</p>
+<p>四道工序各管一件事。过滤决定哪些观测有效，原子标注定义意图，速度对齐抹平数据源之间的快慢差，质量加权决定有效帧被抽到的频次。论文在摘要和图 3 里列三道，正文 3.1.2 节多出一道具名速度对齐，这里按四道算。</p>
+<h3>3.4 模型结构</h3>
+<figure><img src="figs/2609.39403-fig4.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　模型结构。左边三路输入，头戴相机 RGB、语言指令、一组 query token，还有下方的机器人状态与加噪动作。中间是两股独立的 Transformer 流，靠若干层联合注意力搭上关系。右上角那一块虚线框是先验分支，只在训练期存在。右下角是推理期的输出，一段相机系动作块。</figcaption></figure>
+<p><strong>为什么拆成两个专家。</strong> 单流 VLA 把离散或连续的动作 token 直接接到视觉语言上下文序列后面。低层轨迹回归的梯度一路灌进视觉语言主干，会干扰它预训练来的开放词表表征。论文按 Mixture-of-Transformers 的路子，把感知推理和动作生成拆成两股独立参数的流。</p>
+<p><strong>理解专家。</strong> 从预训练视觉语言主干初始化，吃头戴相机 RGB 图和自然语言指令，保留原有的因果注意力与交叉注意力语言解码头。这样在动作预训练期间，开放词表接地和指令理解不容易被带偏。</p>
+<p><strong>动作专家。</strong> 一个 DiT 变体，用 flow matching 训练，建模连续动作轨迹上的分布。训练时以状态 token 和加噪动作块为条件，预测把噪声变成真值动作序列的向量场。推理时对预测出的向量场做少量步数的数值积分，得到一段时间上连贯的动作块。一次预测多步轨迹，既有利于时间平滑，也能压住闭环执行里的误差累积。</p>
+<p><strong>共享注意力。</strong> 在若干指定深度上，两股 token 拼成一条序列做联合注意力，每个流用自己的投影矩阵。动作专家由此直接读到细粒度的视觉特征和语言上下文，同时对预训练表征的干扰被限制在少数几层。</p>
+<p><strong>世界先验（可选）。</strong> 一组可学习的 query token 加到理解专家的前缀里。训练时它们与图像、语言上下文做自注意力，产出几何、语义、动态三类紧凑潜在表示，再去驱动三个辅助头。空间几何那一路用稠密深度表征监督，消融段写明是 Depth-Anything-3-Base。语义那一路用自监督模型的语义特征监督，写明是 DINOv3。动态那一路让潜在 query 去条件一个冻结的视频生成模型，预测未来帧的 VAE 潜变量，消融段写明是 Wan2.2。论文另外试了三维运动光流，作为动态监督的替代目标。</p>
+<p>这三个外部模型都是各自领域里的现成网络，Depth-Anything-3-Base 出稠密深度，DINOv3 出语义特征，Wan2.2 是视频生成模型。差别在于角色，它们的输出只当监督目标，权重全程冻结，不进策略的前向通路；策略自己学的只有那组 query token。</p>
+<p>所有外部特征提取器、深度估计器和视频生成模型在预训练全程冻结。辅助损失的梯度只能经可学习 query token 的通路进入理解专家。预训练结束后，辅助解码头和目标生成网络都被移除，<mark>教师模型只在训练期存在</mark>。推理时留下的是学到的 query token，动作专家通过共享注意力读到它们。推理期不额外背教师模型的算力。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　动作专家要解的量是一段动作轨迹。初值是高斯噪声加机器人状态，残差是相机系动作的 flow-matching 损失，兜底有两层，一层是预训练视觉语言主干给的视觉与语言先验，另一层是后训练阶段真机遥操作数据的微调。三层缺一层，这套设计都接不上。</p></blockquote>
+<h3>3.5 两段式训练</h3>
+<p>预训练在混合语料上做，主料是人类视频，配料是非目标本体的机器人遥操作序列。优化目标是相机系动作的 flow-matching 损失，可选地叠加深度、语义特征、视频动态三项辅助损失。跨规模实验里，结构、优化配方、异构机器人数据的混合比例都固定，额外的经验只从语料里人类视频那一部分进来。这样不同档位的差别主要能归给数据量。</p>
+<p>超参只交代了两条，AdamW 优化器，全局批大小 1024，余弦学习率衰减到峰值的 10%。这一节按契约的可压缩项处理，不再往下堆。</p>
+<p>后训练用目标机器人上攒的遥操作数据做适配。IRON-R01 的示范只在这一阶段出现。动作接口不变，机器人轨迹用外参转到头戴相机系，于是预训练的理解专家和动作头可以沿用下来。两个专家都微调。躯干系基线只为真机那节的对照单独训一份。<mark>后训练换的是本体，保下来的是动作语义。</mark></p>
+<p>这节要你记住的是　相机系负责接上两种本体，清洗管线负责压住噪声。</p>
+<hr>
+<h2>四、结果</h2>
+<h3>4.1 三层评测怎么搭</h3>
+<p>评价一层比一层贵，也一层比一层真。</p>
+<p><strong>开环。</strong> 给一张没见过的 RGB 图和一条指令，预测一段动作块，不执行。用例是 101 张用 RealSense D435 拍的桌面 RGB-D 快照，每张摆 6 到 15 个日常物体，标了 23 类物体的三维点云。每张快照里有一到两只真实人手，离物体 25 到 50 厘米。每只手配本张里语义明确的每个物体，凑出 <strong>970 例</strong>，492 例右手、478 例左手，46 条提示。抓取那一路另有 120 次抓取事件，来自 10 个自采场景，闭合的起始点由人复核。</p>
+<p>四个指标。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> 是每步手到目标点云最小距离的 10 分位，单位厘米，越小越好。progress 是末步闭合掉的初始间隙比例，越大越好。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math></math> 是目标质心方向与手腕净位移之间的夹角，0 度表示径直朝目标。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math> 是四个指尖平均张距与真值曲线之间的平均绝对差，单位毫米。<u><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> 取 10 分位，这样个别踩对的步不会把整段拉好看。</u></p>
+<p><strong>策略在环。</strong> 同一批 970 例，链三段动作块。每一段之后把预测的手渲染回观测，再做下一段，相机位姿和场景几何保持不动。</p>
+<pre class="flow"><code>t0　用一段人类视频的末帧加指令，预测第一段动作块
+     ↓ 把预测的手渲染回画面，相机位姿与场景几何不动
+t1　用渲染后的观测预测第二段动作块
+     ↓ 再渲染一次
+t2　预测第三段，统计三个接近指标</code></pre>
+<p><strong>真机。</strong> IRON-R01，和采后训练数据用的不是同一台。10 Hz 闭环，物体实例、可供性与推理提示都在后训练分布之外。六个任务，每个 10 次试验，报二值成功率和里程碑进度。</p>
+<p>这三层隔离的是不同来源的误差。开环测一段动作块本身的质量，没有反馈。策略在环把预测接回输入，暴露误差累积。真机再加进控制器误差、相机运动和物理接触。前两层共用同一套接近指标，可以直接比。</p>
+<h3>4.2 预训练档位怎么缩放</h3>
+<p>验证损失随小时数走对数线性，斜率是每十倍小时数 <strong>−0.058</strong>，到 10,000 小时还没有饱和的迹象。</p>
+<figure><img src="figs/2609.39403-fig7.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 7（右栏）</b>　验证损失的缩放律。横轴是预训练总预算，对数刻度，从 250 小时到 10,000 小时。纵轴是最优验证损失。灰点依次是 0.654、0.644、0.594、0.580，红点 0.565 是最长那一档。虚线是斜率 −0.058 的对数线性拟合。</figcaption></figure>
+<div class="scroll"><table><thead><tr><th>预训练预算</th><th>验证损失</th></tr></thead><tbody><tr><td>250 h</td><td>0.654</td></tr><tr><td>500 h</td><td>0.644</td></tr><tr><td>2,000 h</td><td>0.594</td></tr><tr><td>5,000 h</td><td>0.580</td></tr><tr><td>10,000 h</td><td><strong>0.565</strong></td></tr></tbody></table></div>
+<p>开环那四个指标（论文表 1，只预测一段动作块，接近指标来自 970 例，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math> 来自 120 次抓取事件）。</p>
+<div class="scroll"><table><thead><tr><th>预训练预算</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> (cm) ↓</th><th>progress (%) ↑</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math></math> (°) ↓</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math> (mm) ↓</th></tr></thead><tbody><tr><td>250 h</td><td>37.8</td><td>14.7</td><td>47.8</td><td>19.97</td></tr><tr><td>500 h</td><td>33.4</td><td>28.1</td><td>41.7</td><td>19.54</td></tr><tr><td>2,000 h</td><td>32.0</td><td>30.7</td><td>36.0</td><td><strong>23.83</strong></td></tr><tr><td>5,000 h</td><td>30.8</td><td>34.0</td><td>41.2</td><td>20.33</td></tr><tr><td>10,000 h</td><td><strong>25.8</strong></td><td><strong>44.9</strong></td><td><strong>26.0</strong></td><td><strong>15.66</strong></td></tr></tbody></table></div>
+<p>策略在环那三个指标（论文表 2，链三段动作块，全部 970 例）。</p>
+<div class="scroll"><table><thead><tr><th>预训练预算</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> (cm) ↓</th><th>progress (%) ↑</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math></math> (°) ↓</th></tr></thead><tbody><tr><td>250 h</td><td>32.0</td><td>21.4</td><td>46.1</td></tr><tr><td>500 h</td><td>25.6</td><td>32.2</td><td>39.5</td></tr><tr><td>2,000 h</td><td>23.0</td><td>39.0</td><td>33.9</td></tr><tr><td>5,000 h</td><td>22.7</td><td>39.1</td><td>36.3</td></tr><tr><td>10,000 h</td><td><strong>14.6</strong></td><td><strong>49.3</strong></td><td><strong>21.6</strong></td></tr></tbody></table></div>
+<p>留出片段上还做了一个盲测的用户研究，20 个试验，每个 5 位评判者，共 100 票。其中 30 票判平，70 票分出胜负。10,000 小时那档拿到 47 票，在分出胜负的票里胜率 <strong>67.1%</strong>。250 小时那档拿到 23 票，32.9%。</p>
+<p>有两处不一致值得摆在一起看。第一处，验证损失一路平顺，任务指标不平顺。2,000 小时那档的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math> 是 23.83 mm，比 250 小时的 19.97 mm 还差。策略在环里 2,000 与 5,000 小时的 progress 是 39.0% 与 39.1%，几乎打平。<mark>能力跃升集中在 5,000 到 10,000 小时之间</mark>。第二处，策略在环的改善幅度比开环大，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> 从 32.0 降到 14.6 厘米，而开环只从 37.8 降到 25.8 厘米。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　验证损失是平滑的代理量，能力是台阶式的。前面几档更像在积累，跨过某个量级才显出差别。多段执行那一列的改善比单段大，说明长预算那一档的误差在反复续接时没有滚起来，这一点比单段的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> 更能说明问题。</p></blockquote>
+<h3>4.3 世界先验消融</h3>
+<p>论文表 4 在同一套接近集合上比了九种配置，每一项都是同一个训练里若干个检查点的平均。论文自己的提醒是，差几个厘米只能当倾向看，不算定论。</p>
+<div class="scroll"><table><thead><tr><th>先验配置</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> (cm) ↓</th><th>progress (%) ↑</th><th><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math></math> (°) ↓</th></tr></thead><tbody><tr><td>无先验监督，基线</td><td>27.6</td><td>40.9</td><td>34.8</td></tr><tr><td>三路全开，默认未来帧 0.4 s</td><td><strong>22.6</strong></td><td><strong>53.4</strong></td><td><strong>26.5</strong></td></tr><tr><td>去掉语义先验</td><td>24.1</td><td>50.2</td><td>29.2</td></tr><tr><td>去掉深度先验</td><td>25.7</td><td>46.1</td><td>31.1</td></tr><tr><td>去掉动态先验</td><td>24.1</td><td>51.1</td><td>26.8</td></tr><tr><td>动态目标换成当前帧重建</td><td>27.3</td><td>42.7</td><td>33.3</td></tr><tr><td>动态目标准 0.2 s</td><td>25.8</td><td>45.7</td><td>30.5</td></tr><tr><td>动态目标准 0.8 s</td><td>24.8</td><td>49.3</td><td>28.3</td></tr><tr><td>动态目标换成三维运动光流</td><td>25.2</td><td>47.1</td><td>28.6</td></tr></tbody></table></div>
+<p>三路全开在三个指标上都最好。拆掉任何一路，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> 涨 1.5 到 3.1 厘米，涨得最多的是去掉深度那一路。把动态目标从未来帧换成当前帧重建，增益基本被抹掉，回到 27.3 厘米和 42.7%。默认的 0.4 秒比 0.2 秒和 0.8 秒都好。冻结视频生成器和三维运动光流这两条动态目标里，前者略好，论文猜是光流标签更稀疏。</p>
+<h3>4.4 真机</h3>
+<p>论文表 5 是真机消融，六个 OOD 任务各 10 次试验，后训练数据和算力预算相同，括号里是相对第一行的百分点跌幅。</p>
+<div class="scroll"><table><thead><tr><th>变体</th><th>成功率 ↑</th><th>里程碑进度 ↑</th></tr></thead><tbody><tr><td>IronMind，相机系，不带世界先验</td><td><strong>55.0%</strong></td><td><strong>71.3%</strong></td></tr><tr><td>IronMind，躯干系基线</td><td>26.7%（低 28.3）</td><td>46.2%（低 25.1）</td></tr><tr><td>IronMind，带世界先验监督</td><td>31.7%（低 23.3）</td><td>53.3%（低 18.0）</td></tr><tr><td>InternVLA-A1.5，同批后训练数据</td><td>30.0%（低 25.0）</td><td>47.8%（低 23.5）</td></tr></tbody></table></div>
+<p>真机上的缩放趋势和图 10 一致。5,000 小时及以下每一档，六个任务的平均成功率都低于 <strong>12%</strong>。10,000 小时那档升到 <strong>40% 以上</strong>，逐任务在 40% 到 90% 之间。提升最强的是推理类和语义类，最弱的是可供性类。论文说明这几组实验不带世界先验监督。</p>
+<p>图 10 里两个具体例子。葡萄放进左边的篮子或右边的篮子，成功率从 10% 升到 90%。蓝杯子和黄杯子的辨别，从 0% 升到 50%。</p>
+<p><mark>世界先验开环加分，闭环减分</mark>，两边的方向对不上。同一套先验在三项开环指标上全面领先，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math> 从 27.6 降到 22.6 厘米，progress 从 40.9% 升到 53.4%。带上它的真机变体却只有 31.7%，比不带的 55.0% 低 <strong>23.3 个百分点</strong>。论文给的解释是辅助预测目标和接触密集的闭环控制之间存在错配。</p>
+<p>相机系和躯干系的对照在同一批 10,000 小时数据上做，两套表示各自从预训练一路用到后训练，模型只换表示，结果是 55.0% 对 26.7%，里程碑进度 71.3% 对 46.2%。论文另外交代了 InternVLA-A1.5 那一行的条件，它的动作空间是重新初始化的，而 IronMind 预训练和后训练共用同一套动作空间。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　两条表示路线的取舍是双向的。<u>躯干系不需要头部相机外参，相机系必须先标对外参。</u> 躯干系的优势场景正是相机装歪、标定不准的场合，这时它的动作定义不受影响，代价是要接受重定向引入的假设误差。相机系换来的是没有重定向这一环，代价写在论文的局限里，它只是减少而没有消掉对目标机器人的依赖，真机后训练数据一条也省不掉。同表里不预训练的版本是 <strong>5.0%</strong>，带世界先验的版本是 <strong>31.7%</strong>，都够不上 55.0%。开环和真机在这一篇里方向相反，说明这套开环指标适合当筛选器，不够格当验收标准。</p></blockquote>
+<p>这节要你记住的是　验证损失一路平顺，能力要到一万小时才跳一级。</p>
+<hr>
+<h2>五、局限</h2>
+<h3>论文自己承认的六条</h3>
+<p>一，语料集中在家庭、厨房和车间，极端的场景多样性有限。</p>
+<p>二，相机系动作表示减少但没有消除对目标机器人的依赖，仍然需要相机外参标定，也仍然需要在真机数据上做后训练。</p>
+<p>三，缩放研究只覆盖一种结构和一种数据配比。</p>
+<p>四，真机评测覆盖一个本体、六个 OOD 任务、每个任务 10 次试验。更长时序和更广的接触密集任务没有测。</p>
+<p>五，世界先验的收益能不能从开环评测搬到闭环部署，论文说留待将来考察。</p>
+<p>六，超出 InternVLA-A1.5 的对照，论文点名 DreamZero，也说留待将来。DreamZero 是另一条路线，论文引的题名是《World action models are zero-shot policies》，也就是把世界动作模型本身当作零样本策略。它和 IronMind 的差别落在要不要在目标本体上做后训练，以及推理时要不要跑世界模型。论文没有展开这两条的对比，只说留待将来。</p>
+<h3>编者补充</h3>
+<p><strong>下面几条论文未将其列为局限，是编者读的时候另外记下的。</strong></p>
+<p>人类视频与机器人数据的小时数配比没有给出。论文只交代人类视频是主料、机器人数据是补充，也说五档预算的增量只来自人类视频那一部分，但没说这 10,000 小时里人占多少。数据规模是这篇的主变量，主变量的构成缺一半。</p>
+<p>动作向量的维度、手指数目、动作块长度都没写。本项目该核的自由度账，也就是几个未知量、每个观测源贡献几个独立方程、最少要几个观测，在这里落不了地，因为论文没有给出动作空间的维度定义。本文只能按机制描述对齐，没法按维度核算。</p>
+<p>前两层评测都在人类域。开环和策略在环的用例，起点都是同一套前端从真实人手重建出来的手。论文给的理由是让观测和本体状态留在同一个域。这样前两层实际测的是会不会预测人手动作，<mark>只有第三层把本体换成 IRON-R01</mark>。</p>
+<p>策略在环的 rollout 里，相机位姿和场景几何是固定的，预测的手被重新渲染回画面。物体不会因为被碰而移动，也没有接触力。这一层能暴露误差累积，抓不到接触失败。</p>
+<p>没有仿真结果。整篇文章的实验都在第一人称视频域和真机域，仿真成功率无从谈起。这一条要单独标出，别和真机数字混着说。</p>
+<p>五档预算的验证损失单调下降，任务指标不单调。除了前面提过的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math> 倒挂，真机那些数字报的是六个任务各 10 次试验的均值，没有给方差或置信区间。用验证损失当缩放律的代理量，论文没有交代这个代理在哪个尺度范围有效。</p>
+<p>这节要你记住的是　作者认了六条，没认的那些多在评测域和数据配比上。</p>
+<hr>
+<h2>六、我的评价</h2>
+<p><strong>做得对的。</strong></p>
+<p>相机系这个选择的价值在于它把&quot;要不要重定向&quot;整个绕开。改重定向是修假设，换表示是把假设去掉。<mark>用表示换掉了重定向</mark>，这条思路大概率能搬到别的跨本体数据上，代价是一次外参标定。</p>
+<p>数据管线是这篇最实在的部分。四道工序各自对着一种具体的脏数据，规则过滤对跟踪失败，原子重标注对标注与动作错位，速度对齐对人和机器的节奏差，逐帧加权对无效帧挤占采样。这套东西不依赖模型结构，换一个主干照样能用。</p>
+<p>评测三层把单段预测质量和多段误差累积分开，前两层共用同一套接近指标，可以直接比。这一点比只报一个真机成功率诚实。</p>
+<p><strong>存疑的。</strong></p>
+<p>真机那一层是唯一带接触的评测，样本量是六个任务各 10 次试验。一个任务的成败进退一格就是 10 个百分点。55.0% 和 47.8% 这种差距，在这个样本量下不宜过度解读。</p>
+<p>世界先验在真机上掉 23.3 个百分点这件事，论文给的解释是辅助预测目标与接触密集控制错配。这是个方向，还不是结论。至少它证明开环指标不能替代真机。</p>
+<p>InternVLA-A1.5 那一行有混杂，理由论文自己写了。这一行只能当参考，不能当成&quot;比通用 VLA 强 25 个百分点&quot;的证据。</p>
+<p><strong>它想走去哪。</strong></p>
+<p>把机器人操作的数据问题，换成视觉和人类行为数据的问题。这个换法只有在评测也跟着换的前提下才成立，而这篇的评测恰好有一半还留在人类域。数据端已经走通，评测端还没跟上。</p>
+<p>这节要你记住的是　关键取舍是用表示换掉重定向，代价压在标定和评测域上。</p>
+<hr>
+<h2>七、可以接着做什么</h2>
+<p>把人类视频与机器人数据的小时数配比当成自变量，而不是只扫总预算。现在五档只动人类视频那一部分，配比这条线完全没被扫过。</p>
+<p>用同一套评测把开环指标和真机成功率的对应关系量出来。哪个开环指标能预测闭环，现在没人知道，而这篇同时握着两边的数据。<u>把对应关系先量出来，再谈哪个开环指标可信。</u></p>
+<p>给世界先验换个施加方式。既然它在接触密集的任务上掉分，可以只在接触相关的时间窗上施加，或者把预测目标从未来帧换成接触状态。</p>
+<p>相机系依赖外参。试试在线估计头部相机外参，把标定误差挡在标签之外。</p>
+<p>后训练用了约 40,000 条真机遥操作回合。把它砍一个量级，看相机系预训练能补回来多少。这一条直接决定这套管线的落地成本。</p>
+<p>补失败原因分布。论文给了里程碑进度，没有给失败分类。手滑、抓偏、中途放开各占多少，对做数据的人比成功率有用。</p>
+<p>这节要你记住的是　先把数据配比和开环闭环的对应关系搞清，再谈别的。</p>
+<div class="fine">上面六条是即时联想，没有实验，没有查证，只当线索。</div>
+<hr>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>词</th><th>一句话解释</th></tr></thead><tbody><tr><td>VLA</td><td>视觉语言动作模型，把图像和语言指令直接映射成动作的一类策略网络</td></tr><tr><td>第一人称视频</td><td>相机戴在人头上拍到的录像，画面里能看到自己的手</td></tr><tr><td>具身差距</td><td>人手与机器人末端在运动学和关节数上的结构差异</td></tr><tr><td>重定向</td><td>把人手动作折算成机器人关节角的那一步换算</td></tr><tr><td>相机系动作表示</td><td>把动作写成相对于头戴相机的位置与姿态，人和机器人的轨迹都往这里写</td></tr><tr><td>语义对齐</td><td>按运动量的含义，把不同本体的动作放到同一组输出维度上</td></tr><tr><td>动作块</td><td>一次预测出来的连续多步动作，不是单步</td></tr><tr><td>flow matching</td><td>一种生成式训练目标，学一个把噪声推成真值轨迹的向量场，推理时积分几步出结果</td></tr><tr><td>双专家 MoT</td><td>感知推理和动作生成各用一套 Transformer 参数，只在部分层共享注意力</td></tr><tr><td>世界先验</td><td>训练期额外施加的几何、语义、未来帧三类监督</td></tr><tr><td>教师模型</td><td>提供监督信号的外部预训练模型，这里全程冻结，训练完就撤掉</td></tr><tr><td>VAE 潜变量</td><td>视频生成模型内部的压缩表示，这里拿它当未来帧的监督目标</td></tr><tr><td>开环评测</td><td>只预测一段动作不执行，测单段质量</td></tr><tr><td>策略在环</td><td>把预测结果接回输入再预测下一段，测误差累积</td></tr><tr><td>闭环</td><td>策略输出直接驱动机器人，边看边调</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>d</mi><mrow><mi>p</mi><mn>10</mn></mrow></msub></mrow></math></math></td><td>手到目标点云的每步最小距离取 10 分位，单位厘米，越小越好</td></tr><tr><td>progress</td><td>末步闭合掉的初始间隙所占比例，越大越好</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">n</mi></mrow></mrow></msub></mrow></math></math></td><td>指向目标质心的方向与手腕净位移之间的夹角，越小越直</td></tr><tr><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">A</mi></mrow></mrow></msub></mrow></math></math></td><td>四个指尖平均张距的预测误差，单位毫米</td></tr><tr><td>OOD</td><td>分布外，指后训练阶段没见过的物体、可供性或指令</td></tr><tr><td>遥操作</td><td>人用主从设备实时操纵机器人来采集示范</td></tr><tr><td>里程碑进度</td><td>按到达、抓起、搬运、放下这些阶段给的分档完成度</td></tr><tr><td>验证损失</td><td>留出数据上的预测误差，这里用来画缩放律</td></tr><tr><td>缩放律</td><td>能力随数据量变化的规律，这里指验证损失对小时数的对数线性趋势</td></tr><tr><td>原子任务</td><td>只有单一意图的短操作片段</td></tr><tr><td>数据漏斗</td><td>从全量帧到有效训练帧的保留比例</td></tr><tr><td>IRON-R01</td><td>论文用的目标人形机器人，只在后训练阶段出现</td></tr><tr><td>InternVLA-A1.5</td><td>最接近的架构先例兼真机对照基线，用冻结视频生成器监督潜在预见 token</td></tr><tr><td>EgoScale</td><td>先把人类手腕相对运动重定向进机器人关节空间、再拿去训练的路线</td></tr><tr><td>EgoWAM</td><td>在第一人称人类数据上做世界动作模型、用三维运动光流做动态监督的路线</td></tr><tr><td>VITRA</td><td>用相机系手部轨迹做大规模 VLA 预训练的路线</td></tr><tr><td>Qwen-RobotManip</td><td>让异构数据留在各自动作空间、按含义对齐维度的路线</td></tr><tr><td>MHR</td><td>论文用的参数化三维人体与手部模型，人类手部标注从它出来</td></tr></tbody></table></div>
+<h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li>EgoScale<span style="color:var(--ink3);font-size:13px">　显式重定向那一路，先把人体手腕相对运动重定向进机器人关节空间再训练，转换发生在训练之前</span></li></ul>
+<a class="paperlink" href="https://arxiv.org/abs/2609.39403" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2609.39403） →</a>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:31</footer>
+</div></body></html>

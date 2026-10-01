@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DAVIO：让 VIO 不等视差就起步 · CtrlView</title>
+<meta name="description" content="DAVIO：让 VIO 不等视差就起步">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001143103"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.27702.html?force=20261001143103" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">SLAM 与状态估计 · 论文精读</div>
+<h1>DAVIO：让 VIO 不等视差就起步</h1>
+<div class="meta"><b>Jaafar Mahmoud, Arthur Movsesyan, Mikhail Iumanov, Sergey Kolyubin</b><br>
+arXiv:2609.27702 · 2026-10-01 · 精读约 40 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-状态估计">状态估计</a><a class="tag" href="topics.html#t-视觉惯性里程计">视觉惯性里程计</a><a class="tag" href="topics.html#t-初始化">初始化</a><a class="tag" href="topics.html#t-稠密建图">稠密建图</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>设想一台巡检机器人刚上电，停在走廊起点。它背着一个摄像头和一个 IMU，IMU 就是手机里那个测加速度和角速度的小芯片。它需要回答两个问题，我在哪儿，我周围长什么样。</p>
+<p>摄像头负责看清周围，IMU 负责感受自己的运动。两样合起来估计位姿，这套做法叫视觉惯性里程计，简称 VIO。麻烦出在<strong>刚上电那几秒</strong>。机器人还没走起来，画面里几乎看不出深度，而 IMU 单独又定不出尺度。它只能干等，等自己动出足够的视角变化，视差攒够了才能启动。</p>
+<p>DAVIO 的做法是别等。它请来一个前馈几何模型 Depth Anything 3，从最开始的五张图里直接读出稠密深度和相对位姿。把这些预测和 IMU 的预积分测量拼成一个线性方程组，一次解出<strong>尺度、初速度和重力方向</strong>。解出来的状态灌进一个没改过的 OpenVINS 滤波器，后面交给滤波器跟踪。</p>
+<p>进入跟踪阶段，<mark>主从关系翻过来</mark>。滤波器提供米制位姿，反过来约束深度模型。</p>
+<hr>
+<h2>一、问题背景</h2>
+<h3>1.1 起步为什么难</h3>
+<p>先把比力说清楚。你把手机平放在桌上，它一动不动，可加速度计的读数仍有大约 9.8。原因在于它测的是支撑力产生的加速度，静止时桌面的支撑刚好抵消重力。这个测到的量叫比力，等于真实加速度加上重力的反向。</p>
+<p>于是问题来了。要从比力里抠出机器人的真实运动，得先知道重力朝哪、多大。而重力方向和尺度是缠在一起的。你把尺度猜大一倍，可以靠微调重力方向补回一部分误差。<mark>两个未知量互相遮掩，谁都不肯先露头</mark>。这种纠缠让定尺度变成一个病态问题，也就是数据稍微变一点，解就跳很远。</p>
+<p>再看摄像头这一侧。单张图像只能告诉你某个点在画面里处于哪个方向，深度是未知的。不信可以闭上左眼只用右眼看东西，你会发现判断远近变得很吃力。要解出深度，得靠人移动位置后同一个点在画面里的位移，这个位移叫视差。视差越大，深度越准。</p>
+<p>两件事叠在一起，就有了那个尴尬的等待。机器人在起点附近小幅度移动，视差还没攒够，VIO 报不出带米制尺度的位姿。</p>
+<h3>1.2 两条路各自的短板</h3>
+<p>经典滤波器路线靠跟踪稀疏特征点，用视差反推深度，再和 IMU 融合。精度可靠，代价是起点依赖运动量。它维护的特征点通常几百个，做轨迹估计够用，拿来做导航和避障就太稀。</p>
+<p>前馈几何模型是另一条路。DUSt3R、MASt3R、VGGT、Depth Anything 3 这一类，一次前向就能从几张共视图像里预测稠密点图或深度图。它们见过海量数据，泛化和视觉鲁棒性都强。</p>
+<p>代价是预测结果没有标定。<mark>没有米制尺度，没有重力方向，速度和 IMU 零偏也一并缺失</mark>。零偏指的是传感器那个固定的系统性偏差，比如陀螺静止时读数本该是零，实际却慢慢漂。稠密归稠密，落到米制世界里缺了一半。</p>
+<p>论文看中的正是这两边互补。IMU 补上前馈模型缺的物理量，前馈模型在视差攒够之前就把稠密结构交出来。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　这是信息互补的典型结构。两路观测各缺一个子空间，视觉缺尺度和重力，惯性缺绝对参考。把它们联立求解，相当于给系统补秩。判断一套融合方案值不值得做，可以先看两路的零空间有没有错开。错得越开，合起来越有用。</p></blockquote>
+<h3>1.3 这篇的做法</h3>
+<p>用一个前馈模型干两件事。起步时拿它做初始化，跟踪时拿它做建图。中间用标准 OpenVINS 滤波器串起来，滤波器本身一行不改。</p>
+<p>论文列了三条贡献。一套双用途框架；一个带条件数检查和物理合理性闸门的鲁棒初始化器；一种把尺度修正只作用在深度上的位姿条件化建图方案。</p>
+<hr>
+<h2>二、总体结构</h2>
+<figure><img src="figs/2609.27702-fig2.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　DAVIO 的三段式结构。左栏 <b>01 INITIALIZE</b> 负责初始化，用 DA3 加惯性求解，从单目图像和 IMU 里解出米制状态，再经缓冲交接交给滤波器。中栏 <b>02 TRACK</b> 是 OpenVINS 持续跟踪，输出米制位姿和内参。右栏 <b>03 MAP</b> 用位姿条件化的 DA3 生成重叠子图，再用位姿和深度尺度图修正输出坐标系。<strong>箭头是双向的</strong>，初始化阶段几何模型给滤波器送状态，跟踪阶段滤波器给几何模型送位姿。中栏底下那行小字交代了一件要紧的事，图的更新只改输出坐标系，不动滤波器的运行状态。</figcaption></figure>
+<p>把图上的三个阶段和论文章节对齐。</p>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>01 初始化</td><td>§IV</td><td>五帧图像 + IMU 预积分</td><td>尺度、初速度、重力、零偏修正</td></tr><tr><td>交接</td><td>§IV-C</td><td>上一步状态</td><td>一个新起的 OpenVINS 实例</td></tr><tr><td>02 跟踪</td><td>§V-A 前</td><td>IMU + 特征</td><td>米制相机位姿、内参</td></tr><tr><td>03 建图</td><td>§V</td><td>位姿 + 图像</td><td>重叠深度子图、地图坐标系修正</td></tr></tbody></table></div>
+<hr>
+<h2>三、方法拆解</h2>
+<h3>3.1 把尺度、速度、重力塞进一个线性系统</h3>
+<p>符号先约定好。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>s</mi></mrow></math></math> 是米制尺度，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D42F;</mi><mn>0</mn></msub></mrow></math></math> 是起始帧速度，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D420;</mi></mrow></math></math> 是重力向量，三者都表达在起始 IMU 坐标系 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>I</mi><mn>0</mn></msub></mrow></math></math> 里。要解的就是这三组量，一共 7 个未知数。位姿写成 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mrow><mi>A</mi><mi>B</mi></mrow></msub></mrow></math></math>，意思把 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>B</mi></mrow></math></math> 系的坐标搬到 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>A</mi></mrow></math></math> 系，所以 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>T</mi><mrow><mi>A</mi><mi>B</mi></mrow><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>T</mi><mrow><mi>B</mi><mi>A</mi></mrow></msub></mrow></math></math>。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D429;</mi><mrow><mi>I</mi><mi>C</mi></mrow></msub></mrow></math></math> 是相机原点在 IMU 系里的位置，也就是相机和 IMU 之间那根杆臂。</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x1D431;</mi><mo>&#x0003D;</mo><mo stretchy="false">[</mo><mi>s</mi><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><msubsup><mi>&#x1D42F;</mi><mn>0</mn><mo>&#x022A4;</mo></msubsup><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><msup><mi>&#x1D420;</mi><mo>&#x022A4;</mo></msup><msup><mo stretchy="false">]</mo><mo>&#x022A4;</mo></msup><mo>&#x02208;</mo><msup><mi>&#x0211D;</mi><mn>7</mn></msup></mrow></math></math></div>
+<p>DA3 给出每张图的深度、置信度、内参和相对位姿。第 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math></math> 张图里第 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math></math> 个像素的归一化坐标记作 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D433;</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math>，预测的未定尺度深度记作 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>d</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math>。利用 DA3 的相对位姿，这个像素反投影出一个未定尺度的三维点。</p>
+<div class="eq"><span class="eqn">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover><mrow><mi>&#x1D429;</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0003D;</mo><msub><mi>R</mi><mrow><msub><mi>C</mi><mn>0</mn></msub><msub><mi>C</mi><mi>i</mi></msub></mrow></msub><msub><mover><mrow><mi>d</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub><msub><mover><mrow><mi>&#x1D433;</mi></mrow><mo stretchy="false">&#x0007E;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0002B;</mo><msub><mover><mrow><mi>&#x1D429;</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><msub><mi>C</mi><mn>0</mn></msub><msub><mi>C</mi><mi>i</mi></msub></mrow></msub></mrow></math></math></div>
+<p>IMU 预积分同时给出相对旋转 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>R</mi><mrow><msub><mi>I</mi><mn>0</mn></msub><msub><mi>I</mi><mi>i</mi></msub></mrow></msub></mrow></math></math> 和无重力位移 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>&#x1D429;</mi><mi>i</mi></msub></mrow></math></math>。预积分这个说法指的是把两帧之间的 IMU 测量提前积分成一个相对运动量，省得后面反复重算。起始 IMU 的位置这样写出来。</p>
+<div class="eq"><span class="eqn">(3)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D429;</mi><mrow><msub><mi>I</mi><mn>0</mn></msub><msub><mi>I</mi><mi>i</mi></msub></mrow></msub><mo>&#x0003D;</mo><mi>&#x00394;</mi><msub><mi>t</mi><mi>i</mi></msub><msub><mi>&#x1D42F;</mi><mn>0</mn></msub><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mi>&#x00394;</mi><msubsup><mi>t</mi><mi>i</mi><mn>2</mn></msubsup><mi>&#x1D420;</mi><mo>&#x0002B;</mo><mi>&#x00394;</mi><msub><mi>&#x1D429;</mi><mi>i</mi></msub></mrow></math></math></div>
+<p>这个式子值得停一下。右边第一项是匀速位移，第二项是重力造成的抛物线下坠，第三项是实测比力的二重积分。<u>尺度、初速度、重力各自占一个位置，互不重叠</u>。线性化的空间就是这么腾出来的。</p>
+<p>接下来是关键的构造。定义一个投影矩阵 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math>，它把三维点投到二维像平面。这个矩阵很朴素，只有两行。</p>
+<div class="eq"><span class="eqn">(2)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0003D;</mo><mo>&#x0005B;</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd><mtd><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>x</mi></mrow></msub></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd><mtd><mo>&#x02212;</mo><msub><mi>z</mi><mrow><mi>i</mi><mi>k</mi><mo>&#x0002C;</mo><mi>y</mi></mrow></msub></mtd></mtr></mtable><mo>&#x0005D;</mo></mrow></math></math></div>
+<p>像素 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D433;</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math> 视线方向上的任何点都落在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math> 的零空间里，也就是满足 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mi>&#x1D432;</mi><mo>&#x0003D;</mo><mrow><mn mathvariant="bold">0</mn></mrow></mrow></math></math>。把式 (3) 的相机位置代进链式变换 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>C</mi><mn>0</mn></msub><mo>&#x02192;</mo><msub><mi>I</mi><mn>0</mn></msub><mo>&#x02192;</mo><msub><mi>I</mi><mi>i</mi></msub><mo>&#x02192;</mo><msub><mi>C</mi><mi>i</mi></msub></mrow></math></math>，这个视线约束对 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi></mrow></math></math> 就是线性的，系数矩阵可以写成三个列块拼起来的样子。</p>
+<div class="eq"><span class="eqn">(5)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>A</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mspace width="0.167em" /><msub><mi>B</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><msub><mi>R</mi><mrow><mi>I</mi><mi>C</mi></mrow></msub><msub><mover><mrow><mi>&#x1D429;</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mtext>&#x000A0;</mtext><mo>&#x02212;</mo><mi>&#x00394;</mi><msub><mi>t</mi><mi>i</mi></msub><msub><mi>B</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mtext>&#x000A0;</mtext><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x00394;</mi><msubsup><mi>t</mi><mi>i</mi><mn>2</mn></msubsup><msub><mi>B</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mspace width="0.167em" /><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>B</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>&#x0003D;</mo><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><msub><mi>R</mi><mrow><mi>C</mi><mi>I</mi></mrow></msub><msub><mi>R</mi><mrow><msub><mi>I</mi><mi>i</mi></msub><msub><mi>I</mi><mn>0</mn></msub></mrow></msub></mrow></math></math></div>
+<p><strong>三块正好对着三个未知数</strong>。第一块管尺度，第二块管初速度，剩下的重力落在第三块。前面那句&quot;互不重叠&quot;，具体长这样。</p>
+<figure><img src="figs/2609.27702-svg-system.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）每一块对应一个未知数。尺度只出现在第一块，初速度只出现在第二块，重力只出现在第三块，谁也不抢谁的位置。点再多也只是把每一块的行数堆高，块的个数不变。</figcaption></figure>
+<p>所有点的约束堆起来，就是一个标准的最小二乘问题。</p>
+<div class="fine">本文的公式编号沿用论文原编号。没有出现的编号表示那一式没有在本文展示，需要时回原文对照即可。</div>
+<blockquote><p>📌 <strong>控制视角</strong>　这一段走的是先重构方程再求解的路子，属于线性化技巧。代价是引入了一个假设，预测的旋转必须和惯性积分对得上。假设不成立时方程依然有解，但解的含义变了。判断这类技巧能不能用，先看假设被破坏时误差往哪儿跑。</p></blockquote>
+<h3>3.2 秩只有 3，点再多也没用</h3>
+<p>这一节是全文最值得读的地方。</p>
+<p>直觉上，DA3 每张图能给出几百个点，系统按 4×4 网格每帧挑出最多 100 个，五帧堆起来就是几百个约束，解 7 个未知数应该绰绰有余。论文指出这个直觉错了。</p>
+<p>可以把每张图的那些点想成一群证人。他们共享同一个相机中心，说的话其实是同一件事，按了尺度的相机中心该落在哪里。证人再多，证词也只撑起三个分量，因为一个三维位置本来就只有三个自由度。这就是秩的含义，<u>它数的是独立方程有几个，和方程总数不是一回事</u>。</p>
+<p>推导走一遍。如果 DA3 的相对旋转和惯性预积分一致，链式变换之后的深度分量恰好落在它自己的视线上，被 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math> 直接消掉。剩下的约束只剩一个三维量 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D430;</mi><mi>i</mi></msub></mrow></math></math>，它表示按尺度放大后的 DA3 相机中心必须和惯性积分出的位置吻合。</p>
+<div class="eq"><span class="eqn">(6)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D430;</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mi>s</mi><msub><mi>R</mi><mrow><mi>I</mi><mi>C</mi></mrow></msub><msub><mover><mrow><mi>&#x1D429;</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><msub><mi>C</mi><mn>0</mn></msub><msub><mi>C</mi><mi>i</mi></msub></mrow></msub><mo>&#x02212;</mo><mi>&#x00394;</mi><msub><mi>t</mi><mi>i</mi></msub><msub><mi>&#x1D42F;</mi><mn>0</mn></msub><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mi>&#x00394;</mi><msubsup><mi>t</mi><mi>i</mi><mn>2</mn></msubsup><mi>&#x1D420;</mi><mo>&#x02212;</mo><mi>&#x00394;</mi><msub><mi>&#x1D429;</mi><mi>i</mi></msub><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>R</mi><mrow><msub><mi>I</mi><mn>0</mn></msub><msub><mi>I</mi><mi>i</mi></msub></mrow></msub><mo>&#x02212;</mo><msub><mi>I</mi><mn>3</mn></msub><mo stretchy="false">&#x00029;</mo><msub><mi>&#x1D429;</mi><mrow><mi>I</mi><mi>C</mi></mrow></msub></mrow></math></math></div>
+<p>而 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub></mrow></math></math> 的秩是 2。同一张图里，两个方向不同的点就足以定出 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D430;</mi><mi>i</mi></msub></mrow></math></math>。换句话说，<mark>一张图无论有多少个点，它对这 7 个未知数的独立贡献最多只有 3 个方程</mark>。</p>
+<p>顺着数下去。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D430;</mi><mn>0</mn></msub><mo>&#x0003D;</mo><mrow><mn mathvariant="bold">0</mn></mrow></mrow></math></math>，所以<strong>至少需要 4 张图</strong>。五帧窗口只多出 1 帧的冗余。密点和置信度加权提高的是抗噪和抗外点的能力，秩一点没变。</p>
+<figure><img src="figs/2609.27702-svg-rank.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）每帧几百个点，最后压成一个三维量。点都落在各自的视线上，深度分量被投影矩阵消掉。所以每帧最多只贡献三个独立方程。首帧的 w₀ 又是零，于是至少要四帧，五帧窗口只多一帧冗余。</figcaption></figure>
+<blockquote><p>📌 <strong>控制视角</strong>　这就是可观性分析的要害。可观测的自由度由系统结构决定，跟测点数量无关。传感器堆得再密，只要观测矩阵的秩不够，某些状态组合就是解不出来。工程上常见的误判是我加了很多传感器所以肯定可观，而秩的账必须单独算。</p></blockquote>
+<h3>3.3 退化运动与三道闸门</h3>
+<p>四张图是必要条件，还不够。</p>
+<p>论文给出了一种退化情形。如果未定尺度的轨迹在时间上最多是二次的，也就是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>&#x1D429;</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mrow><msub><mi>C</mi><mn>0</mn></msub><msub><mi>C</mi><mi>i</mi></msub></mrow></msub><mo>&#x0003D;</mo><mi>&#x00394;</mi><msub><mi>t</mi><mi>i</mi></msub><mi>&#x1D41A;</mi><mo>&#x0002B;</mo><mi>&#x00394;</mi><msubsup><mi>t</mi><mi>i</mi><mn>2</mn></msubsup><mi>&#x1D41C;</mi></mrow></math></math>，那么存在一个非零方向能同时满足所有约束。</p>
+<div class="eq"><span class="eqn">(7)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>A</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><msup><mrow><mo stretchy="true" fence="true" form="prefix">[</mo><mn>1</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mo stretchy="false">&#x00028;</mo><msub><mi>R</mi><mrow><mi>I</mi><mi>C</mi></mrow></msub><mi>&#x1D41A;</mi><msup><mo stretchy="false">&#x00029;</mo><mo>&#x022A4;</mo></msup><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>2</mn><msub><mi>R</mi><mrow><mi>I</mi><mi>C</mi></mrow></msub><mi>&#x1D41C;</mi><msup><mo stretchy="false">&#x00029;</mo><mo>&#x022A4;</mo></msup><mo stretchy="true" fence="true" form="postfix">]</mo></mrow><mo>&#x022A4;</mo></msup><mo>&#x0003D;</mo><mrow><mn mathvariant="bold">0</mn></mrow></mrow></math></math></div>
+<p>这个方向的物理含义是，尺度的变化可以被初速度和重力一起吸收掉。式 (7) 的第一分量是 1，正对着尺度 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>s</mi></mrow></math></math>。后两个分量分别落在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D42F;</mi><mn>0</mn></msub></mrow></math></math> 和 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D420;</mi></mrow></math></math> 上。</p>
+<p>说人话就是，机器人匀速直行时，你把尺度放大一倍、同时把初速度也放大一倍，算出来的观测量可以和原来完全一样，<mark>从数据上分不出这两种解释</mark>。轨迹越接近二次，重力的分量也会一起卷进来。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D41C;</mi><mo>&#x0003D;</mo><mrow><mn mathvariant="bold">0</mn></mrow></mrow></math></math> 恰好对应匀速，而匀速正是起步时最常见的情形，机器人刚上电总要慢慢往前挪。</p>
+<p>论文不去修补，改成识别和拒绝。线性解要同时满足三条才被接受。至少四张图可用；列平衡后的系统奇异值比不小于 1e-3；基线深度比不小于 0.02。</p>
+<p>这三条都是数值兜底，用奇异值比和基线深度比来判断方程组是不是快散架了。论文自己声明它们不构成可观性证明，因为约束 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo fence="false" stretchy="false">&#x02016;</mo><mi>&#x1D420;</mi><mo fence="false" stretchy="false">&#x02016;</mo><mo>&#x0003D;</mo><msub><mi>g</mi><mn>0</mn></msub></mrow></math></math> 有可能把某些被拒绝的情形救回来。敢这么保守地拒绝，是因为 OpenVINS 自带的初始化器一直挂在后台待命，拒绝了也不损失什么。</p>
+<h3>3.4 鲁棒搜索与接收条件</h3>
+<p>DA3 的深度在几个地方不可靠。物体边缘、反光面、弱纹理区、运动物体。外点比例事先不知道，论文用最小平方中位数 LMedS 搜索，跑 100 个假设。</p>
+<p>这种方法的思路是随机抽若干组数据各解一个候选，再看哪个候选能让大多数点都满意。挑中位数有个好处。平均值会被少数离谱的坏点带跑，中位数不会。</p>
+<p>采样方式是分层的，每个假设从每一张非参考图里各取两个点。前一小节说明两个点就吃满了单张图的秩贡献，这样采样既良态，又不会让某一张图主导结果。</p>
+<p>打分时除以尺度。代数残差 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mi>k</mi></msub></mrow></math></math> 会随 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>s</mi></mrow></math></math> 一起放大，直接用中位数打分会让结果偏向小尺度，所以用 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>e</mi><mi>k</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0002F;</mo><mi>s</mi></mrow></math></math>。鲁棒标准差取 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover accent="true"><mrow><mi>&#x003C3;</mi></mrow><mo>&#x0005E;</mo></mover><mo>&#x0003D;</mo><mn>1.4826</mn><mspace width="0.167em" /><msub><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">d</mi></mrow><mi>k</mi></msub><mo stretchy="false">&#x00028;</mo><msub><mi>e</mi><mi>k</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math>。一个假设还要先过一道及格线，至少有三张图里有多数点落在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>max</mo><mo stretchy="false">&#x00028;</mo><mn>2.5</mn><mover accent="true"><mrow><mi>&#x003C3;</mi></mrow><mo>&#x0005E;</mo></mover><mo>&#x0002C;</mo><mn>0.01</mn><mo stretchy="false">&#x00029;</mo></mrow></math></math> 以内，只在少数几帧上凑合的假设会被直接扔掉。</p>
+<p>接收条件有几条硬杠。内点比例至少 0.4，中位残差不超过 0.05，初速度不超过 5 m/s，重力方向与平均比力方向的夹角不超过 30°。最后两条是物理合理性检查，把数值上收敛但物理上荒谬的解挡在门外，比如算出机器人以每秒五十米起步。陀螺零偏通过对齐 DA3 相对旋转和惯性旋转来初始化，给预积分一个比零更好的起点。</p>
+<p>把上面这一串写成流程，大概是这样。</p>
+<pre class="flow"><code>输入   DA3 对五帧的输出（深度、置信度、内参、相对位姿）
+       IMU 预积分（相对旋转、无重力位移）
+
+ 1   每帧按 4×4 网格挑高置信度的点，每帧最多 100 个
+ 2   写出视线约束，堆成   A x = b
+ 3   for h = 1 to 100:                     # 100 个假设
+ 4       从每张非参考图各取 2 个点           # 分层采样
+ 5       解出假设 h 的 x_h
+ 6       打分 = median(e_k / s_h)           # 除以尺度，免得偏向小尺度
+ 7   取分最低的假设，用它的内点重解一次
+ 8   及格线：至少三张图的多点数落在 max(2.5σ̂, 0.01) 以内
+ 9   接收检查，四条全过才算数：
+10       内点比例        ≥ 0.4
+11       中位残差        ≤ 0.05
+12       ‖v0‖           ≤ 5 m/s
+13       重力与平均比力夹角 ≤ 30°
+14   两次重力切平面精修，然后交给 OpenVINS
+15   任何一条没过 → 拒绝这一窗，等 OpenVINS 自己的初始化器</code></pre>
+<h3>3.5 交接与回放追赶</h3>
+<p>初始化解出来之后，怎么交给滤波器是个工程问题。</p>
+<p>参数化有两个细节。尺度用 softplus 保证严格为正，这样优化过程中不会跳到负尺度上。</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>s</mi><mo>&#x0003D;</mo><mi>&#x003B5;</mi><mo>&#x0002B;</mo><mi>log</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mi>&#x003B7;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003B5;</mi><mo>&#x0003D;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup></mrow></math></math></div>
+<p>重力用两个切平面坐标表示，约束在半径 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>g</mi><mn>0</mn></msub></mrow></math></math> 的球面上。重力方向只有两个自由度，因为它的长度是固定的，所以用两个角度就够了。</p>
+<div class="eq"><span class="eqn">(8)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x1D420;</mi><mo stretchy="false">&#x00028;</mo><mi>&#x003B4;</mi><mrow><mi mathvariant="bold-italic">&#x003B3;</mi></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>g</mi><mn>0</mn></msub><mspace width="0.167em" /><mrow><mi mathvariant="normal">E</mi><mi mathvariant="normal">x</mi><mi mathvariant="normal">p</mi></mrow><mo stretchy="false">&#x00028;</mo><mi>N</mi><mi>&#x003B4;</mi><mrow><mi mathvariant="bold-italic">&#x003B3;</mi></mrow><mo stretchy="false">&#x00029;</mo><mover accent="true"><mrow><mi>&#x1D420;</mi></mrow><mo>&#x0005E;</mo></mover><mo>&#x0002C;</mo><mspace width="2em" /><mi>N</mi><mo>&#x02208;</mo><msup><mi>&#x0211D;</mi><mrow><mn>3</mn><mo>&#x000D7;</mo><mn>2</mn></mrow></msup><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><msup><mi>N</mi><mo>&#x022A4;</mo></msup><mover accent="true"><mrow><mi>&#x1D420;</mi></mrow><mo>&#x0005E;</mo></mover><mo>&#x0003D;</mo><mrow><mn mathvariant="bold">0</mn></mrow></mrow></math></math></div>
+<p>残差里显式加了三项先验。论文给了理由。在一个亚秒级的窗口内，加速度计零偏和尺度、重力几乎分不开，那条尺度先验把精修结果按在已经接受的线性解附近，防止它在不可辨识的方向上乱跑。</p>
+<p>交接机制叫缓冲回放。初始化期间到达的传感器数据先排队不发，滤波器起来之后以快于实时的速度回放这些数据。判据是连续五个状态都能跟上实时流，时间差在 0.15 s 以内，才算交接成功。3 s 内追不上就放弃这个候选，最多试五次。</p>
+<pre class="flow"><code> 1   初始化期间：到达的 IMU 和图像全部压进缓冲队列，一个都不发布
+ 2   for c = 1 to 5:                       # 最多试 5 个候选
+ 3       把解出的状态写进一个新的 OpenVINS 实例
+ 4       以快于实时的速度回放缓冲队列，最长回放 8 秒
+ 5       if 连续 5 个状态与实时流的时间差 ≤ 0.15 s:
+ 6           交接成功，开始对外发布，结束
+ 7       if 3 秒内还没追上:
+ 8           放弃这个候选，回到第 3 步
+ 9   五个候选都失败 → 继续用 OpenVINS 自带的初始化器</code></pre>
+<blockquote><p>📌 <strong>控制视角</strong>　这是一段时序一致性设计。初始化本身要花时间，这期间传感器还在出数据。丢数据会留下空洞，阻塞数据会让系统停摆。缓冲回放把离线求解和在线运行两个时间尺度解耦，代价是短暂延迟，收益是不丢一个测量。凡是初始化耗时超过采样周期的系统，都要处理这个问题。</p></blockquote>
+<h3>3.6 建图，尺度只作用在深度上</h3>
+<p>跟踪阶段，滤波器给出米制位姿 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mrow><msub><mi>C</mi><mi>i</mi></msub><mi>O</mi></mrow></msub></mrow></math></math> 和内参 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>K</mi></mrow></math></math>，交给同一个 DA3 模型，得到重叠的深度子图。</p>
+<p>这里有个容易踩的坑。DA3 的预测是相似变换意义下的，相似变换就是整体缩放，连相机之间的间距也跟着一起放大缩小。对整个窗口做一次相似拟合，等于把窗口里已经由滤波器标定好的相机间距也改掉了，原本站得对的相机全被推歪。</p>
+<p>论文把尺度拆开，只往深度上放。每个子图带一个位姿 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>Q</mi><mi>j</mi></msub></mrow></math></math> 和一个残差对数尺度 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003BB;</mi><mi>j</mi></msub></mrow></math></math>，像素 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D42E;</mi></mrow></math></math> 在地图里的位置写成这样。</p>
+<div class="eq"><span class="eqn">(12)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D429;</mi><mi>M</mi></msub><mo>&#x0003D;</mo><msub><mi>T</mi><mrow><mi>M</mi><msub><mi>S</mi><mi>j</mi></msub></mrow></msub><msub><mi>T</mi><mrow><msub><mi>S</mi><mi>j</mi></msub><msub><mi>C</mi><mi>i</mi></msub></mrow></msub><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msup><mi>e</mi><mrow><msub><mi>&#x003BB;</mi><mi>j</mi></msub></mrow></msup><msub><mi>d</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>&#x1D42E;</mi><mo stretchy="false">&#x00029;</mo><msup><mi>K</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mi>&#x1D42E;</mi><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></math></div>
+<p><mark>尺度 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>e</mi><mrow><msub><mi>&#x003BB;</mi><mi>j</mi></msub></mrow></msup></mrow></math></math> 只乘在深度上</mark>，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mrow><msub><mi>S</mi><mi>j</mi></msub><msub><mi>C</mi><mi>i</mi></msub></mrow></msub></mrow></math></math> 里的米制平移从头到尾不动。窗口内部的基线因此保住了。基线就是两个相机位置之间的那段距离，它要是被缩放了，整个窗口的尺度就跟着错。</p>
+<figure><img src="figs/2609.27702-svg-scale.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 C</b>　（编者绘制）左图对整个窗口做一次相似变换。缩放会把相机间距一起放大，原本站得对的非中心帧被推歪。右图只把缩放加在深度上，相机位置不动，点沿原视线后移。窗口内的米制基线因此保住。</figcaption></figure>
+<p>窗口内还有每帧的尺度修正 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>s</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math></math>，它们由帧间匹配点的残差约束，八轮深度归一化的重加权最小二乘来解。每轮结束后把所有 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>log</mi><msub><mi>s</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math></math> 投影到均值为零，也就是归一化到单位几何均值。帧尺度只负责窗口内部的相对修正，窗口的整体尺度交给子图图去估。</p>
+<h3>3.7 回访门控</h3>
+<p>子图之间用共享图像建立相对尺度约束。两个子图 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math></math>、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math></math> 共享的每张图上，对齐后有效像素的中位对数深度比记作 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>m</mi><mi>i</mi></msub></mrow></math></math>，相对尺度的残差是</p>
+<div class="eq"><span class="eqn">(14)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mi>r</mi><mrow><mi>a</mi><mi>b</mi></mrow><mrow><mi>s</mi></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>&#x003BB;</mi><mi>b</mi></msub><mo>&#x02212;</mo><msub><mi>&#x003BB;</mi><mi>a</mi></msub><mo>&#x02212;</mo><msub><mi>&#x003BA;</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>&#x0002C;</mo><mspace width="2em" /><msub><mi>&#x003BA;</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>&#x02110;</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub><mo stretchy="false">&#x0007C;</mo></mrow></mfrac><munder><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x02208;</mo><msub><mi>&#x02110;</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub></mrow></munder><msub><mi>m</mi><mi>i</mi></msub></mrow></math></math></div>
+<p>回访指的是机器人走回曾经到过的地方，这时候可以拿旧地图来约束当前位姿，把累积漂移压下去。它的准入流程比较长。先在 8 米内、间隔至少 5 秒的范围里检索候选。候选要过 PnP RANSAC 检验，条件是至少 50 个匹配、30 个内点、内点比例 0.25、2 像素阈值。接着还要过正深度、图像覆盖、深度一致性，以及 3σ 里程计新息检验。最多取 80 个验证过的对应点组成点组。</p>
+<p>然后是本文最有意思的一个设计。尺度约束和位姿约束走不同的门。</p>
+<p>每次验证通过的回访，它的中位深度比都会进入尺度约束集合。但它的点组只有在里程计漂移超过该回访约束自身的不确定度时，才被允许进入位姿问题、去移动位姿。</p>
+<p>这个门限的道理不难想。<mark>新约束自己也可能带错</mark>，在漂移还没超过这条约束自身误差水平的时候把它加进去，等于往解里掺偏差。等漂移涨到明显大于噪声了再放行，它带来的才是净收益。</p>
+<figure><img src="figs/2609.27702-svg-gate.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 D</b>　（编者绘制）横轴是观测继续到来，纵轴是累积漂移。虚线是这条回访约束自身的不确定度。漂移还在虚线下方时，它只进尺度约束集合。漂移涨过虚线，它的点组才被允许去改位姿。</figcaption></figure>
+<p>把这条逻辑写成流程是这样。</p>
+<pre class="flow"><code> 1   检索：8 米以内、与当前帧间隔至少 5 秒
+ 2   验证：PnP RANSAC（≥50 匹配、≥30 内点、内点比 ≥0.25、2 像素阈值）
+ 3   复查：正深度、图像覆盖、深度一致性、3σ 里程计新息检验
+ 4   取最多 80 个验证过的对应点，组成点组
+ 5   中位深度比 → 无条件加进尺度约束集合
+ 6   if 累积漂移 &gt; 这条回访约束自身的不确定度:
+ 7       点组加进位姿约束集合        # 允许它去动位姿
+ 8   else:
+ 9       点组留在一边，不参与位姿     # 漂移还没涨过噪声，加进去是掺偏差
+10   相邻子图的点组不走这个门，无条件加入</code></pre>
+<p>节点优化时只放开平移、绕重力的偏航角和 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003BB;</mi><mi>j</mi></msub></mrow></math></math>，横滚和俯仰保持滤波器给的值。图的能量函数是四项加权和，用阈值 2 的 Huber 损失。Huber 损失是一种折中，残差小的时候按平方算和平常一样，残差大到超过阈值就改成线性增长，这样个别离谱的点不会主导结果。</p>
+<div class="eq"><span class="eqn">(16)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><munder><mo>&#x02211;</mo><mrow><msub><mi>&#x02130;</mi><mi>o</mi></msub></mrow></munder><mi>&#x003C1;</mi><mo stretchy="false">&#x00028;</mo><mo fence="false" stretchy="false">&#x02016;</mo><msub><mi>W</mi><mi>o</mi></msub><msubsup><mi>&#x1D42B;</mi><mrow><mi>a</mi><mi>b</mi></mrow><mrow><mi>o</mi></mrow></msubsup><mo fence="false" stretchy="false">&#x02016;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><munder><mo>&#x02211;</mo><mrow><msub><mi>&#x02130;</mi><mi>p</mi></msub></mrow></munder><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>N</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub></mrow></mfrac><munder><mo>&#x02211;</mo><mrow><mi>k</mi></mrow></munder><mi>&#x003C1;</mi><mo stretchy="false">&#x00028;</mo><mo fence="false" stretchy="false">&#x02016;</mo><msub><mi>W</mi><mrow><mi>a</mi><mi>b</mi><mi>k</mi></mrow></msub><msubsup><mi>&#x1D42B;</mi><mrow><mi>a</mi><mi>b</mi><mi>k</mi></mrow><mrow><mi>p</mi></mrow></msubsup><mo fence="false" stretchy="false">&#x02016;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><munder><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></munder><mi>&#x003C1;</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><msub><mi>&#x003BB;</mi><mi>j</mi></msub><mo>&#x02212;</mo><msub><mi>&#x003BB;</mi><mn>0</mn></msub><mo stretchy="false">&#x0007C;</mo></mrow><mrow><mn>0.10</mn></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002B;</mo><munder><mo>&#x02211;</mo><mrow><msub><mi>&#x02130;</mi><mi>s</mi></msub></mrow></munder><mi>&#x003C1;</mi><mspace width="negativethinmathspace" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mo stretchy="false">&#x0007C;</mo><msubsup><mi>r</mi><mrow><mi>a</mi><mi>b</mi></mrow><mrow><mi>s</mi></mrow></msubsup><mo stretchy="false">&#x0007C;</mo></mrow><mrow><msub><mi>&#x003C3;</mi><mrow><mi>a</mi><mi>b</mi></mrow></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></math></div>
+<blockquote><p>📌 <strong>控制视角</strong>　这个门控是一次假设检验。回访约束本身也可能有错，无条件把它当硬约束，错误就会被写进位姿。做法是拿漂移量和约束的不确定度比大小。漂移没超过噪声水平时，加它就是引入偏差。这套逻辑和卡尔曼滤波里用新息协方差做门限一致，也解释了后面消融实验里去掉门控反而变差的结果。</p></blockquote>
+<p>最后是输出坐标系。每次提交算出里程计到地图坐标系的刚体修正 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mrow><mi>M</mi><mi>O</mi></mrow></msub></mrow></math></math>，实时位姿按它发布。修正量的变化超过 5 厘米或 2 度时，就在一个传感器秒内插值过渡，平移线性插值，旋转沿 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">O</mi></mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></math> 测地线，也就是在旋转空间里走最短的那条弧。滤波器的状态始终不被修改。</p>
+<hr>
+<h2>四、结果</h2>
+<h3>4.1 起步时间</h3>
+<p>EuRoC 是视觉惯性领域最常用的公开数据集，132 个十秒窗口的统计如下。</p>
+<div class="scroll"><table><thead><tr><th>初始化器</th><th>成功</th><th>T_f (s)</th><th>T_q (s)</th><th>重力误差 (°)</th><th>ATE (m)</th></tr></thead><tbody><tr><td>OpenVINS</td><td>111/132</td><td>3.65</td><td>3.87</td><td>0.85</td><td>0.042</td></tr><tr class='hl'><td><strong>本文</strong></td><td><strong>109/132</strong></td><td><strong>2.43</strong></td><td><strong>2.66</strong></td><td><strong>0.99</strong></td><td><strong>0.044</strong></td></tr></tbody></table></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mi>f</mi></msub></mrow></math></math> 是首次报出位姿的时间，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mi>q</mi></msub></mrow></math></math> 把失败也算成十秒，所以更能反映真实体验。中位首帧时间从 <strong>3.65 秒压到 2.43 秒</strong>。分场景看差距更大，Machine Hall 里 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mi>q</mi></msub></mrow></math></math> 从 4.68 秒降到 2.30 秒，直接减半。</p>
+<p>Vicon room 是反的。那里 OpenVINS 的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mi>q</mi></msub></mrow></math></math> 是 3.15 秒，DAVIO 是 4.50 秒。Vicon room 空间小、运动充分，视差来得快，经典初始化器本来就占优。DAVIO 多花的那一秒，是它等深度模型出结果的时间。</p>
+<h3>4.2 轨迹精度</h3>
+<p>EuRoC Machine Hall，ATE 指绝对轨迹误差，单位是米。</p>
+<div class="scroll"><table><thead><tr><th>序列</th><th>OpenVINS</th><th>实时输出</th><th>最终轨迹</th><th>相对 OpenVINS</th></tr></thead><tbody><tr><td>MH_01</td><td>0.099</td><td>0.119</td><td><strong>0.065</strong></td><td>−34%</td></tr><tr><td>MH_02</td><td>0.092</td><td>0.098</td><td><strong>0.062</strong></td><td>−33%</td></tr><tr><td>MH_03</td><td>0.158</td><td>0.143</td><td><strong>0.101</strong></td><td>−36%</td></tr><tr><td>MH_04</td><td>0.278</td><td>0.212</td><td><strong>0.153</strong></td><td>−45%</td></tr><tr><td>MH_05</td><td>0.281</td><td>0.254</td><td><strong>0.200</strong></td><td>−29%</td></tr></tbody></table></div>
+<p>最终轨迹在五条序列上全部改善，幅度 29% 到 45%。实时输出那列单独看更有意思。<mark>只有 MH_03 到 MH_05 打平或略好，MH_01 和 MH_02 反而比原生轨迹差</mark>。</p>
+<p>差别在于两条轨迹的含义不同。最终轨迹是跑完之后拿全部修正重新导出的，实时输出只能用发布那一刻已经到手的修正，后面的观测还没发生。图的修正需要用后续观测去换，因果输出拿不到全部收益。论文把这个区别明确分成了 causal 和 final 两套指标，这一点做得比多数工作细致。</p>
+<h3>4.3 建图精度</h3>
+<figure><img src="figs/2609.27702-fig3.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　地图到参考面的距离。(a) 是 EuRoC 的 V1 02 和 V2 02，参考来自 Leica 扫描；(b) 是 ORI 的 R01 和 R03，参考是测量级数据。两组都用刚体轨迹对齐，不做表面 ICP。DAVIO 和 ScaRF 的建图器用同一条 OpenVINS 轨迹、同一个 DA3-Base 权重，属于同姿态对比。MASt3R-Fusion 和 VGGT-SLAM2 用自己的轨迹，后者还额外做了一次全局 Sim(3) 拟合，这个处理对它有利。每张小图的标题里是平均距离和 F@10。</figcaption></figure>
+<p>ORI 数据集上，同一轨迹下对比建图层。F@10 指十厘米阈值下的 F 分数，管子越贴合参考面得分越高。</p>
+<div class="scroll"><table><thead><tr><th>方法</th><th>位姿来源</th><th>全局平均误差 (m) ↓</th><th>F@10 ↑</th><th>分块精度 (%) ↑</th></tr></thead><tbody><tr><td>无位姿条件化</td><td>VIO</td><td>0.219</td><td>0.38</td><td>20.1</td></tr><tr class='hl'><td><strong>本文在线</strong></td><td>VIO</td><td><strong>0.080</strong></td><td><strong>0.75</strong></td><td><strong>60.8</strong></td></tr><tr><td>ScaRF 建图器（离线）</td><td>VIO</td><td>0.084</td><td>0.69</td><td>61.6</td></tr><tr><td>MASt3R-Fusion</td><td>自有</td><td>0.194</td><td>0.67</td><td>49.6</td></tr><tr><td>VGGT-SLAM2</td><td>自有</td><td>0.161</td><td>0.50</td><td>34.0</td></tr></tbody></table></div>
+<p>位姿条件化把中位全局误差从 <strong>0.219 米压到 0.080 米</strong>，F@10 从 0.38 提到 0.75。同一套 VIO 位姿下，DAVIO 在线跑赢了 ScaRF 的离线建图器。</p>
+<h3>4.4 消融给出的分工</h3>
+<ul><li>去掉位姿条件化，F@10 掉到距离无参考基线 0.03 以内，表面质量主要来自条件化</li><li>固定图位姿，F@10 变化不超过 0.003，但 MH_03 的 ATE 从 0.101 米退回 0.158 米，也就是未修正里程计的水平</li><li>去掉回访，ATE 同样是 0.158 米，整个修正效果全部来自回访</li><li>去掉漂移门控，ATE 变成 0.116 米，比完整的 0.101 米差</li></ul>
+<p><strong>最后一条是对 3.7 节那套门控逻辑的直接验证。</strong> 四个模块各管一摊，分工清楚，这种消融在视觉惯性领域其实不多见。</p>
+<hr>
+<h2>五、局限</h2>
+<h3>深度质量是剩下的主要误差源</h3>
+<p>论文自己指出这一点，而且把位姿精度与深度质量并列为两个主要误差源，这里只展开深度这一半。把 DA3-Base 换成 DA3-Large，在线全局误差从 <strong>0.080 降到 0.061 米</strong>，F@10 从 0.75 升到 0.81。精修和图的修正都在同一个深度预测上做文章，地基不牢的时候上层能救的有限。</p>
+<h3>优势体现在抗漂移，不在绝对建图精度</h3>
+<p>换成参考位姿之后，ScaRF 的建图器反而更准，全局误差 0.040 对 0.069 米。把两者同时放到 OpenVINS 位姿上，DAVIO 的误差涨 26%，ScaRF 涨 110%。DAVIO 的长处是对里程计漂移不敏感，位姿好的时候它并不占优。</p>
+<h3>回访约束有时帮倒忙</h3>
+<p>V1_03 和 V2_02 两段序列上，<mark>去掉回访反而让 F@10 略升</mark>，幅度是 0.009 和 0.049。论文的猜测是部分被接收的回访给出了不精确的尺度约束。这个现象论文没有继续解释，只说效果依序列而定。</p>
+<h3>效率提升有场景条件</h3>
+<p>Vicon room 里 DAVIO 的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mi>q</mi></msub></mrow></math></math> 明显更差，4.50 对 3.15 秒。它买到的是视差贫乏场景里的提前起步，代价是富运动场景里多绕的一段。整体成功率也略低，109/132 对 111/132。</p>
+<h3>闸门只是数值兜底</h3>
+<p>论文明确写了奇异值比和基线深度比这些判据不构成可观性证明，因为等式约束 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo fence="false" stretchy="false">&#x02016;</mo><mi>&#x1D420;</mi><mo fence="false" stretchy="false">&#x02016;</mo><mo>&#x0003D;</mo><msub><mi>g</mi><mn>0</mn></msub></mrow></math></math> 可能让被拒的情形重新变得可解。保守拒绝之所以安全，全靠 OpenVINS 初始化器还在后台待命。这套逻辑换到一个没有备用初始化器的系统上就要重新权衡。</p>
+<h3>算力门槛（编者补充，论文只陈述了平台）</h3>
+<p>实验平台是 i7-12700H 加 RTX 3060 Laptop，显存 6 GB，DA3-Base 跑 504 像素。论文只陈述了这个平台，没有把嵌入式可行性列为局限，下面这句是我的补充观察。前馈几何模型的显存占用通常是这类方案落地时的瓶颈。</p>
+<hr>
+<h2>六、我的评价</h2>
+<p>做对的地方里，<strong>3.2 节那段秩分析最值得单独学</strong>。它把一个看起来约束充足的系统拆到只剩 3 个独立方程，然后老实承认五帧窗口只多 1 帧冗余。这种先把账算清的写法，比堆模块的工作有用得多。尺度只作用在深度上、保住窗口内的米制基线，也是想明白了相似变换会破坏什么之后才做得出的设计。</p>
+<p>滤波器一行不改，靠缓冲回放做交接，系统边界划得干净，出了问题好定位。回访约束按漂移量门控而不是无条件相信，消融实验里去掉它反而变差，说明这个门确实在起作用。</p>
+<p>存疑的地方也有几处。初始化器的拒绝率不低，靠的是后台那套经典初始化器兜底，这个设计在论文里成立，移植到没有备用初始化器的系统上，保守拒绝的成本会立刻显出来。深度模型同时承担初始化和建图两个关键角色，深度一变差两端一起受影响，论文用换模型规格的方式展示了敏感度，但没给出深度质量的具体阈值。回访在个别序列上帮倒忙这件事，只用一句可能是不精确的尺度约束带过。<strong>既然有门控，为什么还会漏进来</strong>，我想看到更细的分析。</p>
+<p>论文的定位是让前馈几何模型和经典滤波器各干擅长的那一半。<mark>这个方向务实</mark>。前馈模型的能力在涨，滤波器的成熟度不用重造，Depth Anything 这类模型继续变强，同样的框架能直接吃到红利，3.6 节里 DA3-Large 带来的提升就是证据。</p>
+<hr>
+<h2>七、可以接着做什么</h2>
+<p>读完这篇，我顺手想了几个能往下走的方向。都只是读完之后的即时联想，给正在找题的人当线索。</p>
+<h3>1. 起步时主动晃一下，把尺度换出来</h3>
+<p>3.3 节那段退化分析指出匀速起步时尺度不可观。这个结论可以反过来用。既然观测矩阵的秩不够，就别指望被动等待，让机器人在起步阶段主动做一个已知的小幅激励，比如底盘轻微横向摆动，或者短暂的斜向平移。用可控的运动去补观测矩阵的秩，把不可观的方向变成可观。</p>
+<p>这在控制里是熟面孔。系统辨识早就在做这件事，输入信号必须持续激励，否则参数根本辨识不出来。视觉惯性初始化长期把自己当成一个被动估计问题，可初始化那几十秒机器人往往还没开始执行任务，时间空着也是空着。拿这段空闲设计一个激励动作，成本几乎为零。</p>
+<p>要回答的问题有两个。激励做多大才够，这个可以拿观测矩阵的条件数当在线指标，够门限就停。以及激励会占用任务时间，多久能收敛得实测。</p>
+<h3>2. 把回访门控从单次比较换成序贯检验</h3>
+<p>3.7 节的门控是逐次独立判断，拿漂移量和单条约束的不确定度比大小。消融表里 V1_03 和 V2_02 去掉回访反而变好，说明这个判据会漏进坏约束。</p>
+<p>一种改法是累积证据。同一条回访通常会被多次观测，把多次观测的一致性累积起来，用序贯概率比检验决定何时接受，比每次单独裁决更稳。这样既能控制误接收率，又能在证据不足时先挂起。</p>
+<p>另一种改法是让门限自适应。论文用的是固定的相对比较，没有考虑这条约束此前的历史表现。给每条回访维护一个成功率，用它去调整门限，应该能压住那些偶发的坏约束。</p>
+<h3>3. 让深度质量的判断进入在线闭环</h3>
+<p>局限第一条是深度质量决定天花板，DA3-Base 换成 Large 就能大幅改善。论文把深度置信度用在了初始化的加权和 LMedS 上，但用量是静态的，一开始定好就不再变。</p>
+<p>可以做的是在线估计每个区域的深度可靠程度，并让它影响决策。某个区域的深度持续和滤波器预测对不上，就把这块降权，或者触发一次局部重新初始化。这比统一换一个更大的模型省算力，也更容易解释清楚系统为什么这样决策。</p>
+<h3>4. 换掉深度模型，检验天花板这个结论</h3>
+<p>论文只在 Depth Anything 3 上验证，用的还是它自己的权重。深度质量是天花板这个结论，换一个前馈几何模型是否依然成立，值得测一遍。Metric3D、UniDepth 这一类如果接进同一个框架，除了精度，还要看它们对初始化拒绝率和回访门控效果的影响。</p>
+<p>结论稳定，说明这套框架的价值不依赖某一个模型。结论不稳定，说明论文那三条贡献里有一条是跟特定模型绑定的。</p>
+<div class="fine">上面四条都是读完文章之后的即时联想，我没有做实验，也没有查证过是否已有人在做，更没有验证过可行性。<strong>只当选题线索看，不要当结论用。</strong> 真要动手，先把它当成假设去验证。</div>
+<hr>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>词</th><th>一句话解释</th></tr></thead><tbody><tr><td><strong>VIO</strong></td><td>视觉惯性里程计，用摄像头加 IMU 一起估位姿</td></tr><tr><td><strong>IMU</strong></td><td>惯性测量单元，测加速度和角速度的小芯片，手机里就有</td></tr><tr><td><strong>预积分</strong></td><td>把两帧之间的 IMU 测量提前积分成相对运动量，省得反复重算</td></tr><tr><td><strong>比力</strong></td><td>加速度计测到的量，等于真实加速度加上重力的反向</td></tr><tr><td><strong>视差</strong></td><td>同一个点在不同位置看起来的位移，深度靠它反推</td></tr><tr><td><strong>秩</strong></td><td>独立方程的个数，和方程总数不是一回事</td></tr><tr><td><strong>可观性</strong></td><td>某个状态能不能从观测里解出来，由系统结构决定</td></tr><tr><td><strong>相似变换</strong></td><td>整体缩放加旋转平移，会把相机基线一起放大</td></tr><tr><td><strong>基线</strong></td><td>两个相机位置之间的那段距离，尺度对不对全看它</td></tr><tr><td><strong>零偏</strong></td><td>传感器那个固定的系统性偏差，比如陀螺静止时读数的缓慢漂移</td></tr><tr><td><strong>DA3</strong></td><td>Depth Anything 3，前馈多视图深度模型，一次前向出深度和相对位姿</td></tr><tr><td><strong>LMedS</strong></td><td>最小平方中位数，用残差中位数打分，能扛住近一半的外点</td></tr><tr><td><strong>Huber 损失</strong></td><td>残差小的时候按平方算，大了改成线性，降低外点影响</td></tr><tr><td><strong>条件数</strong></td><td>衡量方程组病态程度的量，奇异值比太小说明有的方向解不出来</td></tr><tr><td><strong>OpenVINS</strong></td><td>开源的视觉惯性滤波器，本文直接复用了它的初始化入口</td></tr><tr><td><strong>回访</strong></td><td>走到曾经到过的地方，用旧地图约束当前位姿，抑制漂移</td></tr><tr><td><strong>漂移门控</strong></td><td>只有累积漂移超过约束自身的不确定度时，才允许这条约束去改位姿</td></tr><tr><td><strong>ATE</strong></td><td>绝对轨迹误差，衡量估计轨迹与真值的偏差，越小越好</td></tr><tr><td><strong>F@10</strong></td><td>10 厘米阈值下的 F 分数，衡量重建表面与参考面的吻合度</td></tr><tr><td><strong>SO(3) 与 SE(3)</strong></td><td>三维旋转群和刚体变换群，位姿在它们上面做优化</td></tr></tbody></table></div>
+<h2>相关</h2><p style="color:var(--ink2);font-size:14px">站上已有的精读</p><ul><li><a href="2609.40244.html">StreamRig</a><span style="color:var(--ink3);font-size:13px">　本轮新精读，同源思路：同样靠冻结的前馈几何前端供结构，差别在本文用 IMU 与预积分补尺度，StreamRig 用标定相机组的组内几何做因果流式估计</span></li></ul><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li><a href="https://arxiv.org/abs/2606.00307" target="_blank" rel="noopener">ScaRF-SLAM</a><span style="color:var(--ink3);font-size:13px">　arXiv:2606.00307　最接近的工作：同样用 DA3 做条件化，但位姿固定、不让子图去改位姿</span></li><li><a href="https://arxiv.org/abs/2511.10647" target="_blank" rel="noopener">Depth Anything 3</a><span style="color:var(--ink3);font-size:13px">　arXiv:2511.10647　本文兼做初始化与建图的那个前馈几何模型</span></li><li>OpenVINS<span style="color:var(--ink3);font-size:13px">　被直接复用的滤波器，它自带的初始化器一直挂在后台备用</span></li><li>ORB-SLAM3<span style="color:var(--ink3);font-size:13px">　端到端对比基线，覆盖率只有 74–82%</span></li><li>MASt3R-Fusion<span style="color:var(--ink3);font-size:13px">　端到端对比基线之一</span></li><li>VGGT-SLAM 2.0<span style="color:var(--ink3);font-size:13px">　端到端对比基线之一，额外做了全局 Sim(3) 拟合，对它有利</span></li></ul>
+<a class="paperlink" href="https://arxiv.org/abs/2609.27702" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2609.27702） →</a>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:31</footer>
+</div></body></html>

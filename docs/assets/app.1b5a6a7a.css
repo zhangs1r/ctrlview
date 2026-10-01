@@ -26,6 +26,9 @@ p{margin:15px 0}
 ul,ol{padding-left:24px;margin:15px 0}li{margin:8px 0}
 hr{border:0;border-top:1px solid var(--line);margin:40px 0}
 strong{font-weight:680}
+mark{background:linear-gradient(180deg,transparent 56%,var(--accent-bg) 56%);color:inherit;padding:0 .05em}
+u{text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:1.5px;text-underline-offset:3px}
 .meta{color:var(--ink3);font-size:14px;line-height:1.9}
 .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
 .tag{font-size:12px;padding:4px 11px;border-radius:99px;background:var(--accent-bg);color:var(--accent);font-weight:600}
@@ -58,6 +61,9 @@ blockquote{margin:22px 0;padding:14px 20px;background:var(--card);border-left:3p
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .warn{background:rgba(190,80,40,.09);border-left:3px solid #b85028;padding:13px 17px;
   border-radius:0 8px 8px 0;margin:20px 0}
+.fine{margin:18px 0;padding:2px 0 2px 14px;border-left:3px solid var(--line);
+  font-size:13px;line-height:1.75;color:var(--ink3)}
+.fine strong{color:var(--ink2)}
 footer{color:var(--ink3);font-size:13px;text-align:center;padding:34px 0 0}
 nav.bar{border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:0;
   position:sticky;top:0;background:var(--bg);z-index:10}

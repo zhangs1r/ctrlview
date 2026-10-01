@@ -7,7 +7,7 @@
 - 手机/电脑双适配，公式用 MathML 原生渲染
 - 论文原文链接必留（回 arXiv 下载 PDF）
 """
-import os, re, sys, json, base64, html as H, glob, datetime, subprocess
+import os, re, sys, json, base64, html as H, glob, datetime, subprocess, shutil
 
 # ---------- 站点级 CSS（与精读页共用一套设计语言） ----------
 BASE_CSS = """
@@ -38,6 +38,9 @@ p{margin:15px 0}
 ul,ol{padding-left:24px;margin:15px 0}li{margin:8px 0}
 hr{border:0;border-top:1px solid var(--line);margin:40px 0}
 strong{font-weight:680}
+mark{background:linear-gradient(180deg,transparent 56%,var(--accent-bg) 56%);color:inherit;padding:0 .05em}
+u{text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:1.5px;text-underline-offset:3px}
 .meta{color:var(--ink3);font-size:14px;line-height:1.9}
 .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
 .tag{font-size:12px;padding:4px 11px;border-radius:99px;background:var(--accent-bg);color:var(--accent);font-weight:600}
@@ -70,6 +73,9 @@ blockquote{margin:22px 0;padding:14px 20px;background:var(--card);border-left:3p
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .warn{background:rgba(190,80,40,.09);border-left:3px solid #b85028;padding:13px 17px;
   border-radius:0 8px 8px 0;margin:20px 0}
+.fine{margin:18px 0;padding:2px 0 2px 14px;border-left:3px solid var(--line);
+  font-size:13px;line-height:1.75;color:var(--ink3)}
+.fine strong{color:var(--ink2)}
 footer{color:var(--ink3);font-size:13px;text-align:center;padding:34px 0 0}
 nav.bar{border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:0;
   position:sticky;top:0;background:var(--bg);z-index:10}
@@ -105,6 +111,10 @@ BUILD = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 CSSFILE = "assets/app.css"
 BUILD_HUMAN = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
+# 公式转换失败的记录：静默降级成 <code class="tex-err"> 会让线上悄悄出现一屏 LaTeX 源码，
+# 所以哪怕不中止构建，也必须在结尾把数量和样本打出来。
+TEX_FAILS = []
+
 
 def tex(latex, display=False):
     try:
@@ -112,7 +122,8 @@ def tex(latex, display=False):
         mml = C.convert(latex, display="block" if display else "inline")
         d = "block" if display else "inline"
         return f'<math xmlns="http://www.w3.org/1998/Math/MathML" display="{d}">{mml.split(">",1)[1] if ">" in mml else mml}</math>'
-    except Exception:
+    except Exception as e:
+        TEX_FAILS.append((latex.strip()[:60], type(e).__name__))
         return f'<code class="tex-err">{H.escape(latex)}</code>'
 
 
@@ -127,11 +138,28 @@ def cell_md(s):
 
 def inline_md(s):
     s = H.escape(s)
-    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
-    s = re.sub(r"(?<!\*)\*([^*]+?)\*(?!\*)", r"<em>\1</em>", s)
-    s = re.sub(r"`(.+?)`", r"<code>\1</code>", s)
+    # 行内公式与行内代码先摘出来占位，免得其中的 * _ = 被强调语法误伤
+    stash = []
+
+    def _stash(kind):
+        def f(m):
+            stash.append((kind, m.group(1)))
+            return "\x00%d\x00" % (len(stash) - 1)
+        return f
+
+    s = re.sub(r"\$([^$]+)\$", _stash("math"), s)
+    s = re.sub(r"`([^`]+)`", _stash("code"), s)
     s = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2">\1</a>', s)
-    return s
+    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"==(.+?)==", r"<mark>\1</mark>", s)
+    s = re.sub(r"__(.+?)__", r"<u>\1</u>", s)
+    s = re.sub(r"(?<!\*)\*([^*]+?)\*(?!\*)", r"<em>\1</em>", s)
+
+    def _restore(m):
+        kind, text = stash[int(m.group(1))]
+        return f"<code>{text}</code>" if kind == "code" else tex(text, False)
+
+    return re.sub(r"\x00(\d+)\x00", _restore, s)
 
 
 def _eqnum(s):
@@ -172,11 +200,6 @@ def md2html(md, figdir=""):
             out.append(f'<div class="eq"><span class="eqn">{num}</span>{tex(latex, True)}</div>')
             continue
 
-        if re.search(r"\$[^$]+\$", s):
-            out.append("<p>" + re.sub(r"\$([^$]+)\$",
-                        lambda m: tex(m.group(1), False), inline_md(s)) + "</p>")
-            i += 1; continue
-
         m = re.match(r'^<figure\s+src="([^"]+)"\s+caption="([^"]*)">', s)
         if m:
             src, cap = m.group(1), H.unescape(m.group(2))
@@ -214,6 +237,8 @@ def md2html(md, figdir=""):
             continue
         if s.startswith("⚠"):
             out.append(f'<div class="warn">{cell_md(s.replace("⚠","",1).strip())}</div>'); i += 1; continue
+        if s.startswith("※"):
+            out.append(f'<div class="fine">{cell_md(s[1:].strip())}</div>'); i += 1; continue
 
         if s.startswith("|") and i + 1 < len(lines) and re.match(r"^\|[\s:|-]+\|$", lines[i+1].strip()):
             hdr = [x.strip() for x in s.strip("|").split("|")]
@@ -221,7 +246,7 @@ def md2html(md, figdir=""):
             rows = []
             while i < len(lines) and lines[i].strip().startswith("|"):
                 rows.append([x.strip() for x in lines[i].strip().strip("|").split("|")]); i += 1
-            th = "".join(f"<th>{H.escape(x)}</th>" for x in hdr)
+            th = "".join(f"<th>{cell_md(x)}</th>" for x in hdr)
             tb = ""
             for r in rows:
                 cls = " class='hl'" if r and ("本文" in r[0] or "InfiniHand" in r[0]) else ""
@@ -263,13 +288,19 @@ def parse_fm(md):
     return fm
 
 
-def nav(active=""):
+def nav(active="", self_page="index.html"):
     return ('<nav class="bar"><div class="inner">'
             '<a class="brand" href="index.html">CtrlView</a>'
             f'<a href="index.html" class="{"on" if active=="home" else ""}">首页</a>'
             f'<a href="columns.html" class="{"on" if active=="cols" else ""}">栏目</a>'
+            f'<a href="topics.html" class="{"on" if active=="topic" else ""}">主题</a>'
+            f'<a href="glossary.html" class="{"on" if active=="gloss" else ""}">术语表</a>'
+            f'<a href="search.html" class="{"on" if active=="search" else ""}">搜索</a>'
+            f'<a href="history.html" class="{"on" if active=="hist" else ""}">历史</a>'
             f'<a href="archive.html" class="{"on" if active=="arch" else ""}">全部文章</a>'
-            f'<a href="../index.html?force={BUILD}" title="绕过 CDN 缓存">↻ 强制刷新</a>'
+            # 产物里所有页面都在 docs/ 同一层，所以这里必须是相对同级的 index，
+            # 早先写成 ../index.html 会往上跳一层，直接 404。
+            f'<a href="{self_page}?force={BUILD}" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a>'
             '</div></nav>')
 
 
@@ -292,13 +323,150 @@ def build(repo, out):
     open(f"{out}/{CSSFILE}", "w", encoding="utf-8").write(BASE_CSS)
     globals()["CSSFILE"] = CSSFILE
 
+    # 图片：posts 里写的是 figs/xxx.png（相对产物根目录），
+    # 所以 figs/ 必须被复制进产物目录，否则新文章的图全部 404。
+    nfig = 0
+    if os.path.isdir(f"{repo}/figs"):
+        os.makedirs(f"{out}/figs", exist_ok=True)
+        for f in glob.glob(f"{repo}/figs/*"):
+            if os.path.isfile(f):
+                shutil.copy2(f, os.path.join(out, "figs", os.path.basename(f)))
+                nfig += 1
+
     # ---- 精读页 ----
     cname0 = {c["id"]: c["name"] for c in columns}
+
+    # ---------- 共用索引：术语表 / 主题 / 相关 / 搜索 ----------
+    def plain_body(md):
+        """剥掉 front-matter、图表块和公式块，只留可读文字"""
+        b = md.split("---", 2)[2] if md.startswith("---") else md
+        b = re.sub(r"```.*?```", " ", b, flags=re.S)
+        b = re.sub(r"<figure.*?</figure>", " ", b, flags=re.S)
+        b = re.sub(r"\$\$.*?\$\$", " ", b, flags=re.S)
+        b = re.sub(r"\$[^$\n]*\$", " ", b)
+        return b
+
+    def strip_md(s):
+        s = re.sub(r"<[^>]+>", "", s)
+        s = re.sub(r"[*=`>#]", "", s)
+        return re.sub(r"\s+", " ", s).strip()
+
+    def tags_of(p):
+        raw = p["fm"].get("tags", "").strip().strip("[]")
+        out = []
+        for t in raw.split(","):
+            t = t.strip().strip('"').strip("'").strip()
+            if t:
+                out.append(t)
+        return out
+
+    ptitle = {p["id"]: p["fm"].get("title", p["id"]) for p in posts}
+    pmap = {p["id"]: p for p in posts}
+
+    # 术语表：把每篇「名词速查」里的条目汇总
+    gloss = {}
+    for p in posts:
+        m = re.search(r"##\s*名词速查\s*\n(.*?)(?=\n##|\Z)", p["md"], re.S)
+        if not m:
+            continue
+        for line in m.group(1).split("\n"):
+            line = line.strip()
+            if not line.startswith("|"):
+                continue
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) < 2:
+                continue
+            term = strip_md(cells[0])
+            if not term or term == "词" or set(term) <= set("-: "):
+                continue
+            g = gloss.setdefault(term, {"def": strip_md(cells[1]), "from": []})
+            if p["id"] not in g["from"]:
+                g["from"].append(p["id"])
+            elif cells[1]:
+                g["def"] = strip_md(cells[1])
+    gloss_sorted = sorted(gloss.items(), key=lambda kv: kv[0])
+
+    # 主题：按 front-matter 的 tags 聚合
+    topics = {}
+    for p in posts:
+        for t in tags_of(p):
+            topics.setdefault(t, []).append(p["id"])
+    topics = dict(sorted(topics.items(), key=lambda kv: (-len(kv[1]), kv[0])))
+
+    # 相关：正文互相提及 + data/relations.json 里的人工记录
+    marks = {}
+    for p in posts:
+        m = re.search(r"[A-Za-z][A-Za-z0-9\-]{3,}", p["fm"].get("title", ""))
+        if m:
+            marks[m.group(0)] = p["id"]
+    rel_p = f"{repo}/data/relations.json"
+    curated = json.load(open(rel_p, encoding="utf-8")) if os.path.exists(rel_p) else {}
+    MUT = ' style="color:var(--ink3);font-size:13px"'
+
+    def related_html(p):
+        body = plain_body(p["md"])
+        inside, outside, used = [], [], set()
+        for pid in ptitle:
+            if pid == p["id"]:
+                continue
+            hit = pid in body or any(k in body for k, v in marks.items() if v == pid)
+            if hit:
+                used.add(pid)
+                inside.append(f'<li><a href="{H.escape(pid)}.html">{H.escape(ptitle[pid])}</a>'
+                              f'<span{MUT}>　正文提及</span></li>')
+        for r in curated.get(p["id"], []):
+            pid, name = r.get("arxiv", ""), r.get("name", "")
+            note = H.escape(r.get("note", ""))
+            tail = f'　{note}' if note else ""
+            if pid and pid in ptitle:
+                if pid in used:
+                    continue
+                used.add(pid)
+                inside.append(f'<li><a href="{H.escape(pid)}.html">{H.escape(name)}</a>'
+                              f'<span{MUT}>{tail or "　站上有精读"}</span></li>')
+            elif pid:
+                outside.append(f'<li><a href="https://arxiv.org/abs/{H.escape(pid)}" '
+                               f'target="_blank" rel="noopener">{H.escape(name)}</a>'
+                               f'<span{MUT}>　arXiv:{H.escape(pid)}{tail}</span></li>')
+            else:
+                outside.append(f'<li>{H.escape(name)}<span{MUT}>{tail}</span></li>')
+        if not inside and not outside:
+            return ""
+        h = '<h2>相关</h2>'
+        if inside:
+            h += ('<p style="color:var(--ink2);font-size:14px">站上已有的精读</p><ul>'
+                  + "".join(inside) + "</ul>")
+        if outside:
+            h += ('<p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul>'
+                  + "".join(outside) + "</ul>")
+        return h
+
+    def topic_links(p):
+        ts = tags_of(p)
+        if not ts:
+            return ""
+        return "".join(f'<a class="tag" href="topics.html#t-{H.escape(t)}">{H.escape(t)}</a>'
+                       for t in ts)
+
+    # 搜索索引：标题 + 栏目 + 标签 + 摘要片段
+    search_rows = []
+    for p in posts:
+        b = strip_md(plain_body(p["md"]))
+        b = re.sub(r"^#+.*?$", "", b, flags=re.M)
+        search_rows.append({
+            "id": p["id"],
+            "t": p["fm"].get("title", ""),
+            "c": cname0.get(p["fm"].get("column", ""), p["fm"].get("column", "")),
+            "g": tags_of(p),
+            "d": p["fm"].get("date", ""),
+            "s": b[:180],
+        })
+
     for p in posts:
         fm = p["fm"]
         cn = cname0.get(fm.get("column", ""), fm.get("column", ""))
-        tags = "".join(f'<span class="tag">{H.escape(t.strip())}</span>'
-                       for t in fm.get("tags", "[]").strip("[]").split(",") if t.strip())
+        # 标签统一从 tags_of 取，顺带把老写法里残留的引号清掉，并链到主题页
+        tags = topic_links(p)
         aid = p["id"]
         body = md2html(p["md"], figdir="figs/")
         doc = f"""<!DOCTYPE html><html lang="zh-CN"><head>
@@ -309,8 +477,9 @@ def build(repo, out):
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
 <link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
-{nav()}
+{nav(self_page=f"{aid}.html")}
 <div class="wrap">
 <header class="top">
 <div class="kicker">{H.escape(cn)} · 论文精读</div>
@@ -320,6 +489,7 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 <div class="tags">{tags}</div>
 </header>
 {body}
+{related_html(p)}
 <a class="paperlink" href="https://arxiv.org/abs/{aid}" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:{aid}） →</a>
 <footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 {BUILD_HUMAN}</footer>
@@ -348,6 +518,7 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
 <link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
 {nav('home')}
 <div class="wrap wide">
@@ -358,8 +529,11 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 </header>
 <div style="background:var(--card);border:1px solid var(--line);border-radius:10px;
   padding:14px 18px;margin:24px 0;font-size:14px;color:var(--ink2);line-height:1.8">
-<b>最后更新：{BUILD_HUMAN}</b>（北京时间）· 每天 12:10 自动跑批<br>
-<span style="color:var(--ink3)">若看到旧内容，点上方「↻ 强制刷新」，或用 Ctrl/Cmd + Shift + R 硬刷新。</span>
+<b>最后更新：{BUILD_HUMAN}</b>（北京时间）· 每周一 18:00 自动跑批<br>
+<span style="color:var(--ink3)">若看到旧内容，点上方「↻ 强制刷新」，或用 Ctrl/Cmd + Shift + R 硬刷新。</span><br>
+<span style="color:var(--ink2)">也可以 <a href="feed.xml">订阅 Atom</a>，或者直接
+<a href="search.html">搜索</a>、翻<a href="topics.html">主题</a>、
+查<a href="glossary.html">跨文章术语表</a>、看<a href="history.html">历史推荐</a>。</span>
 </div>
 <h2>最新精读</h2>
 <div class="cards">{cards}</div>
@@ -385,7 +559,7 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 <title>栏目 · CtrlView</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
-{nav('cols')}<div class="wrap">
+{nav('cols', 'columns.html')}<div class="wrap">
 <header class="top"><div class="kicker">全部栏目</div><h1>按领域浏览</h1>
 <p style="color:var(--ink2)">一篇论文可能同时属于多个领域。每栏独立成页，交叉内容以交叉标签呈现。</p>
 </header>{sec}<footer>CtrlView · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
@@ -396,13 +570,188 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 <title>全部文章 · CtrlView</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
-{nav('arch')}<div class="wrap wide">
+{nav('arch', 'archive.html')}<div class="wrap wide">
 <header class="top"><div class="kicker">全部文章</div><h1>归档（{len(posts)} 篇）</h1></header>
 <div class="cards">{cards}</div><footer>CtrlView · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
 
+    # ---- 主题页（按 tags 聚合） ----
+    tsec = ""
+    for t, ids in topics.items():
+        cards = "".join(
+            f'<a class="card" href="{H.escape(pid)}.html">'
+            f'<div class="cname">{H.escape(cname0.get(pmap[pid]["fm"].get("column", ""), ""))}</div>'
+            f'<div class="ctitle">{H.escape(ptitle[pid])}</div>'
+            f'<div class="cmeta">arXiv:{H.escape(pid)} · '
+            f'{H.escape(pmap[pid]["fm"].get("read_time", ""))}</div></a>' for pid in ids)
+        tsec += (f'<h2 id="t-{H.escape(t)}">{H.escape(t)}'
+                 f'<span class="badge">{len(ids)} 篇</span></h2><div class="cards">{cards}</div>')
+    if not tsec:
+        tsec = '<p style="color:var(--ink3)">还没有任何主题。</p>'
+    open(f"{out}/topics.html", "w", encoding="utf-8").write(f"""<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>主题 · CtrlView</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
+{nav('topic', 'topics.html')}<div class="wrap wide">
+<header class="top"><div class="kicker">主题</div><h1>按主题浏览</h1>
+<p style="color:var(--ink2)">一篇论文可能落在多个主题下。主题来自每篇正文的标签，按篇数排序。</p>
+</header>
+{tsec}
+<footer>CtrlView · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
+
+    # ---- 术语表（汇总每篇的「名词速查」） ----
+    grows = ""
+    for term, g in gloss_sorted:
+        srcs = "、".join(f'<a href="{H.escape(i)}.html">{H.escape(ptitle[i])}</a>'
+                        for i in g["from"])
+        grows += (f'<tr><td style="white-space:nowrap;font-weight:600">{cell_md(term)}</td>'
+                  f'<td>{cell_md(g["def"])}</td>'
+                  f'<td style="font-size:13px">{srcs}</td></tr>')
+    if not grows:
+        grows = '<tr><td colspan="3" style="color:var(--ink3)">还没有任何术语。</td></tr>'
+    open(f"{out}/glossary.html", "w", encoding="utf-8").write(f"""<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>术语表 · CtrlView</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
+{nav('gloss', 'glossary.html')}<div class="wrap">
+<header class="top"><div class="kicker">术语表</div><h1>跨文章术语速查</h1>
+<p style="color:var(--ink2)">来自每篇末尾的「名词速查」，这里做了合并。同一个词在不同文章里的解释可能不同，右侧标了出处。</p>
+</header>
+<div class="scroll"><table><thead><tr><th>词</th><th>一句话解释</th><th>出处</th></tr></thead>
+<tbody>{grows}</tbody></table></div>
+<footer>CtrlView · 共 {len(gloss_sorted)} 条 · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
+
+    # ---- 搜索页（索引直接内联，不依赖外链与网络） ----
+    import json as _json
+    sdata = _json.dumps(search_rows, ensure_ascii=False).replace("</", "<\\/")
+    open(f"{out}/search.html", "w", encoding="utf-8").write(f"""<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>搜索 · CtrlView</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
+{nav('search', 'search.html')}<div class="wrap">
+<header class="top"><div class="kicker">搜索</div><h1>站内搜索</h1>
+<p style="color:var(--ink2)">匹配标题、栏目、主题和摘要。索引随页面一起加载，不联网也能用。</p>
+</header>
+<p><input id="q" type="search" placeholder="输入关键词，例如 初始化、漂移门控、VLA"
+   style="width:100%;padding:12px 14px;font-size:16px;border:1px solid var(--line);
+   border-radius:9px;background:var(--card);color:var(--ink)"></p>
+<p style="color:var(--ink3);font-size:14px" id="n"></p>
+<div id="r"></div>
+<footer>CtrlView · 索引 {len(search_rows)} 篇 · 最后更新 {BUILD_HUMAN}</footer></div>
+<script>
+var D = {sdata};
+var q = document.getElementById('q'), r = document.getElementById('r'), n = document.getElementById('n');
+function esc(s) {{ return s.replace(/[&<>]/g, function (c) {{ return {{'&':'&amp;','<':'&lt;','>':'&gt;'}}[c]; }}); }}
+function render() {{
+  var k = q.value.trim().toLowerCase();
+  var hit = k ? D.filter(function (x) {{
+    return (x.t + ' ' + x.c + ' ' + x.g.join(' ') + ' ' + x.s).toLowerCase().indexOf(k) >= 0;
+  }}) : D;
+  n.textContent = k ? ('找到 ' + hit.length + ' 篇') : ('共 ' + D.length + ' 篇，输入关键词开始筛选');
+  r.innerHTML = hit.map(function (x) {{
+    return '<a class="card" href="' + x.id + '.html" style="margin:12px 0">'
+      + '<div class="cname">' + esc(x.c) + ' · ' + esc(x.d) + '</div>'
+      + '<div class="ctitle">' + esc(x.t) + '</div>'
+      + '<div class="cmeta">' + esc(x.s) + '…</div>'
+      + '<div class="tags">' + x.g.map(function (g) {{
+          return '<span class="tag">' + esc(g) + '</span>'; }}).join('') + '</div></a>';
+  }}).join('');
+}}
+q.addEventListener('input', render);
+render();
+</script>
+</body></html>""")
+
+    # ---- Atom 订阅 ----
+    base = site.get("base", "").rstrip("/") + "/"
+    feeds = sorted(posts, key=lambda x: x["fm"].get("date", ""), reverse=True)[:30]
+    entries = ""
+    for p in feeds:
+        pid = p["id"]
+        d = p["fm"].get("date", "") or BUILD_HUMAN[:10]
+        link = f"{base}{pid}.html"
+        entries += (f'  <entry>\n    <title>{H.escape(p["fm"].get("title", ""))}</title>\n'
+                    f'    <link href="{H.escape(link)}"/>\n'
+                    f'    <id>{H.escape(link)}</id>\n'
+                    f'    <updated>{d}T00:00:00+08:00</updated>\n'
+                    f'    <category term="{H.escape(cname0.get(p["fm"].get("column",""), ""))}"/>\n'
+                    f'    <summary>{H.escape(strip_md(plain_body(p["md"]))[:300])}</summary>\n'
+                    f'  </entry>\n')
+    latest = (feeds[0]["fm"].get("date", "") if feeds else BUILD_HUMAN[:10])
+    open(f"{out}/feed.xml", "w", encoding="utf-8").write(
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<feed xmlns="http://www.w3.org/2005/Atom">\n'
+        f'  <title>{H.escape(site.get("name", "CtrlView"))}</title>\n'
+        f'  <subtitle>{H.escape(site.get("tagline", ""))}</subtitle>\n'
+        f'  <link href="{H.escape(base + "feed.xml")}" rel="self"/>\n'
+        f'  <link href="{H.escape(base)}"/>\n'
+        f'  <id>{H.escape(base)}</id>\n'
+        f'  <updated>{latest}T00:00:00+08:00</updated>\n'
+        f'{entries}</feed>\n')
+
+    # ---- 历史页（每周推荐记录） ----
+    hist_p = f"{repo}/data/history.json"
+    rounds = json.load(open(hist_p, encoding="utf-8")).get("rounds", []) if os.path.exists(hist_p) else []
+    cname = {c["id"]: c["name"] for c in columns}
+    have = {p["id"]: p["fm"].get("title", "") for p in posts}
+
+    n_pick = n_pub = 0
+    secs = ""
+    for r in sorted(rounds, key=lambda x: x.get("date", ""), reverse=True):
+        rows = ""
+        for k in r.get("picks", []):
+            n_pick += 1
+            pid = k.get("id", "")
+            col = cname.get(k.get("column"), k.get("column", ""))
+            title = have.get(pid) or k.get("title", pid)
+            if pid in have:
+                n_pub += 1
+                link = f'<a href="{H.escape(pid)}.html">{H.escape(title)}</a>'
+                mark = '<span class="tag">已精读</span>'
+            else:
+                link = (f'<a href="https://arxiv.org/abs/{H.escape(pid)}" target="_blank" '
+                        f'rel="noopener">{H.escape(title)}</a>')
+                mark = '<span class="tag" style="background:#fdf5ec;color:#8a5a2d">待精读</span>'
+            rows += (f'<tr><td>{H.escape(col)}</td><td>{link}</td>'
+                     f'<td style="white-space:nowrap">{H.escape(pid)}</td><td>{mark}</td></tr>')
+        note = f'<p style="color:var(--ink3);font-size:14px;margin:6px 0 10px">{H.escape(r["note"])}</p>' if r.get("note") else ""
+        secs += (f'<h2 id="r-{H.escape(r.get("id",""))}">{H.escape(r.get("id",""))}'
+                 f'<span class="badge">{r.get("date","")} · {len(r.get("picks", []))} 篇</span></h2>'
+                 f'{note}<div class="scroll"><table><thead><tr><th>栏目</th><th>论文</th>'
+                 f'<th>arXiv</th><th>状态</th></tr></thead><tbody>{rows}</tbody></table></div>')
+
+    if not secs:
+        secs = '<p style="color:var(--ink3)">还没有任何一周的记录。</p>'
+
+    open(f"{out}/history.html", "w", encoding="utf-8").write(f"""<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>历史推荐 · CtrlView</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="stylesheet" href="{CSSFILE}?v={BUILD}"></head><body>
+{nav('hist', 'history.html')}<div class="wrap">
+<header class="top"><div class="kicker">历史</div><h1>每周推荐记录</h1>
+<p style="color:var(--ink2)">每一轮的推荐都留在这里。已经写出精读的直接点标题进文章，还没写的给的是 arXiv 原文。</p>
+</header>
+<div style="background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:14px 18px;margin:24px 0;font-size:14px;color:var(--ink2);line-height:1.8">
+累计 <b>{len(rounds)}</b> 轮，推荐 <b>{n_pick}</b> 篇，其中已精读 <b>{n_pub}</b> 篇。<br>
+<span style="color:var(--ink3)">出现在这份记录里的论文不会再被后续轮次重复推荐。</span>
+</div>
+{secs}
+<footer>CtrlView · 最后更新 {BUILD_HUMAN}</footer></div></body></html>""")
+
     print(f"OK  {len(posts)} 篇精读 -> {out}")
+    print(f"   figs: {nfig} 个文件 -> {out}/figs/")
+    print(f"   历史: {len(rounds)} 轮 / {n_pick} 篇推荐 (已精读 {n_pub})")
     for p in posts:
         print(f"   {p['id']}  {p['fm'].get('title','')[:46]}")
+    if TEX_FAILS:
+        print(f"\n⚠ 有 {len(TEX_FAILS)} 处公式转换失败，已降级为 LaTeX 源码：")
+        for src, err in TEX_FAILS[:5]:
+            print(f"   [{err}] {src}")
+        print("   → 检查 LaTeX 语法，或确认 latex2mathml 已安装")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,135 @@
+{
+  "note": "每周推荐记录。picks 里的 id 就是去重的依据：出现在任何一轮里的论文，后续轮次不会再推。",
+  "rounds": [
+    {
+      "id": "2026-W40",
+      "date": "2026-09-28",
+      "label": "站点上线",
+      "note": "先把两篇样张放进来，占位用，不是定时任务跑出来的。",
+      "picks": [
+        {
+          "id": "2609.35743",
+          "column": "slam",
+          "title": "InfiniHand：让 AI 一边看视频，一边猜出你的手在哪儿"
+        },
+        {
+          "id": "2609.27702",
+          "column": "slam",
+          "title": "DAVIO：让 VIO 不等视差就起步"
+        }
+      ]
+    },
+    {
+      "id": "2026-W41",
+      "date": "2026-10-05",
+      "note": "W41 周批：每栏目按 L1 选文偏好各挑 3 篇，共 21 篇；automation 候选池偏弱（多为数值方法论文）",
+      "picks": [
+        {
+          "id": "2609.39611",
+          "column": "slam",
+          "title": "Towards Agile Vision-Based Multi-UAV Flight: Revisiting State Estimation"
+        },
+        {
+          "id": "2609.39125",
+          "column": "slam",
+          "title": "LBDU-VIO: Learned Bias Dynamics and Uncertainty for Visual-Inertial Odometry with Unreliable Vision"
+        },
+        {
+          "id": "2609.38048",
+          "column": "slam",
+          "title": "A QCQP-Representable IMU Pre-Integration Factor for Certifiable State Estimation"
+        },
+        {
+          "id": "2609.39971",
+          "column": "embodied",
+          "title": "When Instructions Retrieve Trajectories: Diagnosing and Mitigating Generalization Failures in VLA Models"
+        },
+        {
+          "id": "2609.39403",
+          "column": "embodied",
+          "title": "IronMind: Scaling Humanoid Dexterous Manipulation via Camera-Space Ego-Centric Pretraining"
+        },
+        {
+          "id": "2609.39822",
+          "column": "embodied",
+          "title": "Toward Real-Time VLAs: Stage-Aware Two-Step Flow Denoising and System-Level Evaluation"
+        },
+        {
+          "id": "2609.39981",
+          "column": "control",
+          "title": "Exact Variance of Random Return in Distributional LQR and Its Application to Mean-Variance Optimal Control"
+        },
+        {
+          "id": "2609.39854",
+          "column": "control",
+          "title": "RL-Guided PAC-NMPC for Probabilistically-Safe Perception-Based Navigation in Unknown Environments"
+        },
+        {
+          "id": "2609.39837",
+          "column": "control",
+          "title": "Fast Regularized Policy Mirror Descent with One-Step TD Updates"
+        },
+        {
+          "id": "2609.40244",
+          "column": "robotics",
+          "title": "StreamRig: Exploiting Intra-Rig Geometry for Streaming Multi-Camera Odometry"
+        },
+        {
+          "id": "2609.40178",
+          "column": "robotics",
+          "title": "Non-Invasive Inspection of Water Canals Using Dronar"
+        },
+        {
+          "id": "2609.40297",
+          "column": "robotics",
+          "title": "GPU-Accelerated Path-Dependent Marginal Information Gain for Autonomous Exploration"
+        },
+        {
+          "id": "2609.39969",
+          "column": "cps",
+          "title": "TACTIC: Temporal and Context-Aware LLM Tactical Planning for Roadside LiDAR Attacks"
+        },
+        {
+          "id": "2609.39968",
+          "column": "cps",
+          "title": "On the Input Sensitivity of METANET Models and the Robustness of Dynamic Calibration"
+        },
+        {
+          "id": "2609.39888",
+          "column": "cps",
+          "title": "Markovian Dynamics Enforcer: Feasibility Preserving Correction on Learned Dynamics Manifolds"
+        },
+        {
+          "id": "2609.39902",
+          "column": "security",
+          "title": "CodeMimicry: Exploiting Safety Generalization Lag in Large Language Models via Structured Code Completion"
+        },
+        {
+          "id": "2609.40034",
+          "column": "security",
+          "title": "Efficient Active Auditing of Multi-Group Fairness with Bias Probes"
+        },
+        {
+          "id": "2609.39787",
+          "column": "security",
+          "title": "Privacy Foundations for Multi-Institutional Scientific Artificial Intelligence"
+        },
+        {
+          "id": "2609.39738",
+          "column": "automation",
+          "title": "CNCGEN: A Dataset and Framework for Machining Process Planning and Toolpath Generation from B-rep Models"
+        },
+        {
+          "id": "2609.38811",
+          "column": "automation",
+          "title": "DCM-SAM: Defect-Conditioned Mixture of LoRA Experts for NPU-Deployed AM Defect Segmentation"
+        },
+        {
+          "id": "2609.37212",
+          "column": "automation",
+          "title": "Hybrid GA/MSDLO Approach to Solve a Greenfield Robotized Machine Tending Layout"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 460" width="920" height="460" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:12px}
+    .arr{stroke:#8a8a96;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+    .b4{fill:#f6f1f8;stroke:#c2a8cf;stroke-width:1.6}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a96"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="34">CNCGEN 站在制造流程的哪一格，两边的料从哪来</text>
+  <text class="sm" x="30" y="56">上半排是产线环节，下半排是训练与评测数据的来路</text>
+
+  <rect class="b1" x="30" y="82" width="196" height="104" rx="8"/>
+  <text class="blk" x="46" y="108">设计端</text>
+  <text class="sm" x="46" y="132">输出 B-rep 与目标形状</text>
+  <text class="sm" x="46" y="152">毛坯尺寸与材料一并给定</text>
+  <text class="sm" x="46" y="172">人在这里只定零件，不定工艺</text>
+
+  <path class="arr" d="M228,134 L262,134"/>
+
+  <rect class="b2" x="266" y="82" width="212" height="104" rx="8"/>
+  <text class="blk" x="282" y="108">CNCGEN</text>
+  <text class="sm" x="282" y="132">对象恢复，工序规划，刀路生成</text>
+  <text class="sm" x="282" y="152">毛坯状态每步刷新一次</text>
+  <text class="sm" x="282" y="172">输出参数化刀路，与机床无关</text>
+
+  <path class="arr" d="M480,134 L514,134"/>
+
+  <rect class="b3" x="518" y="82" width="184" height="104" rx="8"/>
+  <text class="blk" x="534" y="108">按机床做后处理</text>
+  <text class="sm" x="534" y="132">转成控制器认的程序</text>
+  <text class="sm" x="534" y="152">这一步论文没有做</text>
+  <text class="sm" x="534" y="172">改造量落在这里</text>
+
+  <path class="arr" d="M704,134 L738,134"/>
+
+  <rect class="b4" x="742" y="82" width="148" height="104" rx="8"/>
+  <text class="blk" x="758" y="108">三轴机床</text>
+  <text class="sm" x="758" y="132">Haas Mini Mill</text>
+  <text class="sm" x="758" y="152">Haas VF-2</text>
+  <text class="sm" x="758" y="172">Tormach 770M</text>
+
+  <path class="arr" d="M330,240 L372,206"/>
+
+  <rect class="b1" x="30" y="238" width="286" height="112" rx="8"/>
+  <text class="blk" x="46" y="264">合成流程，约 5 万条</text>
+  <text class="sm" x="46" y="288">程序化生成标准件族，覆盖四类特征</text>
+  <text class="sm" x="46" y="308">筛选硬条件加体素化验证</text>
+  <text class="sm" x="46" y="328">验证 IoU 不低于 0.95 才保留</text>
+
+  <path class="arr" d="M500,240 L470,206"/>
+
+  <rect class="b2" x="330" y="238" width="286" height="112" rx="8"/>
+  <text class="blk" x="346" y="264">真实记录，800 条</text>
+  <text class="sm" x="346" y="288">从 2000 多条候选里筛出</text>
+  <text class="sm" x="346" y="308">50 名数控专家逐条审</text>
+  <text class="sm" x="346" y="328">全部留作测试，不参与训练</text>
+
+  <path class="arr" d="M620,294 L700,294"/>
+
+  <rect class="b3" x="704" y="238" width="186" height="112" rx="8"/>
+  <text class="blk" x="720" y="264">离线评测器</text>
+  <text class="sm" x="720" y="288">4.0 mm 间距占用网格</text>
+  <text class="sm" x="720" y="308">8192 个表面采样点</text>
+  <text class="sm" x="720" y="328">生成结果只在这里打分</text>
+
+  <rect x="30" y="374" width="860" height="66" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="sm" x="52" y="400">合成数据靠生成器批量产出，成本在算力与筛选规则上；真实数据靠人工审，2000 多条只剩 800 条。</text>
+  <text class="sm" x="52" y="424">论文里的几何指标全部由离线评测器给出，生成的刀路没有真的上机床切过。</text>
+</svg>

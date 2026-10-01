@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 570" width="1040" height="570" font-family="Microsoft YaHei, Helvetica, Arial, sans-serif">
+  <rect width="1040" height="570" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333"/>
+    </marker>
+    <marker id="arwr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c0504d"/>
+    </marker>
+  </defs>
+
+  <rect x="20" y="24" width="290" height="104" rx="8" fill="#eef4ff" stroke="#3d6ea8" stroke-width="1.6"/>
+  <text x="165" y="56" font-size="15" font-weight="bold" fill="#22456e" text-anchor="middle">上游神经轨迹预测器</text>
+  <text x="165" y="82" font-size="12" fill="#3d6ea8" text-anchor="middle">输入 2 s 状态历史 加车辆元数据</text>
+  <text x="165" y="104" font-size="12" fill="#3d6ea8" text-anchor="middle">一次前向解码 3 s 轨迹提案</text>
+
+  <line x1="314" y1="76" x2="362" y2="76" stroke="#333333" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <rect x="368" y="24" width="304" height="104" rx="8" fill="#e8f7ee" stroke="#2f7d4f" stroke-width="1.6"/>
+  <text x="520" y="56" font-size="15" font-weight="bold" fill="#1d5c39" text-anchor="middle">MaDE 冻结算子</text>
+  <text x="520" y="82" font-size="12" fill="#2f7d4f" text-anchor="middle">入口只有前一个状态与当前提案</text>
+  <text x="520" y="104" font-size="12" fill="#2f7d4f" text-anchor="middle">逐转移 时不变 无状态 不动上游权重</text>
+
+  <line x1="676" y1="76" x2="724" y2="76" stroke="#333333" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <rect x="730" y="24" width="290" height="104" rx="8" fill="#f4f0ff" stroke="#6b4fa5" stroke-width="1.6"/>
+  <text x="875" y="56" font-size="15" font-weight="bold" fill="#4b3580" text-anchor="middle">下游消费方</text>
+  <text x="875" y="82" font-size="12" fill="#6b4fa5" text-anchor="middle">仿真 行为预测 批量预测</text>
+  <text x="875" y="104" font-size="12" fill="#6b4fa5" text-anchor="middle">物理可解释性 离线认证</text>
+
+  <rect x="20" y="170" width="1000" height="140" rx="8" fill="#fff6f5" stroke="#c0504d" stroke-width="1.6"/>
+  <text x="40" y="196" font-size="14" font-weight="bold" fill="#a03d3a">物理层 真实系统那一侧</text>
+  <rect x="48" y="208" width="456" height="88" rx="6" fill="#ffffff" stroke="#c0504d" stroke-width="1.2"/>
+  <text x="68" y="234" font-size="13.5" font-weight="bold" fill="#a03d3a">真实受控动力学</text>
+  <text x="68" y="258" font-size="12" fill="#7a4a48">轮胎力 侧滑 惯性耦合</text>
+  <text x="68" y="280" font-size="12" fill="#7a4a48">仿真阶梯里精确已知 inD 里根本没有</text>
+  <rect x="536" y="208" width="456" height="88" rx="6" fill="#ffffff" stroke="#c0504d" stroke-width="1.2"/>
+  <text x="556" y="234" font-size="13.5" font-weight="bold" fill="#a03d3a">不等式约束 g 小于等于零</text>
+  <text x="556" y="258" font-size="12" fill="#7a4a48">状态界 位置 速度 航向 横摆角速度</text>
+  <text x="556" y="280" font-size="12" fill="#7a4a48">执行器界 转向角 加速度 轮胎侧偏</text>
+
+  <line x1="140" y1="316" x2="140" y2="384" stroke="#c0504d" stroke-width="1.6" marker-end="url(#arwr)"/>
+  <line x1="900" y1="316" x2="900" y2="384" stroke="#c0504d" stroke-width="1.6" marker-end="url(#arwr)"/>
+  <rect x="286" y="322" width="468" height="56" rx="28" fill="#fdeceb" stroke="#c0504d" stroke-width="1.6"/>
+  <text x="520" y="346" font-size="13.5" font-weight="bold" fill="#a03d3a" text-anchor="middle">耦合点　缺控制量 加 缺完整物理</text>
+  <text x="520" y="368" font-size="12" fill="#a03d3a" text-anchor="middle">同一份数据同时没有 u 标签 也没有写完的方程</text>
+
+  <rect x="20" y="384" width="1000" height="140" rx="8" fill="#f4f8ff" stroke="#3d6ea8" stroke-width="1.6"/>
+  <text x="40" y="410" font-size="14" font-weight="bold" fill="#22456e">信息层 算子真正拿到手里的</text>
+  <rect x="48" y="422" width="456" height="88" rx="6" fill="#ffffff" stroke="#3d6ea8" stroke-width="1.2"/>
+  <text x="68" y="448" font-size="13.5" font-weight="bold" fill="#22456e">只有状态序列 控制量没有标签</text>
+  <text x="68" y="472" font-size="12" fill="#3a5a80">训练和推理都看不到 u</text>
+  <text x="68" y="494" font-size="12" fill="#3a5a80">逆动力学只能反推模型相对的控制量</text>
+  <rect x="536" y="422" width="456" height="88" rx="6" fill="#ffffff" stroke="#3d6ea8" stroke-width="1.2"/>
+  <text x="556" y="448" font-size="13.5" font-weight="bold" fill="#22456e">已知物理只覆盖一部分通道</text>
+  <text x="556" y="472" font-size="12" fill="#3a5a80">动力学自行车那一档手里只有运动学自行车</text>
+  <text x="556" y="494" font-size="12" fill="#3a5a80">没写进模型的部分交给学出来的残差</text>
+
+  <text x="520" y="552" font-size="12" fill="#666666" text-anchor="middle">算子夹在预测器和消费方之间，工作的是物理层与信息层之间那道缺口</text>
+</svg>

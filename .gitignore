@@ -1,6 +1,9 @@
 out/
+.work/
 data/candidates.json
 data/queue.json
+data/picks.json
+*-standalone.html
 __pycache__/
 *.pyc
 .DS_Store

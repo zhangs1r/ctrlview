@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:12px}
+    .cap{fill:#3c3c46;font-size:12.5px}
+    .stock{fill:#f4f5f7;stroke:#b9bcc4;stroke-width:1.5}
+    .a{fill:#cfe0f0;stroke:#6f9dc4;stroke-width:1.4}
+    .b{fill:#f7e2ce;stroke:#d29a63;stroke-width:1.4}
+    .ov{fill:#ded4e8;stroke:#9d8cc0;stroke-width:1.4}
+    .gone{fill:#c9ccd2;stroke:#9a9ea8;stroke-width:1.4}
+  </style>
+
+  <text class="tb" x="30" y="32">对象编号不变，要切的那块料会变</text>
+  <text class="sm" x="30" y="54">俯视图，两个去除体积重叠的口袋，从左到右是三道加工步</text>
+
+  <rect class="a" x="620" y="16" width="18" height="12" rx="2"/>
+  <text class="sm" x="644" y="27">口袋 A 待切</text>
+  <rect class="b" x="730" y="16" width="18" height="12" rx="2"/>
+  <text class="sm" x="754" y="27">口袋 B 待切</text>
+
+  <rect class="ov" x="620" y="36" width="18" height="12" rx="2"/>
+  <text class="sm" x="644" y="47">两块重叠的部分</text>
+  <rect class="gone" x="730" y="36" width="18" height="12" rx="2"/>
+  <text class="sm" x="754" y="47">已经切掉</text>
+
+  <rect class="stock" x="50" y="90" width="170" height="170" rx="4"/>
+  <rect class="a" x="75" y="120" width="85" height="110"/>
+  <rect class="b" x="125" y="155" width="80" height="95"/>
+  <rect class="ov" x="125" y="155" width="35" height="80"/>
+  <text class="cap" x="50" y="284">第 0 步，B-rep 上认出两个口袋</text>
+  <text class="sm" x="50" y="304">两条工序各指向一个对象编号</text>
+
+  <rect class="stock" x="365" y="90" width="170" height="170" rx="4"/>
+  <rect class="gone" x="390" y="120" width="85" height="110"/>
+  <rect class="b" x="475" y="155" width="45" height="95"/>
+  <rect class="b" x="440" y="230" width="35" height="20"/>
+  <text class="cap" x="365" y="284">第 1 步，切完口袋 A</text>
+  <text class="sm" x="365" y="304">B 的剩余待切区缩掉重叠那一块</text>
+
+  <rect class="stock" x="680" y="90" width="170" height="170" rx="4"/>
+  <rect class="gone" x="705" y="120" width="85" height="110"/>
+  <rect class="gone" x="790" y="155" width="45" height="95"/>
+  <rect class="gone" x="755" y="230" width="35" height="20"/>
+  <text class="cap" x="680" y="284">第 2 步，切完口袋 B</text>
+  <text class="sm" x="680" y="304">同一条工序编号，刀路要重新算</text>
+
+  <rect x="30" y="322" width="840" height="44" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="sm" x="52" y="349">只看工序类型和对象编号，说不清还剩多少活；毛坯状态就是把这块缩小中的区域带进下一步的输入。</text>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="Noto Sans SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="1000" height="600" fill="#ffffff"/>
+
+  <text x="40" y="44" font-size="25" font-weight="700" fill="#111">示意图 A　相机系与躯干系，两条转移动作的路线</text>
+  <text x="40" y="74" font-size="16" fill="#555">同一段手部运动，在两个参考系里的表达不同。左列是本文学到的数据，右列是要控制的对象。</text>
+
+  <!-- LEFT PANEL -->
+  <rect x="40" y="100" width="360" height="380" rx="14" fill="#f4f8fd" stroke="#1f4e79" stroke-width="2"/>
+  <text x="60" y="136" font-size="19" font-weight="700" fill="#1f4e79">人类第一人称视频</text>
+  <text x="60" y="162" font-size="15" fill="#555">头戴相机，不测躯干</text>
+
+  <rect x="60" y="180" width="320" height="76" rx="10" fill="#ffffff" stroke="#1f4e79" stroke-width="1.5"/>
+  <text x="76" y="208" font-size="16" font-weight="700" fill="#1f4e79">相机系 C</text>
+  <text x="76" y="232" font-size="15" fill="#333">原点取在头戴相机的光心</text>
+  <text x="76" y="252" font-size="15" fill="#333">这是视频自带的空间</text>
+
+  <text x="60" y="292" font-size="16" font-weight="700" fill="#111">能直接量到的量</text>
+  <text x="76" y="318" font-size="15" fill="#333">相机自身的位姿（用 SLAM 追出来）</text>
+  <text x="76" y="342" font-size="15" fill="#333">手相对相机的三维轨迹（手部姿态估计）</text>
+  <text x="76" y="366" font-size="15" fill="#333">手指各关节的角度</text>
+
+  <rect x="60" y="392" width="320" height="70" rx="10" fill="#e8f5ec" stroke="#1e8449" stroke-width="1.5"/>
+  <text x="76" y="420" font-size="16" font-weight="700" fill="#1e8449">量不到的量</text>
+  <text x="76" y="444" font-size="15" fill="#333">躯干与脊柱的姿态</text>
+
+  <!-- RIGHT PANEL -->
+  <rect x="600" y="100" width="360" height="380" rx="14" fill="#fdf6f4" stroke="#1f4e79" stroke-width="2"/>
+  <text x="620" y="136" font-size="19" font-weight="700" fill="#1f4e79">IRON-R01 人形机器人</text>
+  <text x="620" y="162" font-size="15" fill="#555">躯干是天然的参考系</text>
+
+  <rect x="620" y="180" width="320" height="76" rx="10" fill="#ffffff" stroke="#1f4e79" stroke-width="1.5"/>
+  <text x="636" y="208" font-size="16" font-weight="700" fill="#1f4e79">躯干系 T</text>
+  <text x="636" y="232" font-size="15" fill="#333">原点取在躯干上</text>
+  <text x="636" y="252" font-size="15" fill="#333">上层操作最自然的参考系</text>
+
+  <text x="620" y="292" font-size="16" font-weight="700" fill="#111">能直接量到的量</text>
+  <text x="636" y="318" font-size="15" fill="#333">头部相机到躯干的外参（可标定）</text>
+  <text x="636" y="342" font-size="15" fill="#333">关节角、末端位置</text>
+  <text x="636" y="366" font-size="15" fill="#333">躯干姿态本身（有本体感受）</text>
+
+  <rect x="620" y="392" width="320" height="70" rx="10" fill="#e8f5ec" stroke="#1e8449" stroke-width="1.5"/>
+  <text x="636" y="420" font-size="16" font-weight="700" fill="#1e8449">对应关系</text>
+  <text x="636" y="444" font-size="15" fill="#333">相机系 = 躯干系 经外参平移旋转</text>
+
+  <!-- TOP PATH (rejected) -->
+  <path d="M400 170 L600 170" stroke="#c0392b" stroke-width="3" stroke-dasharray="9 6" fill="none"/>
+  <path d="M600 170 l-14 -8 l0 16 z" fill="#c0392b"/>
+  <text x="418" y="152" font-size="15" font-weight="700" fill="#c0392b">常规重定向</text>
+  <text x="418" y="196" font-size="14" fill="#c0392b">人类动作搬到躯干系 T</text>
+  <text x="418" y="228" font-size="14" fill="#c0392b">要补一个没被测到的量</text>
+  <text x="418" y="248" font-size="14" fill="#c0392b">脊柱姿态，例如假设刚性</text>
+  <text x="418" y="268" font-size="14" fill="#c0392b">竖直脊柱</text>
+  <text x="418" y="296" font-size="14" font-weight="700" fill="#c0392b">标注带上重定向噪声</text>
+
+  <!-- BOTTOM PATH (adopted) -->
+  <path d="M400 440 L600 440" stroke="#1e8449" stroke-width="5" fill="none"/>
+  <path d="M600 440 l-16 -10 l0 20 z" fill="#1e8449"/>
+  <text x="418" y="486" font-size="15" font-weight="700" fill="#1e8449">本文路线</text>
+  <text x="418" y="510" font-size="14" fill="#1e8449">两边都写成相机系动作</text>
+  <text x="418" y="532" font-size="14" fill="#1e8449">机器人轨迹用外参搬过来</text>
+  <text x="418" y="554" font-size="14" fill="#1e8449">一个输出头同时吃两种数据</text>
+
+  <text x="40" y="586" font-size="15" fill="#555">数据来源　论文第 3.1.1 节；相机外参由标定给出，人类手部量由手部姿态估计给出。</text>
+</svg>

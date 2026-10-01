@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 460" width="940" height="460" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13.5px;font-weight:650;fill:#1b1b1f}
+    .m{fill:#6b6b78;font-size:12px}
+    .ax{stroke:#4a4a55;stroke-width:1.8;fill:none;marker-end:url(#a2)}
+    .ln{stroke:#2d5f8a;stroke-width:3;fill:none}
+    .perp{stroke:#3f7d55;stroke-width:3;fill:none;marker-end:url(#a3)}
+    .par{stroke:#b0553a;stroke-width:2.6;fill:none;stroke-dasharray:7 5}
+    .bx{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+  </style>
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a4a55"/>
+    </marker>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f7d55"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="30">倾角给出的不是加速度的点测量，是一条方向已知的直线</text>
+
+  <rect x="30" y="52" width="560" height="390" rx="10" fill="#fcfcfb" stroke="#e4e1dc" stroke-width="1.5"/>
+  <rect x="612" y="52" width="298" height="390" rx="10" fill="#fcfcfb" stroke="#e4e1dc" stroke-width="1.5"/>
+
+  <text class="blk" x="52" y="78">加速度空间里，真值只能落在这条线上</text>
+  <text class="blk" x="634" y="78">左乘零空间，把未知的那一维消掉</text>
+
+  <text class="m" x="52" y="132">把式 (8) 改写成真值落在一根直线上的样子</text>
+  <text class="m" x="52" y="154">a = (f_T / m) · b̂₃ + a_g + a_d</text>
+  <text class="m" x="52" y="180">方向 b̂₃ 由倾角测量给出，偏移 a_g 是常数，</text>
+  <text class="m" x="52" y="202">未知的只剩标量 f_T / m。</text>
+  <text class="m" x="52" y="228">沿 b̂₃ 的那一维因此测不到，与 b̂₃ 垂直的</text>
+  <text class="m" x="52" y="250">两维被完全锁住，这就是投影的几何含义。</text>
+
+  <path class="ax" d="M150,270 L150,204"/>
+  <text class="m" x="150" y="196" text-anchor="middle">ê₃</text>
+  <path class="ax" d="M150,270 L430,270"/>
+  <text class="m" x="440" y="274">ê₁</text>
+  <circle cx="150" cy="270" r="3.5" fill="#4a4a55"/>
+  <text class="m" x="138" y="264" text-anchor="end">原点 O</text>
+
+  <path class="ax" d="M150,270 L150,370" stroke="#7a7a88"/>
+  <text class="m" x="164" y="322">a_g</text>
+
+  <path class="ln" d="M85,415 L275,290"/>
+  <text class="m" x="96" y="428" fill="#2d5f8a">方向 b̂₃</text>
+
+  <circle cx="150" cy="370" r="4.5" fill="#7a7a88"/>
+  <text class="m" x="164" y="392">偏移 o = a_g + a_d</text>
+
+  <path class="par" d="M150,370 L258,298"/>
+  <text class="m" x="196" y="358" fill="#b0553a">这一段就是未知的 f_T / m</text>
+
+  <circle cx="258" cy="298" r="5" fill="#2d5f8a"/>
+  <text class="blk" x="268" y="292">a</text>
+
+  <path class="perp" d="M258,298 L302,364"/>
+  <text class="m" x="310" y="362" fill="#3f7d55">垂直分量，2 维</text>
+  <text class="m" x="310" y="382" fill="#3f7d55">由倾角与重力定出</text>
+
+  <rect class="bx" x="634" y="100" width="254" height="86" rx="6"/>
+  <text class="m" x="650" y="126">写进测量模型的量，共 6 行</text>
+  <text class="blk" x="650" y="152">[ p 的三行 ; a 的三行 ]</text>
+  <text class="m" x="650" y="172">n_d = 6</text>
+
+  <path d="M760,196 L760,232" stroke="#8c8c99" stroke-width="1.8" fill="none" marker-end="url(#a2)"/>
+
+  <rect class="bx" x="634" y="240" width="254" height="86" rx="6"/>
+  <text class="m" x="650" y="266">左乘 Nᵀ，其中 NᵀW = 0</text>
+  <text class="blk" x="650" y="292">未知的 1 维被消掉</text>
+  <text class="m" x="650" y="312">n_a = 1</text>
+
+  <path d="M760,336 L760,368" stroke="#8c8c99" stroke-width="1.8" fill="none" marker-end="url(#a2)"/>
+
+  <rect x="634" y="374" width="254" height="46" rx="6" fill="#f1f6f1" stroke="#a8c9b0" stroke-width="1.6"/>
+  <text class="blk" x="650" y="403">剩 5 行方程，n_z = 6 − 1 = 5</text>
+
+  <text class="m" x="634" y="430">每帧的 W 和 o 都不同，投影要重做一次。</text>
+</svg>

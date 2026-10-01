@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="920" height="430" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:12px}
+    .arr{stroke:#8a8a96;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+    .b4{fill:#f6f1f8;stroke:#c2a8cf;stroke-width:1.6}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a96"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="34">一次规划迭代，决策变量在哪里</text>
+  <text class="sm" x="30" y="56">横向是数据流，纵向是同一批采样被用两次的地方</text>
+
+  <rect class="b1" x="30" y="80" width="180" height="96" rx="8"/>
+  <text class="blk" x="46" y="106">暖启动，来自 actor</text>
+  <text class="sm" x="46" y="128">π(z_t) 给第一个输入</text>
+  <text class="sm" x="46" y="148">标称动力学 f 前推状态</text>
+  <text class="sm" x="46" y="168">传感器预测补未来测量</text>
+
+  <path class="arr" d="M212,128 L246,128"/>
+
+  <rect class="b2" x="250" y="80" width="196" height="96" rx="8"/>
+  <text class="blk" x="266" y="106">决策变量 ν</text>
+  <text class="sm" x="266" y="128">μ 与 diag Σ 各 N_T·n_u 维</text>
+  <text class="sm" x="266" y="148">合计 2·N_T·n_u 个未知数</text>
+  <text class="sm" x="266" y="168">小车 48，固定翼 88</text>
+
+  <path class="arr" d="M448,128 L482,128"/>
+
+  <rect class="b3" x="486" y="80" width="196" height="96" rx="8"/>
+  <text class="blk" x="502" y="106">采样 L 组先验 × M 条</text>
+  <text class="sm" x="502" y="128">每条用 TVLQR 展开</text>
+  <text class="sm" x="502" y="148">成时变反馈律</text>
+  <text class="sm" x="502" y="168">5×1024 或 1×1024</text>
+
+  <path class="arr" d="M684,128 L718,128"/>
+
+  <rect class="b4" x="722" y="80" width="168" height="96" rx="8"/>
+  <text class="blk" x="738" y="106">每条轨迹出两个标量</text>
+  <text class="sm" x="738" y="128">代价 J(τ)</text>
+  <text class="sm" x="738" y="148">违反指示量 C(τ)</text>
+  <text class="sm" x="738" y="168">取值为 0 或 1</text>
+
+  <path class="arr" d="M806,178 L806,222"/>
+
+  <rect class="b4" x="672" y="226" width="218" height="96" rx="8"/>
+  <text class="blk" x="688" y="252">三个界</text>
+  <text class="sm" x="688" y="274">J 上界，违反概率上界</text>
+  <text class="sm" x="688" y="294">终端值函数上界</text>
+  <text class="sm" x="688" y="314">dropout mask 挂轨迹上</text>
+
+  <path class="arr" d="M670,274 L618,274"/>
+
+  <rect class="b2" x="360" y="226" width="256" height="96" rx="8"/>
+  <text class="blk" x="376" y="252">SQP 求解</text>
+  <text class="sm" x="376" y="274">min J 上界加 γ 乘违反界</text>
+  <text class="sm" x="376" y="294">s.t. 违反界 ≤ ε_c</text>
+  <text class="sm" x="376" y="314">终端值函数界 ≤ 当前值函数</text>
+
+  <path class="arr" d="M358,274 L306,274"/>
+
+  <rect class="b1" x="88" y="226" width="216" height="96" rx="8"/>
+  <text class="blk" x="104" y="252">执行</text>
+  <text class="sm" x="104" y="274">取 μ 对应的反馈策略</text>
+  <text class="sm" x="104" y="294">下一时刻带着新观测</text>
+  <text class="sm" x="104" y="314">再走一遍这张图</text>
+
+  <rect x="30" y="348" width="860" height="60" rx="10" fill="#faf9f7" stroke="#ddd9d2" stroke-width="1.5"/>
+  <text class="sm" x="52" y="374">每条轨迹最多贡献 2 个独立标量，未知数却有 2·N_T·n_u 个，所以界只能靠样本量收紧。</text>
+  <text class="sm" x="52" y="396">要让集中项落到 Φ_α 以下，样本量需满足 L·M ≥ log(1/δ) / (α·Φ_α)。</text>
+</svg>

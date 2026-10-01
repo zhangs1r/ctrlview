@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>同一束假回波，换个车流就不灵 · CtrlView</title>
+<meta name="description" content="同一束假回波，换个车流就不灵">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.1b5a6a7a.css?v=20261001143103"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.39969.html?force=20261001143103" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">信息物理系统 · 论文精读</div>
+<h1>同一束假回波，换个车流就不灵</h1>
+<div class="meta"><b>Yiming Gao, Shaocheng Luo</b><br>
+arXiv:2609.39969 · 2026-10-05 · 精读约 31 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-路侧 LiDAR 攻击">路侧 LiDAR 攻击</a><a class="tag" href="topics.html#t-多模态大模型">多模态大模型</a><a class="tag" href="topics.html#t-语义场景图">语义场景图</a><a class="tag" href="topics.html#t-攻击时机">攻击时机</a><a class="tag" href="topics.html#t-异步推理">异步推理</a><a class="tag" href="topics.html#t-物理信息耦合">物理信息耦合</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>一条直路上，目标车 T 跟着前车 A1，后面还有一辆 A2 跟着 T。路侧的攻击者把 A1 的回波往外推了一段。T 的前向测距读到偏大的车距，就按宽裕的余量继续跟车。真实间距在收缩，等 T 的制动来得及生效，车头已经贴上去了。</p>
+<p>同一套装置，同一个推进量，换一批车流就可能什么都撞不到。A2 离得太远，A1 正在加速，或者 T 正前方那辆车根本不是 A1。参数没变，结局翻了。</p>
+<p>TACTIC 处理的就是这件事。它把物理 LiDAR 攻击的执行看成一个<mark>依赖场景的战术规划问题</mark>，攻击参数不再由人预先钉死，每一轮按当前车流重算。系统里放了一个多模态大模型（MLLM，能同时读图像和读文字的模型），但它的职责被切得很窄，只管判断车与车之间是什么关系、该挑哪一路攻击。物理量由路侧感知提供，可行范围由标定出来的常数卡住。</p>
+<p>两个攻击原语吃的是两种不同的车流关系。push-away 吃 T 与前车 A1 的跟车几何，把 A1 的测距往外推，让 T 以为自己还有余量。phantom-braking 吃后车 A2 与 T 的关系，在 T 前方放一堵不存在的墙，逼 T 急刹，让 A2 追上来。</p>
+<p>让这篇和普通攻击演示拉开距离的是一个反直觉的发现。论文试过等一个更脆弱的窗口再动手，成功率从 <strong>20/20</strong> 掉到 <strong>9/20</strong>，平均耗时从 34.5 s 涨到 43.7 s。时序可行域太窄，等待会先把它吃掉。</p>
+<p>论文在 CARLA 里跑了 <strong>280</strong> 次随机多车试验。完整策略的碰撞率是 <strong>100%</strong>，固定规则 <strong>35%</strong>，随机选择 <strong>60%</strong>，只让大模型挑模式而参数取默认值的受限版本 <strong>75%</strong>，四组都来自同一套混合实现，每组 20 次试验。</p>
+<p><strong>这节要你记住的是，攻击能不能成由车流关系定，参数表定不了。</strong></p>
+<hr>
+<h2>一、问题背景</h2>
+<h3>1.1 威胁模型，攻击者知道什么、能改什么</h3>
+<p>论文设的是灰盒模型。攻击方是一套路侧设备，同一根杆上装了 LiDAR 和一个 RGB 相机，部署形态参照 Moving Vehicle Spoofing System（MVS）。那套系统用一辆行驶中的车把假回波打给高速行驶的受害车，证明的是真车条件下单个原语在长距离上能奏效，参数与路形由人事先设定，不随周围车流重选。TACTIC 沿用它的部署形态，把在线选择加进去。</p>
+<p>攻击者能改的东西只有一处，受害车对物理世界的量测。它通过感知信道往受害车的测距里塞偏移量和虚假目标，除此之外碰不到受害车。它自己的感知栈以 <strong>20 Hz</strong> 检测并跟踪周围车辆，拿到目标级的位置、速度、加速度、车距和 TTC。</p>
+<p><mark>攻击者能碰到的只有受害车对外部世界的量测</mark>。<u>它可能知道受害车的传感器型号与车辆控制配置，但拿不到受害车的原始点云、内部滤波状态与整车报文</u>。这条边界决定了后面所有的设计。</p>
+<p>目标是让指定的目标车 T 与某个邻近交通参与者发生碰撞。受害车这一侧按智能驾驶员模型（IDM，把期望车速和期望车距一起纳入的跟车模型）行驶，另挂一个两段式自动紧急制动（AEB）控制器。感知 TTC 低于 3.0 s 时施加部分制动，低于 1.6 s 时施加全力制动，这两个门槛取自 Euro NCAP 的测试协议。TTC 是 time-to-collision，按当前相对速度算出的相撞剩余时间。</p>
+<h3>1.2 为什么难</h3>
+<p>难在可行域由车间几何和剩余时间一起决定，而这两样随车流连续变化。</p>
+<p>以推远为例。位移太小，受害车读到的车距没宽裕多少，它照旧按原来的间距跟车。位移要够大，前车又得留在路侧感知的覆盖范围里，覆盖约 <strong>50 m</strong>，推得越远越容易把假目标推出量程。位移还必须在前车被真正追到之前完成，爬升速率于是有个下限，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x0002F;</mo><msub><mi>t</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">r</mi></mrow></mrow></msub></mrow></math></math>。速率又不能太高，受害车的量测一致性检查会把它识破。</p>
+<p>两头一挤，可行域变成一个窄带。论文量出来的位移下限是 <strong>11 m</strong>，上限随点火位置 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>o</mi></mrow></math></math> 走，等于 50 减去 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>o</mi></mrow></math></math>。速率上限是 <strong>3.0 m/s</strong>。这些数来自 III-C 的标定和 V-B 的锁定位移扫描，全部在 CARLA 仿真里取得。</p>
+<p>幻影刹车那一侧的约束形状完全不同。它不需要位移，只需要在 T 前方立一堵墙，把感知 TTC 压到 1.6 s 以下。墙位直接由目标车速定，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mn>1.5</mn><mi>v</mi></mrow></math></math>，落在 5 到 15 m 之间。真正卡住它的条件是后车 A2 得能跟上来，也就是 A2 与 T 的间距。</p>
+<p><mark>同一个原语在不同拓扑下的结局可以相反</mark>。T 前方那辆车可能是它的领车，也可能是邻道上无关的参与者。同样的扰动落在前者身上把 T 推向追尾，落在后者身上什么也不会发生。</p>
+<h3>1.3 前人两条路各自缺什么</h3>
+<p>物理 LiDAR 攻击一直走两条路。移除类用对抗物体或物理伪装压掉真实目标的回波，注入类往点云里塞不存在的障碍物。两条路都能在下游感知和控制里造出后果。</p>
+<p>问题出在评测方式上。这些工作通常在简化路形里验证单个原语，直路行驶、预先规定好的转弯、或者预先假定的车辆动作，参数由人手选。这种评测能回答一路原语有没有用，回答不了它在什么样的车流里有用。</p>
+<p>第三条路是离线的。攻击硬度分析（Kim 等人）用离线搜索找出物理攻击在什么条件下可行，LLM-Attacker（arXiv 2501.15850）用大模型去改仿真驾驶场景，两边的动作都发生在攻击执行之前。一篇系统化梳理（Zhang 等人，arXiv 2509.11120）把传感器扰动在自动驾驶管线里的传播分析了一遍，并把场景相关的混合攻击链列为开放问题，它自己不做在线规划。</p>
+<p>TACTIC 把这件事挪到线上。可行域由实测量和标定常数现算，关系理解交给 MLLM，选原语和配参数都在回路里完成。</p>
+<p><strong>这节要你记住的是，可行域窄且随车流漂移，这是攻击必须在线规划的原因。</strong></p>
+<hr>
+<h2>二、总体结构</h2>
+<p>先看全图。最左边是真实车流，路侧攻击者用同址的 LiDAR 加相机把它数字化成状态 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>S</mi><mi>t</mi></msub></mrow></math></math>。中间是大模型的三步，场景推理、战术规划、可行性评估。右边是场景图、三个候选原语，以及一个判断拓扑变没变的开关。</p>
+<figure><img src="figs/2609.39969-fig1.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　攻击者的路侧感知栈用同址 LiDAR 与相机观测局部车流，把感知状态 S 交给多模态大模型。大模型构造语义场景图、选出可行战术 P，场景显著变化时更新策略。缓存拓扑与异步推理减少重复的图生成与重规划等待。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<p>把核心机制压成一句话，用实测量与标定常数圈出可行域，大模型只在域内选原语并配参数。下面这张表把正文的五个阶段对起来，方便回去找公式和阈值。</p>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>落在哪一节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>路侧感知</td><td>III-A 与 IV-A</td><td>路侧 LiDAR 与相机的原始数据</td><td>20 Hz 目标级状态 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>S</mi><mi>t</mi></msub></mrow></math></math></td></tr><tr><td>语义场景图</td><td>IV-A</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>S</mi><mi>t</mi></msub></mrow></math></math> 里的结构化量，加上同一时刻的路侧图像 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>I</mi><mi>t</mi></msub></mrow></math></math></td><td>图 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>V</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>E</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></td></tr><tr><td>物理可行域</td><td>III-C 与 IV-B</td><td><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>S</mi><mi>t</mi></msub></mrow></math></math> 与标定常数</td><td>本轮可执行的参数集合 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></td></tr><tr><td>战术策略</td><td>IV-B</td><td>关系结构、危害分、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></td><td>决策 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D4AB;</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>m</mi><mo>&#x0002C;</mo><msub><mi>&#x003B8;</mi><mi>m</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></td></tr><tr><td>异步监视与重规划</td><td>IV-C</td><td>20 Hz 跟踪状态与缓存图的逐帧比对</td><td>继续执行、发射、或挂起重算</td></tr></tbody></table></div>
+<p>图 2 把大模型那一步拆开。左路是图像编码，路侧图像打成 patch 后过 SigLIP-2 视觉编码器，再接一个 2×2 的 merger，把每四个 patch 嵌入压成一个视觉 token。右路是量测编码，跟踪到的车辆状态和输出 schema 序列化成文本 token。两路 token 用交错 MRoPE 位置编码送进同一个解码器，DeepStack 把视觉中层特征注入靠前的几层。解码是自回归的，输出被约束成 JSON。</p>
+<figure><img src="figs/2609.39969-fig2.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　路侧图像经 SigLIP-2 视觉编码器与 2×2 merger 压成视觉 token，跟踪到的车辆状态序列化成文本 token。解码器同时条件于两路输入，推断语义交通关系并解码成结构化场景图。拓扑不变时稳态管理器只更新度量类边属性，不重做整幅多模态生成。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<p>看图 2 右上角的 JSON 片段。语义字段从多模态上下文里推出来，比如车道归属和谁是领车，度量字段则直接沿用感知栈给的数，比如车距和 TTC。这条分工把状态估计留在感知里，把关系判断留给大模型。</p>
+<p>这条分工还对应着大模型做决策类任务的一处常见短板。GPT-Driver（arXiv 2310.01415）把运动规划写成对结构化驾驶状态的语言建模，输入是已经算好的状态量，输出是轨迹。LMDrive 把多模态观测与语言一并接进驾驶回路，让语言参与连续控制。DriveLM 用图结构把感知、预测和规划串成视觉问答。这三条都在用语言模型处理异质观测与交通参与者之间的关系，输出都是驾驶动作。TACTIC 把同一种推理挪到攻击侧，输出换成攻击原语。</p>
+<p><mark>可行性由代码兜底，提示词只是建议</mark>。执行之前，确定性代码会把大模型生成的参数投影回可行集合 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math>，让物理边界变成系统约束。</p>
+<p><strong>这节要你记住的是，五个阶段的边界很清楚，感知给量，大模型给关系，代码给边界。</strong></p>
+<hr>
+<h2>三、方法拆解</h2>
+<h3>3.1 把攻击执行写成一个带约束的决策问题</h3>
+<p>每一轮，策略输出</p>
+<div class="eq"><span class="eqn">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x1D4AB;</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>m</mi><mo>&#x0002C;</mo><msub><mi>&#x003B8;</mi><mi>m</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>m</mi></mrow></math></math> 是三选一的模式，取 push-away、phantom-braking 或 hold。hold 表示沿用上一轮的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D4AB;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></math></math>，用它避免攻击期间反复换招。参数向量 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>m</mi></msub></mrow></math></math> 随模式走，push-away 带三个连续量，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>m</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>&#x00394;</mi><mi>d</mi><mo>&#x0002C;</mo><mi>&#x003C1;</mi><mo>&#x0002C;</mo><mi>o</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math>，分别是诱导距离位移、分离爬升速率和点火位置；phantom-braking 带两个，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003B8;</mi><mi>m</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x0002C;</mo><mi>&#x003C4;</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math>，分别是幻影墙的放置距离和发射时长。</p>
+<p>一轮的定义是一次决策、执行、重规划的循环，每次试验最多 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math></math> 轮。这个上限是硬编码的，不由模型自己决定。</p>
+<p>把自由度摊开数一遍。模式变量 1 个，取 3 个值。连续未知数在推远一侧有 3 个，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi></mrow></math></math>、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C1;</mi></mrow></math></math>、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>o</mi></mrow></math></math>。约束一共 4 条，来源分三处。</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x02265;</mo><mn>11</mn><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x00394;</mi><mi>d</mi><mo>&#x02264;</mo><mn>50</mn><mo>&#x02212;</mo><mi>o</mi><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003C1;</mi><mo>&#x02265;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>d</mi></mrow><mrow><msub><mi>t</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">r</mi></mrow></mrow></msub></mrow></mfrac><mo>&#x0002C;</mo><mspace width="2em" /><mi>&#x003C1;</mi><mo>&#x02264;</mo><mn>3.0</mn><mtext>&#x000A0;</mtext><mrow><mi mathvariant="normal">m</mi><mo>&#x0002F;</mo><mi mathvariant="normal">s</mi></mrow></mrow></math></math></div>
+<p>第一条来自效应量，位移不够大，受害车读到的余量不足以改变跟车行为。第二条来自感知覆盖，推得太远，假目标落到路侧感知量程外。第三条来自完成时间，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>t</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">r</mi></mrow></mrow></msub></mrow></math></math> 是剩余到达时间，爬升必须在真的追上去之前走完。第四条来自量测一致性，爬得太快会被识破。</p>
+<p>四条里前两条互相拉扯。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi></mrow></math></math> 一变大，天花板下降而地板不动，可行集非空要求 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>11</mn><mo>&#x02264;</mo><mn>50</mn><mo>&#x02212;</mo><mi>o</mi></mrow></math></math>，也就是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>o</mi><mo>&#x02264;</mo><mn>39</mn></mrow></math></math>。原文把点火位置 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>o</mi></mrow></math></math> 直接以米为单位写进覆盖上限，写法上带一点量纲上的松动，这一点我放在局限里说。第三与第四条把 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C1;</mi></mrow></math></math> 夹成一个区间，区间的宽度随剩余到达时间缩短而收窄。</p>
+<p>幻影刹车一侧的自由度小得多。连续未知数 2 个，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi></mrow></math></math> 和 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C4;</mi></mrow></math></math>。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi></mrow></math></math> 被目标车速钉死，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo stretchy="false">&#x00028;</mo><mi>v</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.5</mn><mi>v</mi></mrow></math></math>，再截到 5 到 15 m 之间。真正剩下的只有 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C4;</mi></mrow></math></math>，它的下界由当前的后车间距决定。所以幻影刹车的可行集是一条一维区间，推远是一个受时间挤压的二维窄带。</p>
+<p>参数的初值由大模型给，它联合看了关系结构和可行边界之后吐出 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>&#x00394;</mi><mi>d</mi><mo>&#x0002C;</mo><mi>&#x003C1;</mi><mo>&#x0002C;</mo><mi>o</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 或 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>w</mi><mo>&#x0002C;</mo><mi>&#x003C4;</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math>。驱动修正的是标定上下界构成的越界残差，越界多少就截回多少。兜底的是每一轮用实测量重算的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math>。</p>
+<p><strong>这节要你记住的是，两个原语的自由度形状不同，一个被时间挤成窄带，一个被车速钉成一维。</strong></p>
+<h3>3.2 量由感知给，关系由大模型给</h3>
+<p>感知前端跑在 LiDAR 的 20 Hz 上，先聚类再关联成稳定轨迹，输出的是目标级的量。这些量准确描述单车状态，但不编码车与车的关系。</p>
+<p>大模型要做的是把关系补回来。每一轮查询同时给两样东西，结构化的车辆状态和对应的路侧相机帧。图像提供道路语义，比如车道结构和行驶方向。结构化量保住精确的度量信息。输出是一张语义场景图</p>
+<div class="eq"><span class="eqn">(2)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msub><mi>V</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>E</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p>节点 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>V</mi><mi>t</mi></msub></mrow></math></math> 是被跟踪的交通参与者，边 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>E</mi><mi>t</mi></msub></mrow></math></math> 编码关系，比如同车道前后车、邻车道或对向车道的交互。边的属性保留感知栈给出的度量量，包括车距、相对运动和 TTC。</p>
+<p>视觉那一路的编码写成</p>
+<div class="eq"><span class="eqn">(3)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>Z</mi><mo>&#x0003D;</mo><mo>Merger</mo><mo minsize="1.2em" maxsize="1.2em">(</mo><mo>ViT</mo><mo stretchy="false">&#x00028;</mo><msub><mi>I</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo minsize="1.2em" maxsize="1.2em">)</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>z</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msub><mi>z</mi><mi>M</mi></msub><mo stretchy="false">&#x0007D;</mo></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>I</mi><mi>t</mi></msub></mrow></math></math> 是路侧图像，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>ViT</mo></mrow></math></math> 是 SigLIP-2 视觉编码器，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>Merger</mo></mrow></math></math> 把每 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x000D7;</mo><mn>2</mn></mrow></math></math> 个 patch 嵌入压成一个视觉 token，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>M</mi></mrow></math></math> 是视觉 token 数。文本那一路把跟踪到的车辆状态、输出 schema 和缓存拓扑序列化成 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>X</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msub><mi>x</mi><mi>n</mi></msub><mo stretchy="false">&#x0007D;</mo></mrow></math></math>。</p>
+<p>两路 token 用交错 MRoPE 位置编码送进多模态解码器，DeepStack 把视觉中层特征注入靠前的解码层。图是自回归解码出来的，目标是</p>
+<div class="eq"><span class="eqn">(4)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>p</mi><mo stretchy="false">&#x00028;</mo><msub><mi>G</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x0220F;</mo><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>K</mi></mrow></munderover><mi>p</mi><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>k</mi></msub><mo>&#x02223;</mo><msub><mi>y</mi><mrow><mo>&#x0003C;</mo><mi>k</mi></mrow></msub><mo>&#x0002C;</mo><mi>Z</mi><mo>&#x0002C;</mo><mi>X</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>y</mi><mn>1</mn></msub><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><msub><mi>y</mi><mi>K</mi></msub></mrow></math></math> 是序列化后的输出 token。语义字段靠多模态上下文推，度量字段沿用感知栈的量。这一刀把状态估计挡在大模型外面。</p>
+<p><strong>这节要你记住的是，大模型不碰状态估计，只碰关系判断和模式选择。</strong></p>
+<h3>3.3 危害分与确定性投影</h3>
+<p>论文不希望大模型从零推后果。它先在离线用网格搜索标定出一个 h-group 度量，每一轮战术决策之前，两个原语都被这个度量打一次分。</p>
+<p>推远一路的分数由归一化的车距、加速度和 TTC 三项按 0.15、0.70、0.15 加权，攻击时长在第二层以 0.10 的权重并进去。幻影刹车一路只留加速度和 TTC，权重 0.85 和 0.15，同样带一个 0.10 的时长项。刹车这一路把车距剔掉，理由是刹车后果由目标的减速度主导，它跟车间距的关系不单调。标定的结果是攻击样本与良性样本的平均分离裕度，推远一路 <strong>96.5×</strong>，刹车一路 <strong>13.6×</strong>。</p>
+<p>这个分从受害车视角定义，数值越大表示后果越重，它不含攻击方成本，也不含可行性。这一条论文自己写明了。</p>
+<p>可行性接地是下一步。分数高不代表能执行。系统把实测量和 III-C 推出来的模式专属上下界一起交给大模型。推远给的是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>11</mn><mo>&#x02264;</mo><mi>&#x00394;</mi><mi>d</mi><mo>&#x02264;</mo><mn>50</mn><mo>&#x02212;</mo><mi>o</mi></mrow></math></math> 与 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x0002F;</mo><msub><mi>t</mi><mrow><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">r</mi></mrow></mrow></msub><mo>&#x02264;</mo><mi>&#x003C1;</mi><mo>&#x02264;</mo><mn>3.0</mn></mrow></math></math> m/s，刹车给的是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mn>1.5</mn><mi>v</mi></mrow></math></math> 限在 5 到 15 m，以及由当前后车间距算出的最短发射时长。这些数每一轮按当前场景重算并数值给出。</p>
+<p>于是大模型面对三样输入，关系结构、潜在后果、剩余可行裕度。几何让某一路明显更可行的时候，它可以挑一个危害分更低的。</p>
+<p>执行之前有一道确定性投影。大模型吐出的参数当作初值，投影把它拉回可行集合 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math>。<u>物理边界在投影这道闸门上生效，写在提示词里不作数</u>。</p>
+<p><strong>这节要你记住的是，危害分和可行性分开算，最后一道闸门是代码。</strong></p>
+<h3>3.4 两个回路的时间尺度对不上</h3>
+<p>大模型推理要按秒计，车流按感知速率变。TACTIC 的对策是把高频监视和低频推理拆开。</p>
+<p>缓存策略还有效的时候，执行和下一轮场景生成并行跑。一个轻量警报器每一帧拿 20 Hz 的跟踪状态和缓存图比对。<u>场景突变判定为车辆出现或消失、车间距变化超过 8 m 或 40%、或者推断出的道路关系改变</u>。跟车距离本来就是慢慢变的，这三个阈值瞄的是结构性变化，帧级噪声不算。最小重规划间隔 0.5 s，防止连续告警把大模型调度器打满。</p>
+<p>判定突变之后，警报器挂起执行并触发场景更新。车辆集合和关系结构还有效就走轻量 Δ 路径，只刷边属性；否则请求整幅多模态重生成。战术规划从更新后的图和可行状态接着走。警报器只负责发现和定位变化，语义解释和策略重生成仍然归大模型。</p>
+<figure><img src="figs/2609.39969-svg-loops.svg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）上半圈是受害车自己的感知到控制回路，一拍约 50 ms，读的是真实物理量。下半圈是攻击者的回路，20 Hz 感知进缓存图，再进秒级的大模型推理，最后经确定性投影落到执行器。攻击的注入点只在受害车的量测处，受害车内部滤波状态与整车报文攻击者碰不到。两圈时间常数差了四十倍以上，快回路等不起慢回路，于是有了 0.05 s 的挂起警报器和 0.5 s 的最小重规划间隔。</figcaption></figure>
+<p><mark>大模型的延迟本身就是控制回路里的一个量化环节</mark>。它的输出在一个周期内保持常量，下个周期才刷新。把它从 7.4 s 压到 2.0 s 的办法有两条，一条是把执行和生成重叠，另一条是拓扑没变时只刷新边属性。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　大模型的输出在一个保持周期内不变，这在时序上和零阶保持器的作用相同。推理时间就是保持周期。慢回路给出的是阶梯状的分段常量指令，被控对象的闭合时间只有几秒。把周期压短就是把这串阶梯的台阶变密，这比优化单次决策的精度更直接。</p></blockquote>
+<p><strong>这节要你记住的是，慢回路按秒更新，快回路按帧挂起，靠异步把两者错开。</strong></p>
+<hr>
+<h2>四、结果</h2>
+<p>实验全部在 CARLA 0.9.14 的 Town07 里做，同步仿真 <strong>20 Hz</strong>。每次试验有目标车 T、领车 A1、后车 A2，再加 A3 与 A4 两个参与者。为了让动态车际交互不被遮挡混淆，攻击只打离路侧感知栈最近的那条车道。攻击者用杆装 LiDAR 加 RGB 相机，有效观测距离约 <strong>50 m</strong>，与 MVS 的设置相似。纵向车辆名义巡航速度 <strong>6.0 m/s</strong>，闭环实测约 <strong>5.5 m/s</strong>，无攻击时车距基本保持稳定。大模型后端以 Qwen 为主，另用 Kimi 做后端泛化。</p>
+<p>论文用两次完整回放展示了执行过程。图 3 是一次幻影刹车，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>8.0</mn></mrow></math></math> s 时 A2 与 T 的几何刚好落进可行域，缓存策略被放出去，一堵 8 m 的假墙触发急刹，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mn>10.4</mn></mrow></math></math> s 时 A2 追尾 T。图 4 是一次带中途挂起的推远，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>3.9</mn></mrow></math></math> s 时推远变得可行并开始执行，领车加速让缓存条件失效，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>T</mi><mn>4</mn></msub><mo>&#x0003D;</mo><mn>13.3</mn></mrow></math></math> s 恢复后更新场景图与策略，最后 T 撞上 A1。</p>
+<figure><img src="figs/2609.39969-fig3.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　幻影刹车攻击的示例。T1 时刻系统在标称状态下监视，T2 等于 8.0 s 开始执行，T3 等于 10.4 s 发生碰撞。A 到 C 三列分别是驾驶场景、目标车感知与场景图。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<figure><img src="figs/2609.39969-fig4.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　场景变化与重规划的示例。T2 等于 3.9 s 与 T4 等于 13.3 s 两次重新考虑执行，中间 T3 处条件失效触发挂起。最终目标车 T 与领车 A1 相撞。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<h3>4.1 可行域确实是个窄带</h3>
+<p>蒙特卡洛协议把 T 与 A1 的初始间距在 <strong>18 到 28 m</strong> 上均匀采样，正好跨过推远的可行性转变区。每种配置跑 <strong>20</strong> 次不同随机种子，最多 3 轮攻击。<u>攻击成功定义为两车中心距小于 5.0 m 且残余撞击速度不低于 1.5 m/s</u>。另有 20 次无攻击对照，跑 30 s。统计用 Wilson 95% 置信区间和 Fisher 精确检验。</p>
+<p>先把位移锁死扫一遍。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math></math> m 时 0/20 成功，10 m 时 5/20，15 m 和 20 m 都是 20/20。更细的一遍给出 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x0003D;</mo><mn>8</mn></mrow></math></math> m 时 1/20，9 m 时 0/20，10 m 时 5/20，10.5 m 时 12/20，11 到 12 m 时 20/20。这条曲线把下限定在 <strong>11 m</strong>。</p>
+<p>表 I 里有一列比成功率更能说明问题。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x0003D;</mo><mn>10</mn></mrow></math></math> m 那一行，最小 T 与 A1 间距低于 7 m 的试次是 20/20，二十次全都逼到了七米以内，可成功率只有 5/20。剩下的十五次被受害车的 AEB 刹住了。贴到近处和撞上去是两件事，中间隔着受害车自己的制动。</p>
+<p>另一列记录位移跟踪误差是否小于 1 m，15 m 时 18/20，20 m 时掉到 6/20。位移推得更大，跟踪反而更差，多出来的那部分代价落在暴露上。</p>
+<p>图 5(a) 把可行的位移窗画成一块斜带，左边界是 11 m 的地板，上边界是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>50</mn><mo>&#x02212;</mo><mi>o</mi></mrow></math></math> 的覆盖天花板。绿星是完整策略的实际工作点，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi><mo>&#x02248;</mo><mn>17.4</mn></mrow></math></math> m。红叉是固定规则抽到的点，橙方块是随机策略，两个都落在地板附近。图 5(b) 管速率，黄线是完成时间给的下限，红线是 3.0 m/s 的一致性上限，绿星的工作点 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C1;</mi><mo>&#x02248;</mo><mn>2.97</mn></mrow></math></math> m/s 压在上限下面一点。</p>
+<figure><img src="figs/2609.39969-fig5a.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5(a)</b>　位移范围与各策略的工作点。纵轴是位移 Δd，横轴是初始 T 与 A1 间距。地板 11 m 是效应量下限，斜的天花板是覆盖上限。绿星为完整策略，红叉为固定规则，橙方块为随机策略。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<figure><img src="figs/2609.39969-fig5b.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5(b)</b>　速率受完成时间与一致性上限两头夹。黄线是以 5 s、7 s、9 s 计的完成下限，红线是 ρmax 等于 3.0 m/s 的量测一致性上限。绿星为完整策略工作点，红叉为固定规则。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<p>幻影刹车一侧的结果形状相反。在固定的 13 到 15 m 后车间距下扫发射时长，2 s 到 10 s 全都保持高成功率，看到不清晰的时长门槛。<mark>卡住幻影刹车的是后车间距，发射时长管不住它</mark>。</p>
+<p>图 6 把两路的剂量响应放在一起。推远的成功率在 10.5 到 11 m 之间陡然抬起然后饱和，幻影刹车在 2 到 10 s 的发射时长上一直待在 80% 以上（16/20 到 20/20）。两条曲线形状不同，这就是要按当前交通状态选原语的直接理由。</p>
+<figure><img src="figs/2609.39969-fig6a.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 6(a)</b>　推远成功率对位移。每档 20 次试验，误差棒为 95% Wilson 置信区间。临界带落在 10.5 到 11 m。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<figure><img src="figs/2609.39969-fig6b.jpg?v=20261001143103" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 6(b)</b>　幻影刹车成功率对发射时长，后车间距固定在 13 到 15 m。每档 20 次试验。曲线没有明显门槛，说明起决定作用的是后车几何。（原图，取自论文 arXiv 2609.39969）</figcaption></figure>
+<h3>4.2 四种决策源</h3>
+<p>四种决策源在混合实现下对比，两路原语都可用，每组 20 次试验，Qwen 后端。完整策略 <strong>20/20</strong> 全中，固定规则 <strong>7/20</strong>，随机策略 <strong>12/20</strong>，两个 Fisher 精确检验的 p 值分别是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1.3</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup></mrow></math></math> 和 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3.3</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow></math></math>。受限大模型只挑模式、参数用系统默认值，拿到 <strong>15/20</strong>，与完整策略的差是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0.047</mn></mrow></math></math>。</p>
+<p>表 II 里还有三列值得看。占空比从 0.39 到 0.67，发射剂量从 3.9 到 9.7，剂量效率从 0.26 到 0.07。完整策略三列全部落在最好的一头，信号发得最少还最管用。发射基尼 G 这一列论文没给偏好方向，我只把数抄下来，完整策略 0.61 是四组里最高的。</p>
+<p>固定规则的十三次失败全是被 AEB 刹住的近失。它永远选推远，成功与否完全押在采样到的几何上，几何不合适就只剩近失。</p>
+<p>两边的好处在不同的轴上。完整策略每次试验平均发 <strong>2.1</strong> 次大模型调用，受限策略 2.6 次，两者都要按秒等的推理延迟和推理算力。固定规则与随机策略一次调用都不发，读也不读任何状态，部署成本是四组里最低的。几何本来很有利的时候，固定规则抽到的点也能落进可行域，失败集中在几何不利的那一半。</p>
+<h3>4.3 消融</h3>
+<p>感知通道（表 IIIa）。去掉图像只剩物理量，掉到 <strong>13/20</strong>，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0.0083</mn></mrow></math></math>。去掉物理量只剩图像，掉到 <strong>15/20</strong>，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0.047</mn></mrow></math></math>。两个单通道之间没有显著差异，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>0.73</mn></mrow></math></math>。</p>
+<p><mark>只用图像这一路顶着 15/20，代价是占空比 0.96 与剂量 10.0</mark>，而联合输入是 0.39 和 3.9。图像单独能提供道路语义，却缺精确的度量状态，策略只能靠更长时间、更大的发射量去补。它在平均试验时长上反而最短，20.6 s 对联合输入的 34.5 s。</p>
+<p>攻击时机（表 IIIc）。立即执行 <strong>20/20</strong>，等一个预定义的脆弱窗口（4 s 内车距小于 12 m 且接近速度大于 0.5 m/s）再动手只有 <strong>9/20</strong>，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>1.5</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>4</mn></mrow></msup></mrow></math></math>，平均时长从 34.5 s 涨到 43.7 s。<mark>等一个更脆弱的窗口，成功率掉了一半以上</mark>。等待的过程本身会消耗时空可行域，等到了理想条件，可行域已经不在。</p>
+<p>异步重规划（表 IIIb）。同步重生成要 7.4 s，异步 3.7 s，异步加上 Δ 刷新压到 <strong>2.0 s</strong>。警报器在注入突变后 0.05 s 内挂起执行。推理通道每次试验平均发约 2.5 次大模型调用。十次 Δ 路径探针全部正确保住了原拓扑，只更新了度量边属性。</p>
+<h3>4.4 对照与后端</h3>
+<p>无攻击对照 20 次全部没有碰撞，最小间距 17.9 m，TTC 从未进入危险区。这条对照说明观察到的碰撞来自攻击执行，标称跟车动力学会自己撞的可能性被排掉。</p>
+<p>后端泛化方面，完整策略在 Qwen 上 20/20，在 Kimi 上也是 20/20；受限策略在 Qwen 上 15/20，在 Kimi 上 16/20。差异不显著，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>p</mi><mo>&#x0003D;</mo><mn>1.0</mn></mrow></math></math>。</p>
+<p><strong>280</strong> 这个总数是这样凑出来的。表 I 的锁定位移扫描 4 档乘 20 等于 80 次，表 II 四组乘 20 等于 80 次，表 IIIa 三组乘 20 等于 60 次，表 IIIc 两组乘 20 等于 40 次，再加 20 次无攻击对照。80 加 80 加 60 加 40 加 20 正好 280，全部是 CARLA 仿真，没有真车。</p>
+<p><strong>这节要你记住的是，优势来自在线选择，而等待被量成了负收益。</strong></p>
+<hr>
+<h2>五、局限</h2>
+<p>论文自己承认的散在实验设置和结论里，没有单列成节。下面四条每条都能对回原话。</p>
+<p>一是验证只在仿真里。结论说未来工作会把 TACTIC 扩展到硬件平台，CARLA 里的 280 次试验没有一次跑在真车上。</p>
+<p>二是感知栈是任务特定的。结论把学习型感知栈单列进未来工作，说明现在的目标级量测来自一套定义明确的几何管线，换成学出来的感知栈还没试过。</p>
+<p>三是攻击战术的粒度是单步的。结论提到更丰富的序列级战术，现在的实现是每轮从两个原语里挑一个再配参数，最多三轮，没有跨轮的长时程规划。</p>
+<p>四是遮挡被有意绕开了。实验设置里写明，为了把动态车际交互和遮挡分开，攻击只打离路侧感知栈最近的那条车道。更远的车道、被前车挡住的目标，都不在这次的验证范围里。</p>
+<p>以下几条是编者补充，论文未将其列为局限。</p>
+<p>物理信道在方法里被压缩成两个标量。推远用位移 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi></mrow></math></math>，幻影刹车用墙位 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi></mrow></math></math>，两者都是以米为单位的几何量。论文没有出现光功率、入射角、脉冲时序、探测器饱和、目标反射率这类量，也没有把攻击成败和信噪比联系起来。它称作物理约束的那组边界，实际由效应量下限与传感覆盖上限构成，来源是锁定位移扫描而不是信道模型。</p>
+<p>覆盖上限的写法还有一处量纲上的松动。原文把点火位置 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>o</mi></mrow></math></math> 直接以米写进 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msub><mi>d</mi><mrow><mo>max</mo></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>o</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>50</mn><mo>&#x02212;</mo><mi>o</mi></mrow></math></math>，名字叫时刻却带长度单位。这个写法不影响扫出来的 11 m 地板，会让上限的物理含义难解释。</p>
+<p>危害分的标定细节没交代。96.5× 与 13.6× 两个分离裕度只说来自网格搜索，标定集的规模、场景分布、跨场景迁移都没有报。</p>
+<p>成功判据把擦碰和致命混在同一个口径里。中心距小于 5.0 m 且残余速度不低于 1.5 m/s 就算成功，一次低速刮蹭和一次高速追尾在这里等价。</p>
+<p>论文没有从受害车一侧评估检测难度。占空比、剂量、基尼系数被当作信号效率的代理，可真正决定攻击能不能落地的量，是检测器在这些发射模式下的虚警率与漏警率，论文没有报。</p>
+<p>只在 Town07 的一条直路上验证。更复杂的路形、不同的限速与 AEB 标定、不同的 IDM 参数都没有覆盖。</p>
+<p><strong>这节要你记住的是，论文承认的只有仿真与范围，其余都是编者补的。</strong></p>
+<hr>
+<h2>六、我的评价</h2>
+<p>做得对的地方有几处。</p>
+<p>可行性被写成系统约束，没有停在提示词层面。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math> 投影这道闸门让参数不可能越界，大模型的自由度被限制在挑哪个模式、在区间里挑哪个点。把语言模型放进回路时最容易漏的就是这一步，很多工作把约束写进 prompt 就当成约束生效了。</p>
+<p>大模型的职责切得干净。状态估计留在感知栈，关系判断交给大模型，物理可行性交给标定常数和投影。每一块的责任边界都能指到具体模块。</p>
+<p>随机基线只抽一次，不按轮重抽。论文明确写了这一点，避免多轮重抽给随机策略额外的机会。这种小事上的干净程度会影响整组对比的可信度。</p>
+<p>攻击时机的消融设计得好。它把等更好的时机做成一个可测的对照，结论是负收益。这个反直觉的结果比任何成功率都更能说明时序可行域有多窄。</p>
+<p>存疑的地方也有。</p>
+<p>物理层比标题读起来薄。<mark>论文没有把物理信道建模到光功率与入射角这一层</mark>，攻击的执行被抽象成把前车回波往外推 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>d</mi></mrow></math></math> 和在 T 前方放一堵墙。这两个抽象对规划够用，对物理攻击这个词的支撑有限。</p>
+<p><mark>这套系统的物理与信息耦合是真的，决定性的一环却在时间尺度上</mark>。11 m 地板、3.0 m/s 上限、<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>w</mi><mo>&#x0003D;</mo><mn>1.5</mn><mi>v</mi></mrow></math></math> 这三条都是几何或运动学关系，它们不含光。把两圈耦合起来的是大模型的推理周期与车流的闭合时间处在同一个量级。这篇的耦合机制落在大模型的决策延迟上，落在采样与保持的时序后果上，而不在什么信道物理量上。</p>
+<p>受限大模型与完整策略的 p 值是 0.047。每组只有 20 次，这个差刚好压在常用显著性水平上，换一批种子未必守得住。完整策略 20/20 的 Wilson 区间是 [84, 100]，宽度十六个点。</p>
+<p>危害分与可行性是两个不同的量，论文没有把攻击方成本纳入打分。它自己也说明了这一点，作为一个从受害车视角定义的后果度量，这是合理的设计选择，代价是无法直接回答哪一路攻击更省。</p>
+<p>这套机制的可检验推论是清楚的。一旦车流离开 11 m 位移地板与 3.0 m/s 速率上限围出的带，任何决策源的成功率都会掉。它会失效的情形也很清楚，几何本身不允许的时候就没办法，十三次固定规则失败全是被 AEB 刹住的近失，说明几何不合适时，再好的选择也换不来碰撞。</p>
+<p>要往真机走，最先该确认的是路侧感知给出的车距误差有多大，以及这个误差怎么传导进 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math>。仿真里的目标级状态近乎无偏，真机上不会。</p>
+<p><strong>这节要你记住的是，耦合落在时间尺度上，物理层和标定细节偏薄。</strong></p>
+<hr>
+<h2>七、可以接着做什么</h2>
+<p>把物理信道换成真正的信道模型再做一遍锁定位移扫描。加入发射功率、光束发散角、目标反射率、探测器阈值这些量，看 11 m 的地板会不会移动，看 3.0 m/s 的一致性上限换成给定探测器检测概率之后是放宽还是收紧。</p>
+<p>给受害车装一个异常检测器，把占空比、剂量、基尼系数这套代理指标换成检测器的 ROC。发射模式一变检测难度就变，这条曲线决定了攻击的隐蔽性边界在哪。</p>
+<p>把 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>3</mn></mrow></math></math> 的单步战术换成有限时域搜索。现在每一轮独立选一次，用一个 h-group 分数当后果代理，可以把它直接当代价函数接进滚动时域优化，让选模式和配参数在同一个目标下联合求解。</p>
+<p>把攻击者的感知误差显式建进去。路侧 LiDAR 估的车距、速度、TTC 都有误差，而 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003A6;</mi><mo stretchy="false">&#x00028;</mo><msub><mi>S</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math> 的下界和上界直接由这些量算出来。误差放大到一定程度，可行集会缩到空，这条边界值得量化。</p>
+<p>换场景做泛化。把限速、IDM 参数、AEB 标定这三样各换一组，再试弯道与多车道，看立即执行优于等待这条结论在别的动力学参数下还成不成立。</p>
+<p>多攻击者协同。两个路侧设备同时对相邻车道动手，可能造出现在单点攻击造不出的连锁，可行域的联合形状是个开放问题。</p>
+<p><strong>这节要你记住的是，把信道模型和检测器接进来，这篇的边界才算清楚。</strong></p>
+<div class="fine">以上都是即时联想，没有实验、没有查证，只当选题线索看。</div>
+<hr>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>术语</th><th>一句话解释</th></tr></thead><tbody><tr><td>目标车 T</td><td>攻击指定的受害车，也是要撞上别人的那一辆</td></tr><tr><td>领车 A1</td><td>T 正前方同一车道的车，推远原语的攻击对象</td></tr><tr><td>后车 A2</td><td>T 正后方的车，幻影刹车后期的碰撞对象</td></tr><tr><td>推远 push-away</td><td>把前车回波的感知距离往外推 Δd，让 T 读到的车距偏大</td></tr><tr><td>幻影刹车 phantom-braking</td><td>在 T 前方注入不存在的障碍物，逼 T 触发 AEB</td></tr><tr><td>hold</td><td>第三路模式，沿用上一轮的战术，避免频繁换招</td></tr><tr><td>Δd</td><td>诱导的感知距离位移，单位米，锁定位移扫描的自变量</td></tr><tr><td>ρ</td><td>分离爬升速率，单位 m/s，决定位移走完要多久</td></tr><tr><td>o</td><td>点火位置，原文按米写进覆盖上限 50 减 o</td></tr><tr><td>w</td><td>幻影墙的放置距离，等于 1.5v 并截到 5 到 15 m</td></tr><tr><td>τ</td><td>幻影刹车的一次发射时长</td></tr><tr><td>t_arr</td><td>剩余到达时间，T 追上前车还剩多久</td></tr><tr><td>TTC</td><td>time-to-collision，按当前相对速度算出的相撞剩余时间</td></tr><tr><td>AEB</td><td>自动紧急制动，感知 TTC 低于 3.0 s 与 1.6 s 时两段介入</td></tr><tr><td>IDM</td><td>智能驾驶员模型，把期望车速与期望车距一起纳入的跟车模型</td></tr><tr><td>灰盒威胁模型</td><td>攻击者知道传感器与控制配置，但拿不到受害车内部状态</td></tr><tr><td>语义场景图</td><td>节点是交通参与者、边是相对关系的图，边上挂度量属性</td></tr><tr><td>h-group 度量</td><td>离线标定的后果严重度评分，从受害车视角定义</td></tr><tr><td>Φ(S_t)</td><td>当前场景下可执行的参数集合，由标定上下界围成</td></tr><tr><td>警报器</td><td>逐帧比对 20 Hz 跟踪状态与缓存图的模块，负责发现突变</td></tr><tr><td>Δ 路径</td><td>拓扑不变时只刷新边属性的轻量更新路径</td></tr><tr><td>占空比 duty</td><td>一次试验里执行器处于开启状态的时间占比</td></tr><tr><td>剂量 dose</td><td>一次试验累计发射的信号量</td></tr><tr><td>剂量效率 η</td><td>单位剂量换来的攻击后果，越高越省信号</td></tr><tr><td>Wilson 区间</td><td>小样本下比正态近似更稳的二项比例置信区间</td></tr><tr><td>Fisher 精确检验</td><td>小样本列联表用的显著性检验</td></tr></tbody></table></div>
+<h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li><a href="https://arxiv.org/abs/2501.15850" target="_blank" rel="noopener">LLM-Attacker</a><span style="color:var(--ink3);font-size:13px">　arXiv:2501.15850　用大模型改仿真驾驶场景造对抗场景，动作发生在执行之前，不在回路里配物理攻击参数</span></li><li><a href="https://arxiv.org/abs/2509.11120" target="_blank" rel="noopener">SoK: How Sensor Attacks Disrupt Autonomous Vehicles</a><span style="color:var(--ink3);font-size:13px">　arXiv:2509.11120　梳理传感器扰动在自动驾驶管线里的传播，把场景相关的混合攻击链列为开放问题，自己不做在线规划</span></li><li>MVS (Moving Vehicle Spoofing System)<span style="color:var(--ink3);font-size:13px">　真车高速远距离 LiDAR 欺骗，参数与路形由人事先设定，不随周围车流在线重选</span></li><li>PLA-LiDAR<span style="color:var(--ink3);font-size:13px">　激光注入假障碍物，验证单个原语在预定义场景下能否奏效，不论交通关系</span></li></ul>
+<a class="paperlink" href="https://arxiv.org/abs/2609.39969" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2609.39969） →</a>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 14:31</footer>
+</div></body></html>

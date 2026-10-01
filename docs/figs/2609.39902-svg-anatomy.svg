@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 500" width="920" height="500" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#6b6b78;font-size:11.5px}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .b3{fill:#ffffff;stroke:#e0d3bd;stroke-width:1.3}
+    .b4{fill:#f7f7f9;stroke:#ccccd4;stroke-width:1.6}
+    .b5{fill:#ffffff;stroke:#c9c9d2;stroke-width:1.4;stroke-dasharray:6 4}
+    .b6{fill:#fdeeee;stroke:#d98a8a;stroke-width:1.5}
+  </style>
+
+  <text class="tb" x="24" y="30">最终提示的解剖，三处注入点在哪里</text>
+  <text class="sm" x="24" y="50">左侧是送进 API 的那段文本，右侧是目标模型内部被走到与没被走到的那两条路</text>
+
+  <rect class="b1" x="24" y="66" width="548" height="416" rx="14"/>
+  <text class="blk" x="44" y="94">外层　代码补全触发词 P_t</text>
+  <text class="sm" x="44" y="114">静态、无害、通用。声明这是一次补全请求，并禁止 sorry 一类措辞</text>
+
+  <rect class="b2" x="44" y="128" width="508" height="336" rx="10"/>
+  <text class="blk" x="62" y="154">中层　面向对象的半成品代码 P_c（攻击者模型生成）</text>
+
+  <rect class="b3" x="62" y="168" width="472" height="62" rx="8"/>
+  <text class="blk" x="78" y="192">注入点 1　方法名</text>
+  <text class="sm" x="78" y="212">def execute_penetration_scenario()，有害语义写进标识符</text>
+
+  <rect class="b3" x="62" y="238" width="472" height="62" rx="8"/>
+  <text class="blk" x="78" y="262">注入点 2　文档字符串与注释</text>
+  <text class="sm" x="78" y="282">写成功能需求描述，例如「模拟一次完整的渗透测试场景」</text>
+
+  <rect class="b3" x="62" y="308" width="472" height="62" rx="8"/>
+  <text class="blk" x="78" y="332">注入点 3　配套工具函数与参数</text>
+  <text class="sm" x="78" y="352">撑出正常工程文件的体量，把注意力拉到代码逻辑上</text>
+
+  <rect x="62" y="380" width="472" height="70" rx="8" fill="#fffaf2" stroke="#e2d6c2" stroke-width="1.3"/>
+  <text class="sm" x="78" y="402">这三处都是字符串。正则剥离注释后主表 ASR 从 90% 掉到 20%（附录 B.4）。</text>
+  <text class="sm" x="78" y="422">剩下的部分说明代码结构本身也在起作用。</text>
+  <text class="sm" x="78" y="442">最终提示写成 P = P_t(P_c)，骨架在里面，触发词在外面。</text>
+
+  <rect class="b4" x="592" y="66" width="304" height="416" rx="14"/>
+  <text class="blk" x="612" y="94">目标模型 M 内部</text>
+
+  <rect class="b5" x="612" y="112" width="264" height="128" rx="8"/>
+  <text class="blk" x="628" y="138">对话安全通路</text>
+  <text class="sm" x="628" y="160">安全训练在这条通路上学会了</text>
+  <text class="sm" x="628" y="178">拒绝提问者，拒绝行为长在这里</text>
+  <rect x="628" y="194" width="106" height="26" rx="13" fill="#ececf1"/>
+  <text class="sm" x="645" y="212" fill="#5c5c68">本次未激活</text>
+
+  <rect class="b6" x="612" y="256" width="264" height="150" rx="8"/>
+  <text class="blk" x="628" y="282">代码补全通路</text>
+  <text class="sm" x="628" y="304">接着上下文往下写代码，调用</text>
+  <text class="sm" x="628" y="322">的是预训练里练出来的编码能力</text>
+  <text class="sm" x="628" y="340">这条通路上没有安全约束</text>
+  <rect x="628" y="356" width="106" height="26" rx="13" fill="#f6c9c9"/>
+  <text class="sm" x="645" y="374" fill="#8a3030">本次激活</text>
+
+  <text class="sm" x="612" y="432">注释在这里的身份是程序员写给下</text>
+  <text class="sm" x="612" y="452">一个人的说明。安全训练认的那个</text>
+  <text class="sm" x="612" y="472">提问者身份，在补全通路里消失了。</text>
+</svg>

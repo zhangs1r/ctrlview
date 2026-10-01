@@ -50,16 +50,27 @@ def parse(xml):
     return out
 
 
-def main(repo):
+def main(repo, window_days=2):
     cfg = json.load(open(f"{repo}/pipeline/columns.json", encoding="utf-8"))
+
+    # 去重的权威来源是历史推荐记录：只要出现在任何一轮里，后续就不再推。
+    # data/seen.json 是旧格式，仍然读进来做兼容（手工标记用）。
+    seen = set()
+    hist_p = f"{repo}/data/history.json"
+    if os.path.exists(hist_p):
+        for r in json.load(open(hist_p, encoding="utf-8")).get("rounds", []):
+            for k in r.get("picks", []):
+                if k.get("id"):
+                    seen.add(k["id"])
     seen_p = f"{repo}/data/seen.json"
-    seen = set(json.load(open(seen_p))) if os.path.exists(seen_p) else set()
+    if os.path.exists(seen_p):
+        seen |= set(json.load(open(seen_p)))
 
     found = {}
     for c in cfg["columns"]:
         got, ids = [], set()
         for q in c["queries"]:
-            for p in fetch(q):
+            for p in fetch(q, window_days=window_days):
                 if p["id"] in seen or p["id"] in ids:
                     continue
                 ids.add(p["id"])
@@ -71,11 +82,12 @@ def main(repo):
         print(f"{c['name']:20} 候选 {len(got)}")
 
     os.makedirs(f"{repo}/data", exist_ok=True)
-    json.dump(found, open(f"{repo}/data/candidates.json", "w"),
+    json.dump(found, open(f"{repo}/data/candidates.json", "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
 
-    # 按栏目均衡取样：每栏最多 PER_COL 候选，保证小栏目不被大栏目挤掉
-    PER_COL = 8
+    # 按栏目均衡取样：每栏最多 PER_COL 候选，保证小栏目不被大栏目挤掉。
+    # 每周跑批要从这些候选里挑 3 篇，所以候选池要明显大于 3。
+    PER_COL = 15
     fresh, seen2 = [], set()
     for c in cfg["columns"]:
         ps = sorted(found.get(c["id"], []), key=lambda x: x["id"], reverse=True)
@@ -90,7 +102,7 @@ def main(repo):
                reverse=True)
 
     total = sum(len(v) for v in found.values())
-    json.dump(fresh, open(f"{repo}/data/queue.json", "w"),
+    json.dump(fresh, open(f"{repo}/data/queue.json", "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     import collections
     dist = collections.Counter(x["column_name"] for x in fresh)
@@ -100,4 +112,7 @@ def main(repo):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else ".")
+    # 用法: fetch_new.py <repo> [窗口天数]
+    # 每周跑批用 9 天窗口，确保覆盖上一整周加上一点余量。
+    main(sys.argv[1] if len(sys.argv) > 1 else ".",
+         int(sys.argv[2]) if len(sys.argv) > 2 else 2)

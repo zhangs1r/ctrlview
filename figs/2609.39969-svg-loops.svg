@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 620" width="940" height="620" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:16px;font-weight:700}
+    .blk{font-size:13.5px;font-weight:650;fill:#1b1b1f}
+    .sub{font-size:12px;fill:#6b6b78}
+    .lbl{font-size:11.5px;fill:#8a5a2b;font-weight:650}
+    .blue{font-size:11.5px;fill:#31648c;font-weight:650}
+    .arw{stroke:#8c8c99;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .arwA{stroke:#c08a3e;stroke-width:2.0;fill:none;marker-end:url(#ahA)}
+    .arwB{stroke:#4a7ba6;stroke-width:2.0;fill:none;marker-end:url(#ahB)}
+    .phys{fill:#eef7ef;stroke:#8fbf9a;stroke-width:1.7}
+    .vic{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.6}
+    .atk{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.6}
+    .note{fill:#fbfbfd;stroke:#d5d5de;stroke-width:1.4}
+    .dash{stroke:#c9c9d4;stroke-width:1.2;stroke-dasharray:4 4}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8c8c99"/>
+    </marker>
+    <marker id="ahA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c08a3e"/>
+    </marker>
+    <marker id="ahB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a7ba6"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="28">被攻对象的回路按 50 ms 转一圈，攻击者的回路按秒转一圈</text>
+
+  <rect class="phys" x="30" y="50" width="880" height="86" rx="7"/>
+  <text class="blk" x="48" y="76">物理层　真实车距 g(t)、相对速度、剩余到达时间 t_arr</text>
+  <text class="sub" x="48" y="99">受害车按 IDM 跟车，另挂两段式 AEB</text>
+  <text class="sub" x="48" y="119">感知 TTC 低于 3.0 s 施加部分制动，低于 1.6 s 施加全力制动</text>
+  <text class="lbl" x="700" y="76">被测的物理量只有这一层是真的</text>
+
+  <rect class="vic" x="30" y="176" width="250" height="76" rx="6"/>
+  <text class="blk" x="155" y="203" text-anchor="middle">受害车测距</text>
+  <text class="sub" x="155" y="225" text-anchor="middle">前向 LiDAR 点云与跟踪</text>
+  <text class="sub" x="155" y="243" text-anchor="middle">约 50 ms 一拍</text>
+
+  <rect class="vic" x="330" y="176" width="250" height="76" rx="6"/>
+  <text class="blk" x="455" y="203" text-anchor="middle">AEB 与跟车控制</text>
+  <text class="sub" x="455" y="225" text-anchor="middle">按感知 TTC 与感知车距</text>
+  <text class="sub" x="455" y="243" text-anchor="middle">决定制动量</text>
+
+  <rect class="vic" x="630" y="176" width="280" height="76" rx="6"/>
+  <text class="blk" x="770" y="203" text-anchor="middle">纵向执行</text>
+  <text class="sub" x="770" y="225" text-anchor="middle">油门与制动，改变真实间距</text>
+  <text class="sub" x="770" y="243" text-anchor="middle">这一步才回到物理层</text>
+
+  <path class="arwB" d="M280,214 L324,214"/>
+  <path class="arwB" d="M580,214 L624,214"/>
+  <path class="arwB" d="M770,252 L770,300 L155,300 L155,262" transform="translate(0,0)"/>
+  <text class="blue" x="470" y="318" text-anchor="middle">受害车回路，一拍 50 ms</text>
+
+  <path class="arwA" d="M155,176 L155,142"/>
+  <text class="lbl" x="164" y="166">注入点，只在物理感知信道</text>
+
+  <rect class="atk" x="30" y="360" width="164" height="86" rx="6"/>
+  <text class="blk" x="112" y="388" text-anchor="middle">路侧感知</text>
+  <text class="sub" x="112" y="410" text-anchor="middle">20 Hz 目标级状态</text>
+  <text class="sub" x="112" y="428" text-anchor="middle">位置、速度、车距、TTC</text>
+
+  <rect class="atk" x="212" y="360" width="164" height="86" rx="6"/>
+  <text class="blk" x="294" y="388" text-anchor="middle">场景图缓存</text>
+  <text class="sub" x="294" y="410" text-anchor="middle">节点是车，边是关系</text>
+  <text class="sub" x="294" y="428" text-anchor="middle">边上挂度量属性</text>
+
+  <rect class="atk" x="394" y="360" width="164" height="86" rx="6"/>
+  <text class="blk" x="476" y="388" text-anchor="middle">MLLM 推理</text>
+  <text class="sub" x="476" y="410" text-anchor="middle">秒级，选原语并配参数</text>
+  <text class="sub" x="476" y="428" text-anchor="middle">同时给出成功概率估计</text>
+
+  <rect class="atk" x="576" y="360" width="164" height="86" rx="6"/>
+  <text class="blk" x="658" y="388" text-anchor="middle">确定性投影</text>
+  <text class="sub" x="658" y="410" text-anchor="middle">把参数压回 Φ(S_t)</text>
+  <text class="sub" x="658" y="428" text-anchor="middle">越界就截断</text>
+
+  <rect class="atk" x="758" y="360" width="152" height="86" rx="6"/>
+  <text class="blk" x="834" y="388" text-anchor="middle">执行器</text>
+  <text class="sub" x="834" y="410" text-anchor="middle">回波偏移与假墙发射</text>
+  <text class="sub" x="834" y="428" text-anchor="middle">Δd、ρ、o、w、τ</text>
+
+  <path class="arwA" d="M194,403 L208,403"/>
+  <path class="arwA" d="M376,403 L390,403"/>
+  <path class="arwA" d="M558,403 L572,403"/>
+  <path class="arwA" d="M740,403 L754,403"/>
+  <text class="lbl" x="470" y="470" text-anchor="middle">攻击者回路，整圈按秒走，只有警报器是 50 ms 一拍</text>
+
+  <path class="arwA" d="M834,360 L834,336 L470,336 L470,342" transform="translate(0,0)"/>
+  <text class="lbl" x="600" y="330">执行结果回到物理层，改掉真实车距</text>
+
+  <rect class="note" x="30" y="496" width="880" height="104" rx="7"/>
+  <text class="blk" x="48" y="522">两圈的时间尺度对不上，这是整篇的耦合点</text>
+  <text class="sub" x="48" y="546">受害车每 50 ms 读一次真实状态，攻击者每几秒才更新一次战术。</text>
+  <text class="sub" x="48" y="566">警报器逐帧比对缓存图与 20 Hz 跟踪状态，判定突变后 0.05 s 内挂起执行。</text>
+  <text class="sub" x="48" y="586">最小重规划间隔 0.5 s，防止告警刷屏把调度器打满。挂起期间物理过程照常走。</text>
+</svg>
