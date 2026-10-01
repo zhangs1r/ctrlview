@@ -10,14 +10,14 @@
 - `pipeline/` — 生成脚本（fetch_new / render / build_site / check_quality）
 - `figs/` — 从论文 PDF 提取的插图
 - `data/` — seen.json 已处理列表，queue.json 待处理队列
-- `out/` — 生成产物（不入库，由 Pages 发布）
+- `docs/` — 生成产物（入库，由 Pages 直接发布该目录）
 
 ## 流水线
 ```
 fetch_new.py   抓 arXiv 各栏目候选 → data/queue.json
 （LLM 写精读）  → posts/<arxiv_id>.md
 check_quality.py  AI 味自检，超阈值 exit 1
-build_site.py  → out/*.html
+build_site.py  python pipeline/build_site.py . docs  → docs/*.html
 git push       → GitHub Pages 自动重建
 ```
 
