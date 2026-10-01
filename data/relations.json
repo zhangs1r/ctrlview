@@ -430,5 +430,42 @@
       "name": "Adrian et al., GA/PSO/ACO for construction site layout",
       "note": "三种元启发式横评，纯离散布置、无连续微调"
     }
+  ],
+  "2609.38048": [
+    {
+      "name": "Barfoot, Holmes & Dümbgen, Certifiably optimal rotation and pose estimation based on the Cayley map (IJRR 2025)",
+      "note": "最接近的前作，同样为了绕开对数映射与三角函数才换 Cayley，也推了对应的冗余约束；区别在它处理的是几个位姿之间的相对测量，没有预积分这一步，也就没有姿态与零偏之间的乘积提升"
+    },
+    {
+      "name": "SE-Sync",
+      "note": "位姿图同步的可验证算法，把相对位姿测量写成 QCQP，松弛天生就紧，重点在从 SDP 解恢复秩一解；它的紧度由姿态图结构给，里面没有惯性积分与零偏耦合"
+    },
+    {
+      "name": "Shonan 旋转平均",
+      "note": "不补约束，而是把问题提升到 SO(p)^n 再逐级升 p 换取紧松弛；只估旋转，没有速度、位置和零偏"
+    },
+    {
+      "name": "Xu et al., Certifiable Factor Graph Optimization",
+      "arxiv": "2603.01267",
+      "note": "把可验证估计做成因子图优化框架，本文指出 IMU 测量此前尚未被纳入这类框架"
+    }
+  ],
+  "2609.39611": [
+    {
+      "name": "Zhang, Ning & Zhao, Observability-enhanced target motion estimation via bearing-box (T-RO 2026)",
+      "note": "本文 Z-KF 的更新律与它代数等价；差异在于它去掉了目标尺寸已知这个假设，并给出了一套可观测性分析"
+    },
+    {
+      "name": "Jin et al., Drone Detection and Pose Estimation Using Relational Graph Networks (Sensors 2019)",
+      "note": "用自制卷积网络抽关键点配常规 PnP，后端是 CA-KF，并假设目标的垂直加速度为零"
+    },
+    {
+      "name": "Zheng et al., Keypoint-Guided Efficient Pose Estimation and Domain Adaptation for MAVs (T-RO 2024)",
+      "note": "思路与上一条相近，后端换成伪线性卡尔曼滤波；同一批作者放出带动捕真值的机载位姿数据集，本文直接拿它当真机基线"
+    },
+    {
+      "name": "CV-KF / CA-KF / Pose-KF",
+      "note": "论文内部的只看位置或只看姿态的过程模型基线，本文用同一套自动调参把它们与 Z-KF 放在同一条流水线上比"
+    }
   ]
 }
