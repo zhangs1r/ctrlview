@@ -1,0 +1,94 @@
+{
+  "note": "选文评分表。每个栏目的判据都取自 pipeline/prompts/L1-<栏目>.md 的「必读项」与「选文偏好」，不另立标准。打 0/1/2 三档，口径写在 guide 里；weights 之和为 100，方便横向看分。这张表只评「下载之前能判的东西」，摘要里判不出的必读项在 guide 里明确要求给 0，不要猜——那部分留给精读阶段。",
+  "scale": {
+    "0": "摘要里看不出，或明显不满足该栏选文偏好",
+    "1": "部分满足，或需要读正文才能确认",
+    "2": "摘要里有明确证据"
+  },
+  "columns": {
+    "slam": {
+      "name": "SLAM 与状态估计",
+      "core": ["SLAM", "odometry", "state estimation", "localization", "visual-inertial", "VIO", "pose graph", "loop closure", "bundle adjustment", "inertial", "Kalman", "LiDAR", "IMU", "gnss", "sensor fusion", "estimator", "trajectory estimation", "relocalization", "place recognition", "structure from motion", "SfM", "depth estimation", "visual odometry", "mapping"],
+      "criteria": [
+        {"id": "design_rationale", "name": "设计判断的来龙去脉", "weight": 25, "guide": "摘要是否交代了为什么这样切分模块、这样设计；纯刷分或只换主干给 0"},
+        {"id": "degradation", "name": "退化或失败场景", "weight": 25, "guide": "是否明确讨论退化、失败或不可观场景（弱纹理、纯旋转、光照剧变、视觉中断）；只报精度提升给 0"},
+        {"id": "classic_link", "name": "与经典方法的继承或对立", "weight": 20, "guide": "是否对经典滤波/优化路线有明确继承或对立（改零偏建模、换预积分、改可观性处理）；无从判断给 0"},
+        {"id": "init_scale", "name": "初始化与尺度交代", "weight": 15, "guide": "能否看出谁给尺度、谁给重力、初值从哪来"},
+        {"id": "eval_rigor", "name": "评价口径清楚", "weight": 15, "guide": "是否给出数据集、对齐方式（有尺度/无尺度）、成功率定义；只有仿真且不说明对齐最多给 1"}
+      ],
+      "defer": ["survey", "pure benchmark", "dataset paper"]
+    },
+    "embodied": {
+      "name": "具身智能与 VLA",
+      "core": ["embodied", "vision-language-action", "VLA", "manipulation", "robot learning", "imitation learning", "teleoperation", "dexterous", "grasping", "demonstration", "world model", "policy", "humanoid", "visuomotor", "action chunk", "language-conditioned", "sim-to-real", "affordance", "rollout"],
+      "criteria": [
+        {"id": "real_robot", "name": "真机验证", "weight": 30, "guide": "有真机实验给 2；纯仿真刷成功率给 0（L1 明确压后）"},
+        {"id": "failure_modes", "name": "失败模式讲清楚", "weight": 25, "guide": "是否分析失败案例、给出失败判据；只报成功率给 0"},
+        {"id": "data_pipeline", "name": "数据管线有方法贡献", "weight": 20, "guide": "数据构成（真机遥操作/人类视频/仿真各占多少）是否说清且本身是贡献；只当背景给 1"},
+        {"id": "task_def", "name": "任务与动作空间定义", "weight": 15, "guide": "观测空间、动作空间、一个 episode 何时算成功能否看出"},
+        {"id": "closed_loop", "name": "闭环与恢复", "weight": 10, "guide": "开环执行还是边看边调，出错之后怎么恢复"}
+      ],
+      "defer": ["only simulation", "model scaling only", "representation learning without action space"]
+    },
+    "control": {
+      "name": "控制与优化",
+      "core": ["model predictive control", "MPC", "optimal control", "Riccati", "Lyapunov", "stability", "convergence", "policy optimization", "reinforcement learning", "LQR", "LQG", "controller", "optimization", "controllability", "observability", "stabiliz", "feedback", "observer", "trajectory optimization", "regret", "policy gradient", "Bellman", "dynamic programming", "robust control", "H-infinity", "H∞", "reachability", "safety filter"],
+      "criteria": [
+        {"id": "problem_form", "name": "优化问题完整形式", "weight": 30, "guide": "决策变量、目标函数、约束能否从摘要看出轮廓；只有方法名给 0"},
+        {"id": "why_hard", "name": "为什么不能直接解", "weight": 20, "guide": "是否点明非凸/规模/信息不全/实时性中的具体障碍"},
+        {"id": "theory", "name": "可行性、稳定性或收敛性", "weight": 20, "guide": "是否给出其中一条及所需条件；只做仿真对比给 0"},
+        {"id": "classic_spectrum", "name": "能定位到经典谱系", "weight": 20, "guide": "是否看得出它退化到某个经典形式会变成什么"},
+        {"id": "relaxation_cost", "name": "松弛或近似的代价", "weight": 10, "guide": "近似掉了什么、代价是什么、有无理论保证"}
+      ],
+      "defer": ["pure application tuning", "simulation-only comparison", "theory disconnected from implementation"]
+    },
+    "robotics": {
+      "name": "机器人",
+      "core": ["robot", "UAV", "drone", "mobile robot", "manipulation", "navigation", "planning", "exploration", "aerial", "autonomous", "swarm", "gripper", "quadruped", "legged", "humanoid", "locomotion", "parkour", "manipulator", "end-effector", "self-driving", "autonomous vehicle", "SLAM", "motion planning", "path planning", "teleoperation", "sim-to-real", "embodied"],
+      "criteria": [
+        {"id": "real_platform", "name": "真实平台验证", "weight": 30, "guide": "有实物平台与实测给 2；纯仿真给 0（L1 明确压后）"},
+        {"id": "bounds", "name": "边界与失效条件", "weight": 25, "guide": "论文承认的失败情形、适用边界能否从摘要看出"},
+        {"id": "system_tradeoff", "name": "系统级设计取舍", "weight": 20, "guide": "是否有模块切分/实时性/成本上的取舍讨论，而不是只报某个模块指标"},
+        {"id": "sensing_compute", "name": "系统构成交代", "weight": 15, "guide": "传感器、执行器、算力平台能否看出，决定方法能不能搬走"},
+        {"id": "scale", "name": "实验规模", "weight": 10, "guide": "几次实验、多长时间、有没有野外或产线数据"}
+      ],
+      "defer": ["simulation only", "vague platform", "single demo without repeats"]
+    },
+    "cps": {
+      "name": "信息物理系统",
+      "core": ["cyber-physical", "digital twin", "SCADA", "PLC", "power system", "grid", "microgrid", "networked control", "packet loss", "communication delay", "sampling", "quantization", "real-time", "industrial control", "industrial internet", "traffic", "infrastructure", "sensor network", "water", "monitoring", "edge computing"],
+      "criteria": [
+        {"id": "coupling", "name": "耦合机制具体", "weight": 35, "guide": "时延、采样、丢包、量化、通信约束里哪一个在起决定作用，能否指出；只是套了个词给 0（L1 直接压后）"},
+        {"id": "physical_process", "name": "物理过程与时间尺度", "weight": 20, "guide": "被控或被监测对象、它的动力学、时间尺度是否说清"},
+        {"id": "quant_analysis", "name": "定量分析", "weight": 20, "guide": "是否对时延/丢包/噪声给出定量分析或界"},
+        {"id": "real_system", "name": "真实系统验证", "weight": 15, "guide": "有真实系统或实网数据给 2；纯仿真算例给 0"},
+        {"id": "loop_position", "name": "信息层介入点", "weight": 10, "guide": "介入在测量、决策还是执行，回路哪个位置"}
+      ],
+      "defer": ["monitoring dashboard only", "predictive model without loop coupling"]
+    },
+    "security": {
+      "name": "隐私与安全",
+      "core": ["attack", "adversarial", "privacy", "differential privacy", "jailbreak", "threat model", "membership inference", "backdoor", "poisoning", "leakage", "fairness", "password", "robustness", "prompt injection", "extraction", "watermark", "unlearning", "intrusion detection", "side channel", "phishing", "malware", "audit"],
+      "criteria": [
+        {"id": "threat_model", "name": "威胁模型三条齐全", "weight": 30, "guide": "攻击者知道什么、能改什么、目标是什么，能否从摘要看出至少两条"},
+        {"id": "assumption_bounds", "name": "假设边界", "weight": 25, "guide": "白盒还是黑盒、需不需要知道模型结构、查询次数上限是否交代"},
+        {"id": "mechanism", "name": "在哪一步动手", "weight": 20, "guide": "攻击或防御的具体环节与可乘之机是什么"},
+        {"id": "metrics", "name": "指标量纲与可比性", "weight": 15, "guide": "攻击成功率怎么定义、ε 或查询次数是什么量纲、在什么模型上比"},
+        {"id": "defense_cost", "name": "防御代价", "weight": 10, "guide": "牺牲多少效用、加多少算力、会不会被后续攻击绕过"}
+      ],
+      "defer": ["single model only", "assumptions too strong", "no comparison with existing attacks"]
+    },
+    "automation": {
+      "name": "自动化",
+      "core": ["manufacturing", "machining", "production line", "assembly", "industrial", "factory", "additive manufacturing", "quality inspection", "PLC", "process planning", "CNC", "welding", "toolpath", "layout", "inspection", "3D printing", "quality control", "robot cell", "production"],
+      "criteria": [
+        {"id": "real_line", "name": "真实产线数据", "weight": 30, "guide": "有产线或现场数据给 2；实验室理想工况给 0（L1 明确压后）"},
+        {"id": "cycle_yield", "name": "节拍与良率", "weight": 25, "guide": "节拍、良率、材料利用率这类工业硬指标，能否从摘要看出有数据"},
+        {"id": "integration", "name": "集成成本与改造量", "weight": 20, "guide": "怎么接现有系统（PLC、老设备）、改造量多大"},
+        {"id": "data_cost", "name": "训练数据获取成本", "weight": 15, "guide": "产线数据稀缺且标注昂贵这一点是否被正面处理"},
+        {"id": "fail_safe", "name": "停机成本与安全兜底", "weight": 10, "guide": "出错了会怎样、有没有人工兜底"}
+      ],
+      "defer": ["lab ideal conditions", "no takt data", "existing method rerun on one line"]
+    }
+  }
+}

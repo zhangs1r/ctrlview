@@ -96,6 +96,8 @@ nav.bar .brand{font-weight:700;color:var(--ink);margin-right:6px}
 .cards.abs{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}
 .colsec{margin:10px 0 38px}
 .colnote{color:var(--ink2);font-size:14.5px;margin:6px 0 0}
+.colsec.morepast{margin-top:-6px}
+.colsec.morepast p{color:var(--ink3);font-size:14px}
 .badge{display:inline-block;font-size:11.5px;padding:3px 9px;border-radius:99px;
   background:var(--accent-bg);color:var(--accent);font-weight:600;margin-left:6px}
 .paperlink{display:inline-block;margin:22px 0 0;padding:11px 18px;background:var(--accent-bg);
@@ -516,10 +518,22 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
                 f'<div class="cmeta">arXiv:{p["id"]} · {H.escape(fm.get("date",""))} · '
                 f'精读约 {H.escape(fm.get("read_time",""))}</div></a>')
 
-    # ---- 首页：按栏目分组，每张卡片带摘要 ----
+    # ---- 首页：只显示**本轮**推荐，按栏目分组，每张卡片带摘要 ----
+    # 往期精读留在「全部文章（archive.html）」「栏目页」与「历史推荐（history.html）」。
+    hist_p0 = f"{repo}/data/history.json"
+    rounds0 = (json.load(open(hist_p0, encoding="utf-8")).get("rounds", [])
+               if os.path.exists(hist_p0) else [])
+    cur = max(rounds0, key=lambda r: r.get("date", "")) if rounds0 else None
+    cur_ids = {k.get("id") for k in (cur or {}).get("picks", [])}
+    cur_posts = [p for p in posts if p["id"] in cur_ids]
+    if not cur_posts:      # 没有历史记录时退回全部，避免首页空掉
+        cur_posts = posts
+    cur_label = (f'{cur.get("id","")} · {cur.get("date","")} · {len(cur_posts)} 篇精读'
+                 if cur else f'共 {len(cur_posts)} 篇')
+
     home_secs = ""
     for c in columns:
-        ps = sorted([p for p in posts if p["fm"].get("column") == c["id"]],
+        ps = sorted([p for p in cur_posts if p["fm"].get("column") == c["id"]],
                     key=lambda p: (p["fm"].get("date", ""), p["id"]), reverse=True)
         if not ps:
             continue
@@ -529,6 +543,12 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
             f'<p class="colnote">{H.escape(c.get("note",""))}　'
             f'<a href="columns.html#c-{c["id"]}">栏目页 →</a></p>'
             f'<div class="cards abs">{"".join(home_card(p) for p in ps)}</div></section>')
+    if len(cur_posts) < len(posts):
+        home_secs += (
+            f'<section class="colsec morepast">'
+            f'<p>本轮只列 {len(cur_posts)} 篇。往期的 {len(posts) - len(cur_posts)} 篇在'
+            f' <a href="archive.html">全部文章</a>、<a href="columns.html">栏目页</a>，'
+            f'每一轮的推荐记录见 <a href="history.html">历史推荐</a>。</p></section>')
     open(f"{out}/index.html", "w", encoding="utf-8").write(f"""<!DOCTYPE html><html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>{site['name']} · {site['tagline']}</title>
@@ -547,7 +567,7 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 </header>
 <div style="background:var(--card);border:1px solid var(--line);border-radius:10px;
   padding:14px 18px;margin:24px 0;font-size:14px;color:var(--ink2);line-height:1.8">
-<b>最后更新：{BUILD_HUMAN}</b>（北京时间）· 每周一 18:00 自动跑批<br>
+<b>最新一轮：{cur_label}</b> · 本页构建于 {BUILD_HUMAN}（北京时间）· 每周一 18:00 自动跑批<br>
 <span style="color:var(--ink3)">若看到旧内容，点上方「↻ 强制刷新」，或用 Ctrl/Cmd + Shift + R 硬刷新。</span><br>
 <span style="color:var(--ink2)">也可以 <a href="feed.xml">订阅 Atom</a>，或者直接
 <a href="search.html">搜索</a>、翻<a href="topics.html">主题</a>、

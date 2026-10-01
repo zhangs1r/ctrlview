@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.72c9c7f6.css?v=20261001175749"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.35743.html?force=20261001175749" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261001180907"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.35743.html?force=20261001180907" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">SLAM 与状态估计 · 论文精读</div>
@@ -45,7 +45,7 @@ SLAM 系统  → 相机轨迹
 <p>但&quot;端到端&quot;不是&quot;全端到端&quot;——论文留了后门，§3.4 讲。</p>
 <hr>
 <h2>二、总体结构</h2>
-<figure><img src="figs/fig02.png?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2　方法总览</b>　上下两栏是全文骨架。上面 <b>Stage I</b>（4 帧输入）先学会"看懂一只手"；下面 <b>Stage II</b> 变成流式（4 锚帧 + 16 帧窗口 × 2），带记忆。两栏之间那条 <code>Shared Hand Reconstruction</code> 通路，说明 Stage II 直接复用 Stage I 的手部模块。<strong>不是重训一套，是共享权重。</strong>竖着看：上面练基本功，下面正式干活。</figcaption></figure>
+<figure><img src="figs/fig02.png?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2　方法总览</b>　上下两栏是全文骨架。上面 <b>Stage I</b>（4 帧输入）先学会"看懂一只手"；下面 <b>Stage II</b> 变成流式（4 锚帧 + 16 帧窗口 × 2），带记忆。两栏之间那条 <code>Shared Hand Reconstruction</code> 通路，说明 Stage II 直接复用 Stage I 的手部模块。<strong>不是重训一套，是共享权重。</strong>竖着看：上面练基本功，下面正式干活。</figcaption></figure>
 <p>把图上的框和公式对起来：</p>
 <div class="scroll"><table><thead><tr><th>图上的框</th><th>对应公式</th><th>干什么</th></tr></thead><tbody><tr><td>Hand Localization</td><td>式 (1)(2)</td><td>找出手在哪，给出手部框</td></tr><tr><td>Hand Crops + WiLoR</td><td>式 (3)</td><td>把手部区域放大重编码</td></tr><tr><td>MANO head / Joint-MANO Fusion</td><td>式 (4)(5)(6)</td><td>算出手的姿势细节</td></tr><tr><td><strong>LingBot-Map + GCA Memory</strong></td><td>式 (8)</td><td><strong>流式记忆滚动更新</strong></td></tr><tr><td>Camera Head / Key Frames BA</td><td>式 (9)(10)</td><td>算相机轨迹，世界坐标对齐</td></tr><tr><td>DROID backend</td><td>§3.4 末</td><td>稀疏 BA 纠正漂移</td></tr></tbody></table></div>
 <p>下面按这个顺序走。</p>
@@ -143,5 +143,5 @@ SLAM 系统  → 相机轨迹
 
 <a class="paperlink" href="https://arxiv.org/abs/2609.35743" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2609.35743） →</a>
-<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 17:57</footer>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 18:09</footer>
 </div></body></html>

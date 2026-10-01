@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.72c9c7f6.css?v=20261001175749"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.40178.html?force=20261001175749" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261001180907"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2609.40178.html?force=20261001180907" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">机器人 · 论文精读</div>
@@ -44,18 +44,18 @@ arXiv:2609.40178 · 2026-10-01 · 精读约 33 分钟</div>
 <hr>
 <h2>二、总体结构</h2>
 <p>整条 dronar 系统可以拆成四块。载具是一台自建双浮筒艇，载荷是那套 Lowrance 声呐，搬运靠一台专用小车，作业流程是顺流单程跑一遍再收回来。</p>
-<figure><img src="figs/2609.40178-fig2.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　艇体是两台 Brocraft 皮划艇稳定浮筒加一副铝型材框架，推进靠两台 ApisQueen U2 电动推进器做差速推力。控制用 CubePilot 的 Cube Orange+ 飞控加 Kore 载板，跑的是 ArduPilot 里的 rover 固件。遥控和图传走 Herelink 电台，带 Here4 GPS 模块和一台 Eken H9 相机。艇艏用铝支架把换能器吊在水面下方、推进器下方，减少湍流对成像的干扰。前舱防水箱装声呐主机 Lowrance HDS Pro 9 和它专用电池，后舱装控制与遥测模块以及主电池，一台四芯 14.8 V 20 Ah 锂聚合物电池。整机约 16 kg。所有接口用 3D 打印支架和 T 型槽铝条搭出来，换载荷只需改支架。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig2.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　艇体是两台 Brocraft 皮划艇稳定浮筒加一副铝型材框架，推进靠两台 ApisQueen U2 电动推进器做差速推力。控制用 CubePilot 的 Cube Orange+ 飞控加 Kore 载板，跑的是 ArduPilot 里的 rover 固件。遥控和图传走 Herelink 电台，带 Here4 GPS 模块和一台 Eken H9 相机。艇艏用铝支架把换能器吊在水面下方、推进器下方，减少湍流对成像的干扰。前舱防水箱装声呐主机 Lowrance HDS Pro 9 和它专用电池，后舱装控制与遥测模块以及主电池，一台四芯 14.8 V 20 Ah 锂聚合物电池。整机约 16 kg。所有接口用 3D 打印支架和 T 型槽铝条搭出来，换载荷只需改支架。</figcaption></figure>
 <p>把这四块和章节对起来。</p>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>论文位置</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>换能器与声呐主机</td><td>Materials and Methods 声呐换能器</td><td>800 kHz 声波回波、板载 GPS</td><td>带地理坐标的 DownScan 与 SideScan 原始记录，落内部 SD 卡</td></tr><tr><td>艇体与控制</td><td>Materials and Methods 集成艇体</td><td>遥控杆量或预定义航路、GPS 定位</td><td>差速推力，Manual 或 Auto 两种模式，失联转 Loiter 定点</td></tr><tr><td>搬运与下水回收</td><td>Materials and Methods 运输与部署</td><td>人力绳索、渠壁斜坡</td><td>换能器全程不入泥，艇从渠壁斜坡下水与回收</td></tr><tr><td>数据处理与判读</td><td>Sonar Data</td><td>原始记录，经 sonarlight 读入</td><td>沿渠深度剖面，带通滤波后的深度残差</td></tr></tbody></table></div>
 <p>搬运这一环单独成块，原因是它在这类系统里最容易被低估。换能器吊在艇底，下水时一旦触底就废了，而渠壁的坡度是 45° 到 60° 的陡坡，人搬不动这台 16 kg 的艇。论文做了一台带铝轨和后部卡钩的小车当运输架兼下水滑道，车底开孔进水降低浮力，用绳子顺着坡把车和艇一起放下去，艇到水里后靠水流自己脱开车。回收反过来，艇对着车漂过去，人确认接触后往上拉。</p>
-<figure><img src="figs/2609.40178-fig3.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　左上为空车，右上为载着 dronar 待下水的状态。下面两幅是 CAD 里艇被放下和从车上脱开的过程。车是双用途的，平时当运输支架让换能器悬在空中，下水时当滑道顺着渠壁斜坡滑入水中。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig3.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　左上为空车，右上为载着 dronar 待下水的状态。下面两幅是 CAD 里艇被放下和从车上脱开的过程。车是双用途的，平时当运输支架让换能器悬在空中，下水时当滑道顺着渠壁斜坡滑入水中。</figcaption></figure>
 <p><strong>这节要你记住的是，系统由艇、声呐、搬运车、数据处理四块拼成，搬运车是里面唯一非货架的一块。</strong></p>
 <hr>
 <h2>三、方法拆解</h2>
 <h3>3.1 传感链路的参数账</h3>
 <p>换能器是 Lowrance 的 Active Imaging HD 三合一，配 HDS Pro 9 主机。工作频率 800 kHz，DownScan 的覆盖范围是 ±30°，也就是总张角 60°，SideScan 每侧到 ±58°。这套参数放进这条渠的尺度里刚好够用也可以用不够，两种说法都成立。DownScan 在渠中心线上打下去，波束到渠底时铺开的宽度约为水深的 1.15 倍（<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>tan</mi><msup><mn>30</mn><mo>&#x02218;</mo></msup><mo>&#x02248;</mo><mn>1.15</mn></mrow></math></math>），水深 1 到 2 米时铺开约 1.2 到 2.3 米。渠宽 15 到 20 米，<u>一次走线只能看到中心线附近一条窄带</u>。论文的表述是同时开 DownScan 和 SideScan 时，一次沿渠中心线的走线能给出渠横截面的大部分覆盖，定量分析只用了 DownScan。这两个说法不矛盾，成像能看到的地方和能用来算深度的地方不是同一片。</p>
 <p>主机自带 GPS，深度回波带上地理坐标，这一步对后面把两次跑的剖面按位置对齐是必需的。数据自动写内部 SD 卡，作业中不需要操作员干预，这一点直接决定了单人操艇的可行性。系统功耗低、体积小，能挂上轻量平台。</p>
-<figure><img src="figs/2609.40178-svg-coverage.svg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　按论文给的波束参数画的渠横截面（编者绘制）。红色虚线的扇形是 DownScan 的总张角 60°。它打在渠底上的宽度约为水深的 1.15 倍，水深 1 至 2 米时也就 1.2 至 2.3 米宽，渠底其余部分落在它的外面。紫色是 SideScan 单侧 58° 的波束，横向铺得开。本文没有拿它做定量分析。橙色的淤积堆在渠底偏一侧的位置，正好落在 DownScan 覆盖的边缘上。横轴宽度与纵轴深度都按论文给的量程画，渠宽 15 至 20 米，水深 1 至 2 米。</figcaption></figure>
+<figure><img src="figs/2609.40178-svg-coverage.svg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　按论文给的波束参数画的渠横截面（编者绘制）。红色虚线的扇形是 DownScan 的总张角 60°。它打在渠底上的宽度约为水深的 1.15 倍，水深 1 至 2 米时也就 1.2 至 2.3 米宽，渠底其余部分落在它的外面。紫色是 SideScan 单侧 58° 的波束，横向铺得开。本文没有拿它做定量分析。橙色的淤积堆在渠底偏一侧的位置，正好落在 DownScan 覆盖的边缘上。横轴宽度与纵轴深度都按论文给的量程画，渠宽 15 至 20 米，水深 1 至 2 米。</figcaption></figure>
 <h3>3.2 平台与控制的几处细节</h3>
 <p>艇体是双浮筒加铝框，两台电动推进器做差速推力。方向控制是标准的差速驱动，两个推进器的推力差产生偏航力矩，这一层没什么新鲜的。数据质量最吃紧的一环在换能器的安装位置，论文把它吊在艇艏水面以下、推进器下方。放在推进器下方是为了避开推进器尾流的扰动，声呐靠回波成像，气泡和湍流会直接糊掉图像。</p>
 <p>全系统无缆，操作员和艇之间没有物理连接。实时声呐数据本来可以通过 WiFi 传到平板上看，但这条链路距离有限，三次渠上试验都没用它。声呐数据和控制器变量全部本地记录，回来后统一处理。图传和遥测走 Herelink，在 1.6 公里测试段上信号质量一直很好。</p>
@@ -85,15 +85,15 @@ arXiv:2609.40178 · 2026-10-01 · 精读约 33 分钟</div>
 <p>热管理上出了一条问题。第一次试验在 5 月的凤凰城下午，气温约 35 摄氏度，Herelink 机载单元摸上去烫手但没有报警，Herelink 遥控器过热并给出了警告。这次没有导致任务失败，论文的判断是长时间高温作业需要加遮挡、散热片或者安排间歇降温。第三次试验在 11 月和 2 月的上午做，没有再出现这个警告。</p>
 <h3>4.2 声呐数据的质量</h3>
 <p>先说成像长什么样。图 9 是清淤后干净渠段的原始图像，上面是 SideScan，下面是 DownScan。两幅图都沿渠长展开，SideScan 是俯视图，DownScan 相当于从渠的侧面看过去。干净段上两幅图都均匀，看不到明显的结构。论文从这里开始把定量分析全部收在 DownScan 上。</p>
-<figure><img src="figs/2609.40178-fig9.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 9</b>　来自第三次试验 2026 年 2 月 24 日的清淤后航次。两幅图都以沿渠路径为横轴，右侧小图给出艇与波束的朝向关系。SideScan 的纵轴是横向距离，单位米，两翼的黑色宽带是渠壁附近的强回波。DownScan 的纵轴是水深，单位米，白色的上边缘就是渠底回波。本文的深度剖面分析只用 DownScan。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig9.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 9</b>　来自第三次试验 2026 年 2 月 24 日的清淤后航次。两幅图都以沿渠路径为横轴，右侧小图给出艇与波束的朝向关系。SideScan 的纵轴是横向距离，单位米，两翼的黑色宽带是渠壁附近的强回波。DownScan 的纵轴是水深，单位米，白色的上边缘就是渠底回波。本文的深度剖面分析只用 DownScan。</figcaption></figure>
 <p>重复性先在同一个工况内部查。图 10 比的是 Manual 顺水流速度那两趟，也就是第 3 趟和第 4 趟。<mark>原始深度曲线和带通滤波后的曲线，两趟都重叠得很好</mark>。论文补了一句，其他配对之间也有同样好的一致性。</p>
-<figure><img src="figs/2609.40178-fig10a.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 10 上</b>　两趟都在 Manual 模式下水流水速下跑，2026 年 2 月 24 日清淤后。横轴是沿渠路径的距离，单位米。纵轴是水深，单位米，数值向下增大。紫线是第 3 趟，绿线是第 4 趟。</figcaption></figure>
-<figure><img src="figs/2609.40178-fig10b.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 10 下</b>　滤波抑制了波长长于 50 米的空间变化和波长短于 0.05 米的变化。两条曲线的起伏形态基本一致，缓变的那一部分被拿掉之后，剩下的就是渠底的局部形状。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig10a.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 10 上</b>　两趟都在 Manual 模式下水流水速下跑，2026 年 2 月 24 日清淤后。横轴是沿渠路径的距离，单位米。纵轴是水深，单位米，数值向下增大。紫线是第 3 趟，绿线是第 4 趟。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig10b.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 10 下</b>　滤波抑制了波长长于 50 米的空间变化和波长短于 0.05 米的变化。两条曲线的起伏形态基本一致，缓变的那一部分被拿掉之后，剩下的就是渠底的局部形状。</figcaption></figure>
 <p>数字口径要写清楚。<mark>所有干净段的重复剖面相互之间最大间距 7 厘米</mark>，而整条渠底剖面本身的总深度变化范围约 <strong>12 厘米</strong>。也就是说跑两遍带来的差异，只有渠底自身起伏的一半多。论文还主动交代了一处伪差异，图 10 里 200 到 300 米之间那个&quot;错位&quot;来自沿渠距离的计算偏差，不是声呐本身的精度问题。</p>
 <h3>4.3 清淤前后的对照</h3>
 <p>这是全文的主结果。图 11 把第二次试验的 11 月 7 日清淤前和 2026 年 2 月 24 日清淤后的 DownScan 深度剖面放在一起，左幅是原始水深，右幅是带通滤波后的残差。</p>
-<figure><img src="figs/2609.40178-fig11a.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 11 左</b>　橙线是 2025 年 11 月 7 日清淤前，蓝线是 2026 年 2 月 24 日清淤后。横轴是自 Mesa Drive 渠桥起算的下游距离，单位米，只取了代表性的一段。纵轴是水深，数值向下增大，橙线整体位置更靠下，也就是更浅。</figcaption></figure>
-<figure><img src="figs/2609.40178-fig11b.jpg?v=20261001175749" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 11 右</b>　滤波把两条剖面放到同一个零点上比。橙线在多个位置出现明显的负残差，最深到 15 厘米，对应淤泥把水深压下去的位置。蓝线整段大致落在零附近 5 厘米以内。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig11a.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 11 左</b>　橙线是 2025 年 11 月 7 日清淤前，蓝线是 2026 年 2 月 24 日清淤后。横轴是自 Mesa Drive 渠桥起算的下游距离，单位米，只取了代表性的一段。纵轴是水深，数值向下增大，橙线整体位置更靠下，也就是更浅。</figcaption></figure>
+<figure><img src="figs/2609.40178-fig11b.jpg?v=20261001180907" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 11 右</b>　滤波把两条剖面放到同一个零点上比。橙线在多个位置出现明显的负残差，最深到 15 厘米，对应淤泥把水深压下去的位置。蓝线整段大致落在零附近 5 厘米以内。</figcaption></figure>
 <p>论文在文字里给了三个关于这幅图的说法。清淤前的原始水深剖面比清淤后同段浅了大约 <strong>15 厘米</strong>。滤波后的残差里，清淤前那条在多个位置出现明显负值，最大到 <strong>15 厘米</strong>，而清淤后那条整段落在零附近 <strong>5 厘米</strong>以内。<u>这些负的偏移对应淤积显著压低水深的位置，说明 dronar 检出了空间上集中的淤泥沉积。</u></p>
 <p>还有一条检查写在讨论里。第一次试验在一段已知干净的渠上做，声呐图像没有显示明显的水深变化，跟那段渠的已知状态一致。这条不算定量结果，但它是仪器的基线检查，排除了&quot;随便测都测出东西来&quot;的可能。</p>
 <p>把三次试验的作业量与结果压在一张表里。</p>
@@ -143,5 +143,5 @@ arXiv:2609.40178 · 2026-10-01 · 精读约 33 分钟</div>
 <h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li>Bathy-Drone<span style="color:var(--ink3);font-size:13px">　飞行器吊声呐入水，厘米级精度，代价是空域审批、吊挂跟随偏差与续航</span></li><li>Rufell et al. 的 Dronar<span style="color:var(--ink3);font-size:13px">　无人机吊声呐做搜索，同样卡在空域与续航</span></li><li>Powers et al. 侧扫声呐<span style="color:var(--ink3);font-size:13px">　浑水河流中探测淡水贻贝床，只做特征识别不做深度剖面</span></li><li>Johnson &amp; Helferty<span style="color:var(--ink3);font-size:13px">　建立侧扫图像的地质解译原理，靠后向散射强度不靠测深</span></li></ul>
 <a class="paperlink" href="https://arxiv.org/abs/2609.40178" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2609.40178） →</a>
-<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 17:57</footer>
+<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 2026-10-01 18:09</footer>
 </div></body></html>
