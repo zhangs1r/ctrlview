@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "CtrlView",
-    "tagline": "用控制工程的视角读 AI 与机器人论文",
+    "tagline": "每周论文推荐",
     "description": "面向控制工程背景的读者：每篇论文讲清问题背景、核心公式与设计动机，不用术语堆砌。",
     "base": "https://zhangs1r.github.io/ctrlview/"
   },

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CtrlView</title>
-  <subtitle>用控制工程的视角读 AI 与机器人论文</subtitle>
+  <subtitle>每周论文推荐</subtitle>
   <link href="https://zhangs1r.github.io/ctrlview/feed.xml" rel="self"/>
   <link href="https://zhangs1r.github.io/ctrlview/"/>
   <id>https://zhangs1r.github.io/ctrlview/</id>

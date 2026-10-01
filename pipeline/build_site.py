@@ -498,7 +498,7 @@ arXiv:{aid} · {H.escape(fm.get('date',''))} · 精读约 {H.escape(fm.get('read
 {related_html(p)}
 <a class="paperlink" href="https://arxiv.org/abs/{aid}" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:{aid}） →</a>
-<footer>CtrlView · 用控制工程的视角读 AI 与机器人论文<br>本页构建于 {BUILD_HUMAN}</footer>
+<footer>CtrlView · {site['tagline']}<br>本页构建于 {BUILD_HUMAN}</footer>
 </div></body></html>"""
         open(f"{out}/{aid}.html", "w", encoding="utf-8").write(doc)
 
