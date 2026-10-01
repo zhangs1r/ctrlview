@@ -8,3 +8,4 @@ data/picks.json
 __pycache__/
 *.pyc
 .DS_Store
+data/triage-ranked.md
