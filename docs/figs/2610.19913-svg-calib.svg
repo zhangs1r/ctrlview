@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" font-family="Helvetica, Arial, sans-serif">
+  <rect width="900" height="520" fill="#ffffff"/>
+  <text x="40" y="42" font-size="21" font-weight="bold" fill="#1a1a1a">示意图 C　20 次校准给排名留下的分辨率（编者绘制）</text>
+  <text x="40" y="70" font-size="14" fill="#555555">横轴是校准试验次数 N，纵轴是成功率的二项标准误 s = √(0.25/N)，单位是百分点。</text>
+
+  <!-- axes: y from 0 to 25 pp, 0 at y=430, 25 at y=130 => 12 px per pp; x 10..200 over 110..800 => 3.63 px per unit -->
+  <line x1="110" y1="430" x2="800" y2="430" stroke="#333333" stroke-width="1.8"/>
+  <line x1="110" y1="130" x2="110" y2="430" stroke="#333333" stroke-width="1.8"/>
+  <text x="455" y="470" font-size="14" text-anchor="middle" fill="#333333">校准试验次数 N（每个执行器与单元配对）</text>
+  <text x="46" y="280" font-size="14" fill="#333333" transform="rotate(-90 46 280)">误差幅度，百分点</text>
+
+  <g font-size="12" fill="#555555">
+    <text x="86" y="434" text-anchor="end">0</text>
+    <line x1="104" y1="430" x2="110" y2="430" stroke="#333333"/>
+    <text x="86" y="314" text-anchor="end">10</text>
+    <line x1="104" y1="310" x2="110" y2="310" stroke="#333333"/>
+    <text x="86" y="194" text-anchor="end">20</text>
+    <line x1="104" y1="190" x2="110" y2="190" stroke="#333333"/>
+  </g>
+  <g stroke="#e8e8e8" stroke-width="1">
+    <line x1="110" y1="310" x2="800" y2="310"/>
+    <line x1="110" y1="190" x2="800" y2="190"/>
+  </g>
+
+  <g font-size="12" fill="#555555">
+    <text x="110" y="452" text-anchor="middle">10</text>
+    <line x1="110" y1="430" x2="110" y2="436" stroke="#333333"/>
+    <text x="225" y="452" text-anchor="middle">20</text>
+    <line x1="225" y1="430" x2="225" y2="436" stroke="#333333"/>
+    <text x="455" y="452" text-anchor="middle">50</text>
+    <line x1="455" y1="430" x2="455" y2="436" stroke="#333333"/>
+    <text x="685" y="452" text-anchor="middle">100</text>
+    <line x1="685" y1="430" x2="685" y2="436" stroke="#333333"/>
+    <text x="800" y="452" text-anchor="middle">200</text>
+    <line x1="800" y1="430" x2="800" y2="436" stroke="#333333"/>
+  </g>
+
+  <!-- series 1: standard error, blue -->
+  <polyline points="110,240 225,296 455,345 685,370 800,388" fill="none" stroke="#4a6fa5" stroke-width="2.6"/>
+  <g fill="#4a6fa5">
+    <circle cx="110" cy="240" r="5"/>
+    <circle cx="225" cy="296" r="6"/>
+    <circle cx="455" cy="345" r="5"/>
+    <circle cx="685" cy="370" r="5"/>
+    <circle cx="800" cy="388" r="5"/>
+  </g>
+
+  <!-- series 2: 95 percent interval half width approx 1.96 s, orange -->
+  <polyline points="110,165 225,242 455,310 685,349 800,375" fill="none" stroke="#a5762a" stroke-width="2.2" stroke-dasharray="7 4"/>
+  <g fill="#a5762a">
+    <circle cx="110" cy="165" r="4"/>
+    <circle cx="225" cy="242" r="4"/>
+    <circle cx="455" cy="310" r="4"/>
+    <circle cx="685" cy="349" r="4"/>
+    <circle cx="800" cy="375" r="4"/>
+  </g>
+
+  <line x1="225" y1="296" x2="225" y2="430" stroke="#4a6fa5" stroke-width="1.1" stroke-dasharray="4 4"/>
+  <text x="238" y="290" font-size="12.5" fill="#1f3d6b">N = 20 处，一西格玛约 11.2 个百分点</text>
+  <text x="238" y="236" font-size="12.5" fill="#7d5715">同一处，约百分之九十五的区间半径约 21.9 个百分点</text>
+
+  <rect x="300" y="96" width="560" height="24" fill="#fdf4e8" stroke="#a5762a" stroke-width="1" stroke-dasharray="5 4"/>
+  <text x="312" y="113" font-size="12.5" fill="#7d5715">论文没有给出需要分辨的最小成功率差，两条曲线的哪一段算够用只能由读者自己判断</text>
+
+  <g font-size="12.5" fill="#333333">
+    <line x1="120" y1="492" x2="160" y2="492" stroke="#4a6fa5" stroke-width="2.6"/>
+    <text x="168" y="497">标准误 s</text>
+    <line x1="300" y1="492" x2="340" y2="492" stroke="#a5762a" stroke-width="2.2" stroke-dasharray="7 4"/>
+    <text x="348" y="497">约百分之九十五区间半径 1.96 s</text>
+  </g>
+
+  <text x="40" y="519" font-size="12" fill="#666666">两条曲线按独立同分布二项试验、取 p 最坏情形 0.5 估算。论文只写了 N_cal = 20，以及校准初始状态与训练演示、正式测试都不重叠。</text>
+</svg>

@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 620" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="980" height="620" fill="#ffffff"/>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b6b7d"/>
+    </marker>
+  </defs>
+
+  <text x="30" y="40" font-size="21" font-weight="700" fill="#1a2433">留一评估里谁当目标、谁当影子</text>
+  <text x="30" y="66" font-size="13" fill="#5a6675">四份模型在同领域辅助数据上独立微调，每一轮拿一份当目标，另外三份当影子。</text>
+
+  <!-- header row -->
+  <text x="30" y="108" font-size="13" font-weight="700" fill="#1a2433">轮次</text>
+  <text x="150" y="108" font-size="13" font-weight="700" fill="#1a2433">四份独立微调模型</text>
+  <text x="620" y="108" font-size="13" font-weight="700" fill="#1a2433">这一轮的角色分配</text>
+
+  <!-- row template repeated 4x -->
+  <!-- ROW 1 -->
+  <text x="42" y="152" font-size="13" fill="#3d5570">第 1 轮</text>
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="150" y="130" width="88" height="36" rx="7" fill="#fde8e6" stroke="#d1726a" stroke-width="1.6"/>
+    <text x="194" y="153" fill="#8f3a32">M1</text>
+    <rect x="246" y="130" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="290" y="153" fill="#3d5570">M2</text>
+    <rect x="342" y="130" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="386" y="153" fill="#3d5570">M3</text>
+    <rect x="438" y="130" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="482" y="153" fill="#3d5570">M4</text>
+  </g>
+  <text x="620" y="147" font-size="12.5" fill="#8f3a32">M1 是留出目标</text>
+  <text x="620" y="166" font-size="12.5" fill="#3d5570">M2 M3 M4 训练分类器</text>
+
+  <!-- ROW 2 -->
+  <text x="42" y="228" font-size="13" fill="#3d5570">第 2 轮</text>
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="150" y="206" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="194" y="229" fill="#3d5570">M1</text>
+    <rect x="246" y="206" width="88" height="36" rx="7" fill="#fde8e6" stroke="#d1726a" stroke-width="1.6"/>
+    <text x="290" y="229" fill="#8f3a32">M2</text>
+    <rect x="342" y="206" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="386" y="229" fill="#3d5570">M3</text>
+    <rect x="438" y="206" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="482" y="229" fill="#3d5570">M4</text>
+  </g>
+  <text x="620" y="223" font-size="12.5" fill="#8f3a32">M2 是留出目标</text>
+  <text x="620" y="242" font-size="12.5" fill="#3d5570">M1 M3 M4 训练分类器</text>
+
+  <!-- ROW 3 -->
+  <text x="42" y="304" font-size="13" fill="#3d5570">第 3 轮</text>
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="150" y="282" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="194" y="305" fill="#3d5570">M1</text>
+    <rect x="246" y="282" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="290" y="305" fill="#3d5570">M2</text>
+    <rect x="342" y="282" width="88" height="36" rx="7" fill="#fde8e6" stroke="#d1726a" stroke-width="1.6"/>
+    <text x="386" y="305" fill="#8f3a32">M3</text>
+    <rect x="438" y="282" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="482" y="305" fill="#3d5570">M4</text>
+  </g>
+  <text x="620" y="299" font-size="12.5" fill="#8f3a32">M3 是留出目标</text>
+  <text x="620" y="318" font-size="12.5" fill="#3d5570">M1 M2 M4 训练分类器</text>
+
+  <!-- ROW 4 -->
+  <text x="42" y="380" font-size="13" fill="#3d5570">第 4 轮</text>
+  <g font-size="12.5" text-anchor="middle">
+    <rect x="150" y="358" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="194" y="381" fill="#3d5570">M1</text>
+    <rect x="246" y="358" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="290" y="381" fill="#3d5570">M2</text>
+    <rect x="342" y="358" width="88" height="36" rx="7" fill="#e8eef7" stroke="#8aa6c8" stroke-width="1.4"/>
+    <text x="386" y="381" fill="#3d5570">M3</text>
+    <rect x="438" y="358" width="88" height="36" rx="7" fill="#fde8e6" stroke="#d1726a" stroke-width="1.6"/>
+    <text x="482" y="381" fill="#8f3a32">M4</text>
+  </g>
+  <text x="620" y="375" font-size="12.5" fill="#8f3a32">M4 是留出目标</text>
+  <text x="620" y="394" font-size="12.5" fill="#3d5570">M1 M2 M3 训练分类器</text>
+
+  <text x="150" y="416" font-size="12" fill="#8b95a3">红色格是这一轮的留出目标，灰色格是这一轮的影子模型</text>
+
+  <!-- bottom: data flow -->
+  <line x1="30" y1="446" x2="950" y2="446" stroke="#dde4ec" stroke-width="1.4"/>
+
+  <text x="30" y="482" font-size="14" font-weight="700" fill="#1a2433">每份模型手里的两拨样本</text>
+
+  <!-- shadow box -->
+  <rect x="30" y="498" width="270" height="100" rx="10" fill="#eef3f9" stroke="#8aa6c8" stroke-width="1.4"/>
+  <text x="48" y="524" font-size="13" font-weight="700" fill="#2a4a70">影子样本，带标签</text>
+  <text x="48" y="548" font-size="12.5" fill="#3d5570">微调集里的例子标成成员，留出</text>
+  <text x="48" y="568" font-size="12.5" fill="#3d5570">集里的标成非成员。标签由攻击</text>
+  <text x="48" y="588" font-size="12.5" fill="#3d5570">者自己造出来，不依赖目标</text>
+
+  <line x1="310" y1="548" x2="366" y2="548" stroke="#5b6b7d" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <!-- classifier box -->
+  <rect x="376" y="498" width="230" height="100" rx="10" fill="#e9f2ec" stroke="#6f9c78" stroke-width="1.6"/>
+  <text x="394" y="524" font-size="13" font-weight="700" fill="#2f5c3a">成员分类器</text>
+  <text x="394" y="548" font-size="12.5" fill="#3d5570">只用三份影子的样本训练，特</text>
+  <text x="394" y="568" font-size="12.5" fill="#3d5570">征是输出侧集合与路由遥测的</text>
+  <text x="394" y="588" font-size="12.5" fill="#3d5570">拼接，目标标签完全不参与</text>
+
+  <line x1="616" y1="548" x2="672" y2="548" stroke="#5b6b7d" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <!-- target box -->
+  <rect x="682" y="498" width="268" height="100" rx="10" fill="#fdeeec" stroke="#d1726a" stroke-width="1.6"/>
+  <text x="700" y="524" font-size="13" font-weight="700" fill="#8f3a32">留出目标，只有特征</text>
+  <text x="700" y="548" font-size="12.5" fill="#3d5570">分类器原样搬过来打分，不做</text>
+  <text x="700" y="568" font-size="12.5" fill="#3d5570">任何二次拟合。四轮预测汇总</text>
+  <text x="700" y="588" font-size="12.5" fill="#3d5570">之后再算 TPR 与 AUROC</text>
+</svg>

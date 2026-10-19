@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 660" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="980" height="660" fill="#ffffff"/>
+
+  <text x="30" y="40" font-size="21" font-weight="700" fill="#1a2433">路由遥测的三种形态与切片方式</text>
+  <text x="30" y="66" font-size="13" fill="#5a6675">横轴是 token 位置 t，纵轴是 MoE 层 ℓ。每个格子是一个长度为 E 的概率向量，E 为专家个数。</text>
+
+  <!-- Row 1: per-token routing probability tensor -->
+  <text x="30" y="104" font-size="14" font-weight="700" fill="#1a2433">① 原始路由过程，逐 token 逐层</text>
+
+  <g stroke="#c8d2de" stroke-width="1">
+    <!-- 7 columns x 3 rows of cells -->
+    <g fill="#dfe9f5">
+      <rect x="40"  y="118" width="56" height="26"/><rect x="100" y="118" width="56" height="26"/>
+      <rect x="160" y="118" width="56" height="26"/><rect x="220" y="118" width="56" height="26"/>
+      <rect x="280" y="118" width="56" height="26"/><rect x="340" y="118" width="56" height="26"/>
+      <rect x="400" y="118" width="56" height="26"/>
+    </g>
+    <g fill="#e7eff8">
+      <rect x="40"  y="148" width="56" height="26"/><rect x="100" y="148" width="56" height="26"/>
+      <rect x="160" y="148" width="56" height="26"/><rect x="220" y="148" width="56" height="26"/>
+      <rect x="280" y="148" width="56" height="26"/><rect x="340" y="148" width="56" height="26"/>
+      <rect x="400" y="148" width="56" height="26"/>
+    </g>
+    <g fill="#eff5fb">
+      <rect x="40"  y="178" width="56" height="26"/><rect x="100" y="178" width="56" height="26"/>
+      <rect x="160" y="178" width="56" height="26"/><rect x="220" y="178" width="56" height="26"/>
+      <rect x="280" y="178" width="56" height="26"/><rect x="340" y="178" width="56" height="26"/>
+      <rect x="400" y="178" width="56" height="26"/>
+    </g>
+  </g>
+  <text x="466" y="140" font-size="12" fill="#5a6675">层 ℓ = 1</text>
+  <text x="466" y="170" font-size="12" fill="#5a6675">层 ℓ = 2</text>
+  <text x="466" y="200" font-size="12" fill="#5a6675">…</text>
+  <text x="228" y="228" font-size="12" fill="#5a6675" text-anchor="middle">token 位置 t →</text>
+  <text x="30" y="222" font-size="11" fill="#8b95a3">每格 p(ℓ,t) 长度为 E</text>
+
+  <!-- arrow down -->
+  <line x1="240" y1="240" x2="240" y2="272" stroke="#7a8798" stroke-width="1.6" marker-end="url(#ah)"/>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a8798"/>
+    </marker>
+  </defs>
+
+  <!-- Row 2: three forms -->
+  <text x="30" y="300" font-size="14" font-weight="700" fill="#1a2433">② 三种暴露形态，粒度依次递减</text>
+
+  <!-- form 1 -->
+  <rect x="30" y="318" width="290" height="170" rx="10" fill="#eef5fd" stroke="#7fb0e0" stroke-width="1.6"/>
+  <text x="46" y="344" font-size="14" font-weight="700" fill="#1c4f86">连续专家负载</text>
+  <text x="46" y="366" font-size="12" fill="#3d5570">按层与专家对 token 求平均</text>
+  <text x="46" y="386" font-size="12" fill="#3d5570">每层求和恒为 1，一层 E−1 个自由量</text>
+  <g fill="#2f7ed8">
+    <rect x="46"  y="400" width="18" height="60"/>
+    <rect x="70"  y="404" width="18" height="56"/>
+    <rect x="94"  y="412" width="18" height="48"/>
+    <rect x="118" y="420" width="18" height="40"/>
+    <rect x="142" y="426" width="18" height="34"/>
+    <rect x="166" y="432" width="18" height="28"/>
+    <rect x="190" y="438" width="18" height="22"/>
+  </g>
+  <text x="46" y="478" font-size="12" fill="#1c4f86">记作 φR，长度 层数 × E</text>
+
+  <!-- form 2 -->
+  <rect x="340" y="318" width="290" height="170" rx="10" fill="#f2f7fd" stroke="#9dc2e6" stroke-width="1.6"/>
+  <text x="356" y="344" font-size="14" font-weight="700" fill="#2a6094">离散专家选择</text>
+  <text x="356" y="366" font-size="12" fill="#3d5570">只记每个 token 选中了哪几个专家</text>
+  <text x="356" y="386" font-size="12" fill="#3d5570">统计被选中的 token 占比，无概率值</text>
+  <g fill="#5c9bd8">
+    <rect x="356" y="400" width="18" height="60"/>
+    <rect x="380" y="404" width="18" height="56"/>
+    <rect x="404" y="412" width="18" height="48"/>
+    <rect x="428" y="420" width="18" height="40"/>
+    <rect x="452" y="426" width="18" height="34"/>
+    <rect x="476" y="432" width="18" height="28"/>
+    <rect x="500" y="438" width="18" height="22"/>
+  </g>
+  <text x="356" y="478" font-size="12" fill="#2a6094">记作 φR^count，维度不变但取值只有频次</text>
+
+  <!-- form 3 -->
+  <rect x="650" y="318" width="300" height="170" rx="10" fill="#f7fafd" stroke="#c3d6e8" stroke-width="1.6"/>
+  <text x="666" y="344" font-size="14" font-weight="700" fill="#4b6d8f">受限连续遥测 top-K</text>
+  <text x="666" y="366" font-size="12" fill="#3d5570">按文档级负载排序取前 K 个专家维度</text>
+  <text x="666" y="386" font-size="12" fill="#3d5570">其余维度遮掉，零碎信息被切走</text>
+  <g>
+    <g fill="#8fb8db">
+      <rect x="666" y="400" width="18" height="60"/>
+      <rect x="690" y="404" width="18" height="56"/>
+      <rect x="714" y="412" width="18" height="48"/>
+    </g>
+    <g fill="#e2e9f0">
+      <rect x="738" y="420" width="18" height="40"/>
+      <rect x="762" y="426" width="18" height="34"/>
+      <rect x="786" y="432" width="18" height="28"/>
+      <rect x="810" y="438" width="18" height="22"/>
+    </g>
+  </g>
+  <text x="666" y="478" font-size="12" fill="#4b6d8f">深色为保留维度，浅色为被遮掉的维度</text>
+
+  <!-- legend / loss row -->
+  <text x="30" y="522" font-size="14" font-weight="700" fill="#1a2433">③ 三种形态各自丢掉了什么</text>
+
+  <g font-size="12.5">
+    <rect x="30" y="538" width="290" height="94" rx="8" fill="#eef5fd" stroke="#7fb0e0" stroke-width="1.2"/>
+    <text x="46" y="562" fill="#1c4f86">丢掉的东西最少</text>
+    <text x="46" y="584" fill="#3d5570">概率的精确数值保留着，但每层</text>
+    <text x="46" y="604" fill="#3d5570">求和为 1 这条约束让独立维度</text>
+    <text x="46" y="624" fill="#3d5570">比表面维度少掉层数那么多个</text>
+
+    <rect x="340" y="538" width="290" height="94" rx="8" fill="#f2f7fd" stroke="#9dc2e6" stroke-width="1.2"/>
+    <text x="356" y="562" fill="#2a6094">丢掉概率，保住谁被选中</text>
+    <text x="356" y="584" fill="#3d5570">实测增量与连续形态同量级，九</text>
+    <text x="356" y="604" fill="#3d5570">格里还有四格略大。暴露方的</text>
+    <text x="356" y="624" fill="#3d5570">监控精度换不来免疫</text>
+
+    <rect x="650" y="538" width="300" height="94" rx="8" fill="#f7fafd" stroke="#c3d6e8" stroke-width="1.2"/>
+    <text x="666" y="562" fill="#4b6d8f">丢掉得最多</text>
+    <text x="666" y="584" fill="#3d5570">只露一个专家仍有 0.0175 的增</text>
+    <text x="666" y="604" fill="#3d5570">量，露到三十二个是 0.0641，</text>
+    <text x="666" y="624" fill="#3d5570">完整连续形态是 0.0841</text>
+  </g>
+</svg>

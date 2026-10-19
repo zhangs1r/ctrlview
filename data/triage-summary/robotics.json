@@ -1,0 +1,253 @@
+{
+ "column": "robotics",
+ "ranked": [
+  {
+   "id": "2610.10453",
+   "title": "RFPO: Rectified Flow Policy Optimization for Embodied Control",
+   "total": 95.0,
+   "real_platform": 2,
+   "bounds": 2,
+   "system_tradeoff": 2,
+   "sensing_compute": 2,
+   "scale": 1,
+   "why": "四个真机平台验证，点明少步离散化失效，单步延迟由 4.39ms 降至 0.08ms。"
+  },
+  {
+   "id": "2610.07525",
+   "title": "ReDex: Repairing Sim-to-Real Dexterous Policies by Finger-Level Compliant Interaction",
+   "total": 87.5,
+   "real_platform": 2,
+   "bounds": 2,
+   "system_tradeoff": 2,
+   "sensing_compute": 1,
+   "scale": 1,
+   "why": "真机两项接触密集任务成功率大幅提升，以人手纠正替代触觉仿真，取舍清楚。"
+  },
+  {
+   "id": "2610.12549",
+   "title": "Fly-by-Code: Embodied Coding Agents for Aerial Manipulation with Active Visual and Physical Feedback",
+   "total": 82.5,
+   "real_platform": 2,
+   "bounds": 2,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 2,
+   "why": "失效假设写得明确且有量化，但真机仅定性完成多阶段任务、缺重复统计。"
+  },
+  {
+   "id": "2610.04054",
+   "title": "Reward-DAgger: Robot-Gated Interactive Imitation Learning with General-Purpose Progress-Based Reward Models",
+   "total": 80.0,
+   "real_platform": 2,
+   "bounds": 2,
+   "system_tradeoff": 2,
+   "sensing_compute": 0,
+   "scale": 1,
+   "why": "失效检测精度-延迟取舍明确，但未交代传感器、执行器与算力平台。"
+  },
+  {
+   "id": "2610.17748",
+   "title": "I3L: Iterative Interactive Imitation Learning for Whole-Body Mobile Manipulation",
+   "total": 80.0,
+   "real_platform": 2,
+   "bounds": 1,
+   "system_tradeoff": 2,
+   "sensing_compute": 1,
+   "scale": 2,
+   "why": "三本体八任务四轮迭代、成功率升 68.3 个百分点，人机接管成本取舍清楚。"
+  },
+  {
+   "id": "2610.12733",
+   "title": "Visual-Wi-Fi Navigation to Signal-Emitting Devices",
+   "total": 72.5,
+   "real_platform": 2,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 2,
+   "scale": 1,
+   "why": "真机零样本部署，自建 Wi-Fi 传感器与流程交代清楚；未提失效边界。"
+  },
+  {
+   "id": "2610.18991",
+   "title": "Contact-UAN: Unsupervised Actuator Networks as a Residual World Model for Humanoid Control",
+   "total": 72.5,
+   "real_platform": 2,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 2,
+   "scale": 1,
+   "why": "6.5 分钟真机数据训练，真机扭矩降 20%、力跟踪误差降 43%；未提边界。"
+  },
+  {
+   "id": "2610.08737",
+   "title": "PhoneBot: A Low-Cost Open Humanoid Robot Platform Reusing Smartphones",
+   "total": 70.0,
+   "real_platform": 2,
+   "bounds": 0,
+   "system_tradeoff": 2,
+   "sensing_compute": 2,
+   "scale": 1,
+   "why": "复用手机做感知算力与 13 个低成本舵机，给出实时通信框架；无失败情形。"
+  },
+  {
+   "id": "2610.17521",
+   "title": "YUBI-Real2Sim: 3DGS Scene Verification for Reliable Policy Evaluation",
+   "total": 70.0,
+   "real_platform": 1,
+   "bounds": 2,
+   "system_tradeoff": 1,
+   "sensing_compute": 2,
+   "scale": 1,
+   "why": "3DGS 真到仿评估复现八/九组真实排序，自认尚未建立通用准入规则。"
+  },
+  {
+   "id": "2610.16369",
+   "title": "RoboBugBench: Benchmarking Automated Repair of Real Robot Software Under an Audited Behavioral Oracle",
+   "total": 67.5,
+   "real_platform": 1,
+   "bounds": 2,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 2,
+   "why": "33 个真实 ROS2 缺陷并自审门槛，给出 counterfeit 全被接受的失败证据。"
+  },
+  {
+   "id": "2610.09369",
+   "title": "Immiscible Diffusion Policy: Preserving Multimodal Robot Actions through Label-Free Noise Assignment",
+   "total": 65.0,
+   "real_platform": 2,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 1,
+   "why": "两项真机人形任务，指出扩散策略模态坍塌；真机平台与算力未交代。"
+  },
+  {
+   "id": "2610.10283",
+   "title": "Temporal Visuo-Tactile Learning for Dexterous Grasp Stability",
+   "total": 65.0,
+   "real_platform": 2,
+   "bounds": 0,
+   "system_tradeoff": 1,
+   "sensing_compute": 2,
+   "scale": 2,
+   "why": "万次抓取、200 物体、四枚 Digit360，真机在线门控提升 10.5 个百分点。"
+  },
+  {
+   "id": "2610.07396",
+   "title": "What the Elevation Map Cannot See: Semantic-Aware Locomotion and Execution-Aware Navigation for Humanoid Robot",
+   "total": 62.5,
+   "real_platform": 1,
+   "bounds": 2,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 1,
+   "why": "明确建模高程图盲区与执行偏差两类失效；真机仅验证运动策略。"
+  },
+  {
+   "id": "2610.09302",
+   "title": "Adaptive Risk-Certified Event-Triggered Replanning for Dynamic Navigation",
+   "total": 62.5,
+   "real_platform": 1,
+   "bounds": 2,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 1,
+   "why": "非平稳基准碰撞降 83.3%，指出预测不确定致罕见失败；真机细节少。"
+  },
+  {
+   "id": "2610.15560",
+   "title": "Stereo-Planner: Learning Stereo-to-Trajectory Planning for Zero-Shot Sim-to-Real Quadrotor Navigation",
+   "total": 60.0,
+   "real_platform": 2,
+   "bounds": 0,
+   "system_tradeoff": 1,
+   "sensing_compute": 2,
+   "scale": 1,
+   "why": "Orin NX 上实飞 7m/s、机载推理 24.27ms；未提失效情形与取舍讨论。"
+  },
+  {
+   "id": "2610.10515",
+   "title": "RoboJEPA: Scaling Robotic Latent World Models",
+   "total": 57.5,
+   "real_platform": 2,
+   "bounds": 0,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 2,
+   "why": "12 本体真实数据、8B 模型、算力幂律；无失效讨论，仅算力-质量取舍。"
+  },
+  {
+   "id": "2610.14541",
+   "title": "GG-Nav: Goal-oriented Grounding Chain-of-Thought Elicits Reasoning in Navigation Foundation Models",
+   "total": 50.0,
+   "real_platform": 1,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 1,
+   "scale": 1,
+   "why": "消融指出证据缺失与停止错误，Go2 零样本部署，但无规模与硬件细节。"
+  },
+  {
+   "id": "2610.02750",
+   "title": "CSIR: Contextually and Socially Informed Robots for Efficient Person Goal Navigation",
+   "total": 42.5,
+   "real_platform": 1,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 0,
+   "scale": 1,
+   "why": "合成基准加真机硬件测试，未给实验规模、传感器与算力细节。"
+  },
+  {
+   "id": "2610.12957",
+   "title": "JoyInside-VLM-Agent: Product-Conditioned Multimodal Policy Learning for Embodied Agents",
+   "total": 42.5,
+   "real_platform": 1,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 0,
+   "scale": 1,
+   "why": "仅两个四足案例演示，自认公开基准结果 mixed，硬件与算力缺失。"
+  },
+  {
+   "id": "2610.18699",
+   "title": "RoboFQE: Rollout-Free Evaluation of Visual Robot Policies from Offline Trajectories",
+   "total": 42.5,
+   "real_platform": 1,
+   "bounds": 1,
+   "system_tradeoff": 1,
+   "sensing_compute": 0,
+   "scale": 1,
+   "why": "仿真与真机验证排序一致性，但真机无细节、传感器与算力未交代。"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.10453",
+   "title": "RFPO: Rectified Flow Policy Optimization for Embodied Control",
+   "total": 95.0,
+   "why": "四台真机（Go2/Spot/H1/G1）验证单步执行，明确少步离散化会退化控制并给出延迟取舍，三项优先判据全部满足。"
+  },
+  {
+   "id": "2610.07525",
+   "title": "ReDex: Repairing Sim-to-Real Dexterous Policies by Finger-Level Compliant Interaction",
+   "total": 87.5,
+   "why": "真机两项接触密集任务从 14% 提到 86%、26% 提到 95.3%，并明确以人手局部纠正替代触觉仿真，边界与系统取舍都写得清楚。"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.12549",
+   "title": "Fly-by-Code: Embodied Coding Agents for Aerial Manipulation with Active Visual and Physical Feedback",
+   "total": 82.5,
+   "why": "总分第三，但真机只定性完成多阶段任务、无重复实验统计，主证据来自仿真。"
+  },
+  {
+   "id": "2610.04054",
+   "title": "Reward-DAgger: Robot-Gated Interactive Imitation Learning with General-Purpose Progress-Based Reward Models",
+   "total": 80.0,
+   "why": "总分第四，未交代传感器、执行器与算力平台，方法能否搬到真机待精读确认。"
+  }
+ ]
+}

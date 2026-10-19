@@ -1,0 +1,253 @@
+{
+ "column": "control",
+ "ranked": [
+  {
+   "id": "2610.09988",
+   "title": "Continuous-Time Critic as a Lyapunov Function: Projected Adaptation and Cart-Pole Stabilization",
+   "total": 95.0,
+   "problem_form": 2,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 1,
+   "why": "问题形式完整、条件稳定性定理与反例齐备、Lyapunov/Riccati谱系清晰。"
+  },
+  {
+   "id": "2610.12110",
+   "title": "Adaptive dynamic programming using Lyapunov function constraints",
+   "total": 95.0,
+   "problem_form": 2,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 1,
+   "why": "Lyapunov约束的actor-critic优化形式与闭环稳定、收敛保证明确。"
+  },
+  {
+   "id": "2610.13631",
+   "title": "Private and Distributionally Robust Federated Multiclass Classification",
+   "total": 95.0,
+   "problem_form": 2,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 1,
+   "why": "DRO目标加ADMM求解与DP、收敛保证明确，但偏机器学习方向。"
+  },
+  {
+   "id": "2610.05724",
+   "title": "Data-driven control of linear systems using quantized data",
+   "total": 90.0,
+   "problem_form": 2,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 0,
+   "why": "量化数据下SDP可行条件与指数收敛保证，LMI谱系清晰；松弛代价未谈。"
+  },
+  {
+   "id": "2610.04055",
+   "title": "Stochastic Sequential Feedback Optimization for Wind Farm Control under Time-Varying Inflow",
+   "total": 85.0,
+   "problem_form": 2,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 1,
+   "relaxation_cost": 1,
+   "why": "期望值目标与几乎必然收敛、动态遗憾界明确；线性化代价未量化。"
+  },
+  {
+   "id": "2610.07674",
+   "title": "Belief-Informed Hybrid Control with Almost-Sure Target-Set Convergence",
+   "total": 85.0,
+   "problem_form": 2,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 1,
+   "relaxation_cost": 1,
+   "why": "约束式滚动时域选择清晰，条件化几乎必然收敛；谱系定位一般。"
+  },
+  {
+   "id": "2610.14338",
+   "title": "STREGO: A Scalable Implementation of a Trust-Region Framework for Noisy Bayesian Optimization",
+   "total": 80.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 1,
+   "why": "噪声收敛分析条件明确、信赖域谱系清晰，仅目标问题描述笼统。"
+  },
+  {
+   "id": "2610.10205",
+   "title": "Breaking the Odd Cycle: Regularization and First-Order Optimization for the Maximum $s$-Plex Problem",
+   "total": 80.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 1,
+   "why": "正则化连续形式与收敛、支撑识别条件清楚；目标函数未明写。"
+  },
+  {
+   "id": "2610.05428",
+   "title": "Learning in Continuous Games from Pairwise Preference Feedback",
+   "total": 75.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 0,
+   "why": "不可辨识性刻画与收敛保证强，但问题形式只在学习目标层面。"
+  },
+  {
+   "id": "2610.10369",
+   "title": "Sharp Initialization Guarantees for the Heavy-Ball Method",
+   "total": 75.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 0,
+   "why": "上下界与加速速率条件明确、Heavy-ball谱系清晰，但非优化问题形式。"
+  },
+  {
+   "id": "2610.13741",
+   "title": "Stabilized SQP Method for Convex Piecewise Linear-Quadratic Composite Optimization Problems",
+   "total": 75.0,
+   "problem_form": 1,
+   "why_hard": 1,
+   "theory": 2,
+   "classic_spectrum": 2,
+   "relaxation_cost": 2,
+   "why": "纯理论，松弛条件与反例清楚；问题形式只说问题类，障碍未展开。"
+  },
+  {
+   "id": "2610.06967",
+   "title": "Economic resources, sporting efficiency and uncertainty: a stochastic optimization model of football performance in Africa",
+   "total": 70.0,
+   "problem_form": 2,
+   "why_hard": 1,
+   "theory": 2,
+   "classic_spectrum": 1,
+   "relaxation_cost": 0,
+   "why": "有HJB验证定理与显式条件，但障碍与经典谱系定位较弱。"
+  },
+  {
+   "id": "2610.09889",
+   "title": "Identifiability of a dissipative knowledge-dynamics model: exact recovery under designed excitation, degeneration on observational data",
+   "total": 65.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 2,
+   "classic_spectrum": 1,
+   "relaxation_cost": 0,
+   "why": "可辨识定理与激励条件明确；非优化形式，谱系定位弱。"
+  },
+  {
+   "id": "2610.10772",
+   "title": "Scaling Quantum Optimization to the Thousand-Qubit Scale with Distributed Quantum Sampling",
+   "total": 60.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 0,
+   "classic_spectrum": 2,
+   "relaxation_cost": 1,
+   "why": "规模与截断代价点明、Frank-Wolfe谱系清楚，但无任何理论保证。"
+  },
+  {
+   "id": "2610.13805",
+   "title": "Warm-IP: A Path-Following ADMM Warm Start for Interior-Point Quadratic Programming",
+   "total": 55.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 0,
+   "classic_spectrum": 2,
+   "relaxation_cost": 0,
+   "why": "只与商用求解器比速度，缺目标/约束形式与收敛证明。"
+  },
+  {
+   "id": "2610.14580",
+   "title": "Entanglement-Capability-Aware Finite-Bond Circuit Cutting for Distributed Quantum Computing",
+   "total": 50.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 0,
+   "classic_spectrum": 1,
+   "relaxation_cost": 1,
+   "why": "规模障碍与代理无保证说明清楚，但无理论、问题形式弱。"
+  },
+  {
+   "id": "2610.10465",
+   "title": "LLA-MPPI: Rapidly Adaptive Whole-body Control of Legged Robots with GPU-Accelerated Parallel Simulations",
+   "total": 45.0,
+   "problem_form": 1,
+   "why_hard": 2,
+   "theory": 0,
+   "classic_spectrum": 1,
+   "relaxation_cost": 0,
+   "why": "MPPI应用与实证结果，无问题形式与理论。"
+  },
+  {
+   "id": "2610.12972",
+   "title": "Adaptive Whole-Body MPC with Optimal Posture Planning for Humanoid Robots under Unknown Payloads",
+   "total": 35.0,
+   "problem_form": 1,
+   "why_hard": 1,
+   "theory": 0,
+   "classic_spectrum": 1,
+   "relaxation_cost": 0,
+   "why": "仅约束与仿真、硬件对比，无目标形式与理论。"
+  },
+  {
+   "id": "2610.04949",
+   "title": "A Unified Dynamics Framework for Reinforcement Learning and Classical Control of a Six-DOF Pipeline-Tracking ROV in NVIDIA Isaac Sim",
+   "total": 30.0,
+   "problem_form": 0,
+   "why_hard": 1,
+   "theory": 0,
+   "classic_spectrum": 2,
+   "relaxation_cost": 0,
+   "why": "纯控制器对比实验，无问题形式与理论。"
+  },
+  {
+   "id": "2610.13158",
+   "title": "Low-Latency Mapless ESDF Queries for MAV Reactive Collision Avoidance",
+   "total": 30.0,
+   "problem_form": 0,
+   "why_hard": 2,
+   "theory": 0,
+   "classic_spectrum": 1,
+   "relaxation_cost": 0,
+   "why": "感知与系统论文，仅实时性障碍，无形式与理论。"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.05724",
+   "title": "Data-driven control of linear systems using quantized data",
+   "total": 90.0,
+   "why": "摘要给出完整问题形式：以反馈增益为变量的SDP、可行性即可镇定的条件，及Lyapunov量化更新下的指数收敛保证，落在经典LMI镇定谱系上。"
+  },
+  {
+   "id": "2610.09988",
+   "title": "Continuous-Time Critic as a Lyapunov Function: Projected Adaptation and Cart-Pole Stabilization",
+   "total": 95.0,
+   "why": "摘要给出投影到速度集∩衰减半空间的约束优化形式，配条件状态稳定性定理、反例与局部保守证书，明确区分可达与不可达的保证，Lyapunov/Riccati谱系清晰。"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.12110",
+   "title": "Adaptive dynamic programming using Lyapunov function constraints",
+   "total": 95.0,
+   "why": "与选中篇同源同题（Lyapunov约束的自适应/近似最优控制），主题重复，且收敛只到邻域。"
+  },
+  {
+   "id": "2610.13631",
+   "title": "Private and Distributionally Robust Federated Multiclass Classification",
+   "total": 95.0,
+   "why": "问题形式是联邦学习的DRO训练目标，与栏目控制/优化经典谱系对接最弱。"
+  }
+ ]
+}

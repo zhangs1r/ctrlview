@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>给缺陷检测开一个弃权档，用价 k 控制它什么时候闭嘴 · CtrlView</title>
+<meta name="description" content="给缺陷检测开一个弃权档，用价 k 控制它什么时候闭嘴">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261019192040"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.09057.html?force=20261019192040" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">自动化 · 论文精读</div>
+<h1>给缺陷检测开一个弃权档，用价 k 控制它什么时候闭嘴</h1>
+<div class="meta"><b>Raham A. Butt, Marco Romanelli, Roche C. de Guzman</b><br>
+arXiv:2610.09057 · 2026-10-19 · 精读约 30 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-不确定性量化">不确定性量化</a><a class="tag" href="topics.html#t-弃权分类">弃权分类</a><a class="tag" href="topics.html#t-知识图谱">知识图谱</a><a class="tag" href="topics.html#t-医疗器械质量">医疗器械质量</a><a class="tag" href="topics.html#t-表面贴装">表面贴装</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>一块刚过回流炉的板子摆在检测工位上。模型要判断上面有没有缺陷，如果有，是开路还是桥连。绝大多数样本它闭着眼都能答对，剩下那一小撮里，几类的证据咬得很紧，答错就是一次误报或者一次漏检。</p>
+<p>这两种错的代价不一样。误报要把一批板子拦下来复查，漏检可能让缺陷件流到病人身上。多报几次，产线的节拍和返修工位先受不了；漏掉一次，代价落在使用者那边。</p>
+<p>这篇论文做的是给模型加一个出口。它在分类器的输出层多挂一个单元，让模型有资格说&quot;这一件我拿不准&quot;，把决定推给下游的人或者另一道自动检查。论文在医疗器械制造这个场景里把这件事做齐，从理论到合成基准到真实的 FDA 报告数据都给了一遍。</p>
+<p>机制本身不复杂。训练时给正确预测的收益乘一个价，记作 k。选对类别，收益按 k 倍算；改选弃权档，收益按一倍算。k 高的时候模型倾向于硬猜，k 低的时候倾向于闭嘴。</p>
+<p><mark>值得看的是定理 3.2，它把 k 的三段区间划死了。</mark> k 小于 1，最优解是把全部概率压在弃权档上，这时候整套东西退化成一个人工全检流程。k 大于类别数 C，弃权档在最优解里恒为零，模型退回普通的后验输出。只有夹在中间那一段，弃权与预测才会同时出现。论文在合成基准上的消融把 k 一路扫到 4 以上，精度曲线在那里出现平台和陡降，拐点离 C = 3 不远。</p>
+<p><u>代价乘子 k 是一个价，它决定模型押类别还是押闭嘴。</u></p>
+<p>真实数据一侧用的是 FDA 的 MAUDE 器械不良事件报告，26.6 万条。论文测到的口径是，把覆盖率压到 <strong>90%</strong>，也就是弃权掉一成样本，分类错误相对下降 <strong>47.93%</strong>。更激进的弃权到大约 70% 覆盖率，论文称保留样本上的精度接近满分。</p>
+<p>落到制造场景，塞进产线的那部分证据是合成数据。论文复现了 Shenoy 与 Ameri 的表面贴装缺陷基准，三类任务（无缺陷、开路、桥连），特征取六个工艺量，包括环境相对湿度、环境温度、锡膏黏度、钢网厚度、液相线以上时间和峰值回流温度。在这个任务上以同样的目标覆盖率弃权，错误相对下降 <strong>62.65%</strong>。</p>
+<p>这节要你记住的是，模型多了一个可以闭嘴的出口，出口大小由一个价控制。</p>
+<hr>
+<h2>一、问题背景</h2>
+<h3>1.1 误差顺着根因链往下传</h3>
+<p>论文盯住的是多级级联里的第一级。上游那篇工作搭了一个三头串行的多层感知机，第一个头判缺陷有没有、是哪种，第二个头认机理，第三个头估参数级风险。第一级判错，后面两级的输入就建立在错误事实上，报出来的根因排序再漂亮也没有意义。</p>
+<p>第一级恰恰是最难判的那一级。缺陷本身在样本里就稀少，几类缺陷的边缘分布又互相重叠，边界附近的样本谁看都悬。</p>
+<p>麻烦来自模型对自己没数。论文引的分类里，一类是数据本身的随机性，同一批工艺参数下缺陷时有时无；另一类是模型没见过足够多同类样本带来的认识不确定性。合起来的结果是，模型输出的那串概率在边界样本上并不能反映它真有多虚。论文引用的工作里有人提过，级联架构对第二种不确定性很敏感。</p>
+<p>传统的缺陷检测方法对付不了这个场景还有更直接的原因。基于规则的判定写到规程里就不再变化，遇上纹理背景、小目标缺陷和域漂移就漏，[2] 那篇做手术器械无监督检测的工作在综述里把这几条列成了医疗器械领域的特有困难。</p>
+<h3>1.2 前人两条路各缺一块</h3>
+<p>围绕着&quot;知道自己什么时候会错&quot;，前人走过两条路。</p>
+<p>一条路是把不确定性装进网络结构里。SelectiveNet 在骨干网络后面挂一个置信头，用一个专门的损失逼它预测自己会不会错，弃权是训练出来的。Fisch 那篇校准选择性分类走的是同类思路，用扰动过的训练数据让弃权判据更稳。这两种做法都要改训练流程，代价是调参面变大，收益是判据和任务贴合得紧。</p>
+<p>另一条路完全不碰模型。DOCTOR 那篇用信息论的量去算一个样本该不该被信，输入只是模型的输出分布，模型本身一行代码都不用改。这条路省事，对过度自信的模型效果会打折，[31] 那篇校准问题的经典工作已经把神经网络的过度自信讲清楚了。</p>
+<p>第三种走法是论文采用的。它来自 Deep Gamblers 那篇用组合理论学弃权的工作，把弃权做成网络的第 C+1 个输出，训练目标和分类任务写在同一个损失函数里。论文接着往下做的是理论。<mark>定理 3.1 给出了弃权阈值在最优解上的表达式，定理 3.2 划出了代价乘子 k 的有效区间 1 &lt; k &lt; C</mark>，包括两个端点上的退化情形。论文原话说，这样做能给出选择 k 的指导，而不是把 k 当玄学超参调。</p>
+<h3>1.3 产线上的两条岔路</h3>
+<p>论文里能落地的部分有且只有一段合成基准。这套装置在制造流程里对应的位置很清楚，回流焊接后的在线检测工位，输入是焊膏印刷与回流段的工艺量，输出是这块板子算不算缺陷件。上游是印刷机和回流炉，下游是返修、报废或者 AOI 复判。</p>
+<p>论文真实数据那一半不在这条线上。MAUDE 是上市后的被动上报系统，报的是已经卖出去的器械出的事，报表上带的是器械标识、事件类型和叙述文本。这一段对应的工序是上市后监督与召回评估，处置方式是排队等人工审。</p>
+<p>两级对时延和出错的容忍度完全不同。在线检测工位跟着产线节拍走，单板判定必须在节拍内出结果；上市后监督是批处理队列，一条报告压几天没人管也不影响病人。论文把弃权机制放在同一套框架里讲了两级，这一点后面谈落地的时候要分开算。</p>
+<p>这节要你记住的是，能落地的那半是回流后的在线检测，另一半是上市后的报告分诊。</p>
+<hr>
+<h2>二、总体结构</h2>
+<p>论文的结构可以按三级串行来读。第一级是缺陷判定，弃权机制只装在这里；第二级认机理，第三级估风险，这两级沿用上游工作的原设定，论文没有改动。</p>
+<figure><img src="figs/2610.09057-svg-cascade.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　深红色标出本文动过刀的位置。弃权信号从第一级引出，指向转人工复核的处置支路。（编者绘制）</figcaption></figure>
+<p>论文里没有给出级联结构的原图，各级之间的接口照抄上游工作时容易被画错，所以这里画一张。第一级判错的代价会顺着链路传下去，这也是论文把弃权放在第一级的原因。</p>
+<figure><img src="figs/2610.09057-svg-abstain.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　三个概率坐标构成一个三角形。取价 k 在 1 与类别数 C 之间时，模型只在三个类别的分界旁边留白。横轴无物理量，两个轴由三个类别概率转换而来。（编者绘制）</figcaption></figure>
+<p>论文在第 III-A 节用一张散点图标了决策区域与拒收样本，方向是对的但欠一层几何解释。这张图说明的是留白的形状。k 越小，浅绿色的带越宽；k 越过类别数 C，带整块消失。</p>
+<p>把论文各环节与章节对齐成一张表。</p>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>对应章节与公式</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>弃权输出的定义</td><td>第 III 节，式 (3)(4)(5)</td><td>类别后验、价 k、弃权档概率</td><td>带弃权档的 C+1 维输出</td></tr><tr><td>最优解形状</td><td>定理 3.1，式 (6)</td><td>真实后验 p、拉格朗日乘子 λ</td><td>各类别概率的活动集合与自适应阈值</td></tr><tr><td>k 的区间划分</td><td>定理 3.2</td><td>价 k、类别数 C</td><td>退化区、混合区、不弃权区</td></tr><tr><td>合成基准与重叠加难</td><td>第 IV-A 节，图 2 至图 4</td><td>六个工艺量、目标贝叶斯误差</td><td>精度、覆盖率、风险曲线</td></tr><tr><td>真实报告分诊</td><td>第 IV-B 节，图 5、图 6</td><td>26.6 万条 MAUDE 叙述文本</td><td>四类严重度判读、覆盖率、弃权量</td></tr></tbody></table></div>
+<p>这节要你记住的是，弃权只挂在第一级上，几何形状随价缩窄。</p>
+<hr>
+<h2>三、方法拆解</h2>
+<h3>3.1 先把问题写成一次多类分类</h3>
+<p>论文把第一级的任务写成多类分类。特征空间记作 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D4B3;</mi></mrow></math></math>，标签空间 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D4B4;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><mi>C</mi><mo stretchy="false">&#x0007D;</mo></mrow></math></math>，训练集记作 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D49F;</mi><mi>n</mi></msub></mrow></math></math>，里面是 n 个独立同分布的样本对。分类器要逼近的是贝叶斯判据</p>
+<div class="eq"><span class="eqn">(a)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>f</mi><mrow><mo>&#x022C6;</mo></mrow></msup><mo stretchy="false">&#x00028;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0225C;</mo><msub><mo movablelimits="true">argmax</mo><mrow><mi>y</mi><mo>&#x02208;</mo><mi>&#x1D4B4;</mi></mrow></msub><msub><mi>P</mi><mrow><mi>Y</mi><mo stretchy="false">&#x0007C;</mo><mi>X</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p>符号逐个说。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x1D431;</mi></mrow></math></math> 是一个样本的特征向量，在合成基准里就是那六个工艺量。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>C</mi></mrow></math></math> 是类别数，合成基准取 3，MAUDE 报告任务取 4。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mrow><mi>Y</mi><mo stretchy="false">&#x0007C;</mo><mi>X</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>y</mi><mo>&#x02223;</mo><mi>&#x1D431;</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是真实但未知的类别后验，也就是知道全部工艺条件的情况下这个样本属于第 y 类的概率。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mrow><mover><mrow><mi>Y</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x0007C;</mo><mi>X</mi></mrow></msub></mrow></math></math> 是模型估出来的那一份，通常就是 softmax 的输出。上标带星号的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>f</mi><mrow><mo>&#x022C6;</mo></mrow></msup></mrow></math></math> 是理论上的最优判据，模型能逼近它但不能达到。</p>
+<p>平时的训练把经验交叉熵压到最小</p>
+<div class="eq"><span class="eqn">(b)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x02112;</mi><mrow><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">E</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>&#x1D49F;</mi><mi>n</mi></msub><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>n</mi></mrow></mfrac><munderover><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>n</mi></mrow></munderover><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>C</mi></mrow></munderover><msub><mi>P</mi><mrow><mi>Y</mi><mo stretchy="false">&#x0007C;</mo><mi>X</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>j</mi></msub><mo>&#x02223;</mo><msub><mi>&#x1D431;</mi><mi>i</mi></msub><mo stretchy="false">&#x00029;</mo><mi>log</mi><msub><mi>P</mi><mrow><mover><mrow><mi>Y</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x0007C;</mo><mi>X</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><msub><mi>y</mi><mi>j</mi></msub><mo>&#x02223;</mo><msub><mi>&#x1D431;</mi><mi>i</mi></msub><mi>;</mi><msub><mi>&#x1D49F;</mi><mi>n</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></div>
+<p>这一项的作用是逼模型给正确类别压上高概率。写成这样是为了后面替换方便，训练时真实后验用独热向量代替，求和退化成一个对数项。</p>
+<h3>3.2 加一个弃权档，把收益乘上一个价</h3>
+<p>论文改的就是上面这个目标里的那一项。原来每个样本的似然项是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mo>&#x02211;</mo><mi>j</mi></msub><msub><mi>p</mi><mi>j</mi></msub><mi>log</mi><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub></mrow></math></math>，改完之后变成</p>
+<div class="eq"><span class="eqn">(c)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>W</mi><mi>r</mi></msub><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo>&#x0002C;</mo><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>C</mi></mrow></munderover><msub><mi>p</mi><mi>j</mi></msub><mi>log</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mi>k</mi><mo>&#x000B7;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub><mo>&#x0002B;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub></mrow></math></math> 是模型给第 j 类压上的概率，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub></mrow></math></math> 是新加的第 C+1 个输出，论文叫它预留变量，读出来就是模型这一刻的自认不确定度。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>j</mi></msub></mrow></math></math> 是真实后验的第 j 个分量。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math></math> 是一个正实数，论文叫它代价乘子。约束和普通概率一样</p>
+<div class="eq"><span class="eqn">(d)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>C</mi></mrow></munderover><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub><mo>&#x0002B;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mspace width="2em" /><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub><mo>&#x02265;</mo><mn>0</mn><mtext>&#x000A0;</mtext><mtext>&#x000A0;</mtext><mo>&#x02200;</mo><mi>j</mi><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo></mrow></math></math></div>
+<p>k 的作用在这条式子里看得清楚。选对类别时，模型拿到的收益是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>log</mi><mo stretchy="false">&#x00028;</mo><mi>k</mi><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub><mo>&#x0002B;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math>，k 越大，把概率挪给类别档越划算。全押弃权档时 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x000B7;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>1</mn></mrow></math></math> 取对数得零。k 大到某个程度，押类别的期望收益再也追不上弃权档的零，模型就彻底不弃权了。</p>
+<h3>3.3 最优解长什么样</h3>
+<p>定理 3.1 说，在弃权档的最优取值严格大于零的前提下，每个类别档的最优解可以写成</p>
+<div class="eq"><span class="eqn">(e)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msubsup><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>i</mi><mrow><mo>&#x022C6;</mo></mrow></msubsup><mo>&#x0003D;</mo><mo>max</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mfrac><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow><mrow><mi>&#x003BB;</mi></mrow></mfrac><mo>&#x02212;</mo><mfrac><mrow><msubsup><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mo>&#x022C6;</mo></mrow></msubsup></mrow><mrow><mi>k</mi></mrow></mfrac><mo>&#x0002C;</mo><mn>0</mn><mo stretchy="true" fence="true" form="postfix">&#x0007D;</mo></mrow><mo>&#x0002C;</mo><mspace width="2em" /><mi>i</mi><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><mi>C</mi><mo stretchy="false">&#x0007D;</mo></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>p</mi><mi>i</mi></msub></mrow></math></math> 是第 i 类的真实后验，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi></mrow></math></math> 是等式约束对应的拉格朗日乘子，在最优解上严格大于零。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mo>&#x022C6;</mo></mrow></msubsup></mrow></math></math> 是弃权档在最优解上的取值，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math></math> 就是上面那个价。</p>
+<p>两个符号先解释清楚。拉格朗日乘子在这里的角色是配额，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi></mrow></math></math> 越大，整个右端项被压得越小，可用的概率总量越紧。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mo>&#x022C6;</mo></mrow></msubsup><mo>&#x0002F;</mo><mi>k</mi></mrow></math></math> 这一项是门槛，真实后验低于 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003BB;</mi></mrow></math></math> 倍这个门槛的类别，算出来的坐标是负数，被 max 截到零，论文说这些类别在最优解上失活。</p>
+<p>这条式子的读法值得停一下。<mark>门槛项随弃权档的取值上升而抬高，随价 k 上升而降低</mark>。<u>模型自认越不确定，它能接受的类别就越少；价给得越高，它愿意接受的类别就越多。</u>论文把这解释成弃权输出本身就是一种自适应的不确定度度量。</p>
+<h3>3.4 自由度账本</h3>
+<p>这套问题的未知量和约束可以数清楚。模型的输出向量一共 C+1 个坐标，就是 C 个类别概率加一个弃权档。约束有两条，一条来自式 (4) 的归一化等式，一条来自实数域上的非负性，后者在最优解上以互补松弛的形式生效。未知数减去独立的等式约束，剩下的自由维度是</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mi>C</mi></mrow></math></math></div>
+<p>求解所需的观测来自真实后验 p，它一次提供 C 个分量，且因概率归一而只剩 C 个独立取值。所以从自由维度看，这条问题的观测与未知数刚好齐平，不需要额外的观测源，也不存在最小样本数一类的要求。它是一次逐样本的凸优化，不是需要堆观测才能定解的状态估计问题。</p>
+<p>要小心的是秩的问题出在别处。约束集合是概率单纯形，论文的引理 1.1 说它凸、闭、有界，引理 1.2 说目标函数在这个集合上凹，于是问题有全局最优解，这就是凸优化教科书里那套存在性论证。极端取值上自由度会塌掉，那是 3.5 小节讲的退化情形。</p>
+<h3>3.5 价 k 的三个区间</h3>
+<p>定理 3.2 把 k 分了三段，每一段的最优解形状都不同。</p>
+<figure><img src="figs/2610.09057-svg-kregime.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 C</b>　横轴为价 k 的取值，纵轴无物理量。黑色实心点为合成基准消融扫到的位置，空心点为扫描上限。（编者绘制）</figcaption></figure>
+<p>第一段是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mi>&</mi><mi>l</mi><mi>t</mi><mi>;</mi><mn>1</mn></mrow></math></math>。论文的证明思路是先证任意可行解上目标函数不超过零，再指出全弃权的那个解恰好取到零。完整句式在式 (12) 的记号下写作，对任意可行解和任意类别 j 都有</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>k</mi><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub><mo>&#x0002B;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x02264;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub><mo>&#x0002B;</mo><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>C</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msub><mo>&#x02264;</mo><mn>1</mn></mrow></math></math></div>
+<p>右边的不等号来自归一化，左边来自 k 小于 1。取对数之后整个目标函数非正，而把概率全压在弃权档上恰好让它等于零。这一段的最优解就是把每个样本都推给人工。</p>
+<p>第二段是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mi>&</mi><mi>g</mi><mi>t</mi><mi>;</mi><mi>C</mi></mrow></math></math>。论文用反证法，假设最优解里弃权档严格大于零，经过一串推导会得到 k 不超过 C，与假设矛盾；剩下的一种情形会逼出活跃类别数等于 k，而 k 已经超过类别总数。结论是弃权档在最优解上恒为零，目标函数退回</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>W</mi><mi>r</mi></msub><mo stretchy="false">&#x00028;</mo><mi>p</mi><mo>&#x0002C;</mo><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>log</mi><mo stretchy="false">&#x00028;</mo><mi>k</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><munderover><mo>&#x02211;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>C</mi></mrow></munderover><msub><mi>p</mi><mi>j</mi></msub><mi>log</mi><msub><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi></msub></mrow></math></math></div>
+<p>把它最大化等于最大化右边的求和项，按吉布斯不等式，解就是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mover><mrow><mi>p</mi></mrow><mo>&#x0005E;</mo></mover><mi>j</mi><mrow><mo>&#x022C6;</mo></mrow></msubsup><mo>&#x0003D;</mo><msub><mi>p</mi><mi>j</mi></msub></mrow></math></math>。模型老老实实输出后验，弃权机制等于没有。</p>
+<p>第三段是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mi>&</mi><mi>l</mi><mi>t</mi><mi>;</mi><mi>k</mi><mi>&</mi><mi>l</mi><mi>t</mi><mi>;</mi><mi>C</mi></mrow></math></math>，论文说这是最有意思的一段，弃权与预测同时出现。两端的取值 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math></math> 和 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi><mo>&#x0003D;</mo><mi>C</mi></mrow></math></math> 是退化点。论文各给了一个例子，k 等于 1 时后验集中在一个类别上，任何让类别档与弃权档之和等于 1 的分配都是最优；k 等于 C 时后验均匀分布，对任意 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi><mo>&#x02208;</mo><mo stretchy="false">[</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math></math>，把 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 放在弃权档、剩下的均匀摊给 C 个类别，目标值都是零。</p>
+<h3>3.6 训练与推理的具体装置</h3>
+<p>训练就是把式 (1) 换成式 (3)。合成实验用的是上游架构的第一个头，两个隐藏层各 256 个神经元，ReLU 激活，dropout 取 0.1，Adam 优化器，学习率 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow></math></math>，批大小 128，最多 40 轮，早停耐心 6 轮。</p>
+<p>真实数据实验的网络小一号，两个隐藏层分别是 256 与 128 个神经元，Adam 的学习率同样是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow></math></math>，权重衰减 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>4</mn></mrow></msup></mrow></math></math>，批大小 32，最多 80 轮，早停耐心 10 轮。文本特征用 TF-IDF 表示，最多 5 万个一元与二元特征。论文给的理由是可扩展、可解释，并且不依赖预训练语言模型。</p>
+<p>推理规则短。一次前向得到 C+1 个输出，最大的类别概率超过弃权档概率就接受这个判定，否则拒收。论文在玩具例子上写的是&quot;最大类别概率超过弃权档概率&quot;这条判据，真实数据实验里的弃权量由目标覆盖率控制。</p>
+<p>被优化的量的三件套可以交代一下。初值来自随机初始化的网络权重与 Adam 的默认状态。驱动它的残差是式 (3) 里对数似然项对参数的梯度，训练时真实后验换成独热标签。兜底的是式 (4) 那条归一化等式加上非负约束，它们把解限制在概率单纯形里。</p>
+<p>这节要你记住的是，价的三个区间决定弃权机制开还是关。</p>
+<hr>
+<h2>四、结果</h2>
+<h3>4.1 合成基准</h3>
+<p>第一个基准来自上游工作，三类任务，六个工艺量特征。论文说原始基准数据没有公开，它是照原文的描述复现的，复现之后用同样规模的感知机核对了性能量级。</p>
+<figure><img src="figs/2610.09057-fig2.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　六个工艺量在三类样本下的边缘分布。上排是低重叠的原始基准，下排是加大类间重叠之后的同一组特征。灰为无缺陷，绿为开路，紫为桥连。右侧四个特征上两类缺陷的峰几乎压在一起。</figcaption></figure>
+<p>上排是原始基准，可以看到环境相对湿度这一类特征把三类分得很开，这也是论文说这个任务相对简单的原因。下排是把类间后验重叠加大之后的同一组特征，熔丝粘度的双峰几乎压在一起。<mark>重叠程度由生成流程里的一个目标贝叶斯误差参数控制，这一段写在附录的算法 1 里。</mark></p>
+<figure><img src="figs/2610.09057-fig3.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　两个设置下的精度与覆盖率，误差棒为多次随机初始化的标准差。图的图例用"选择性"与"非选择性"区分是否开启弃权，与正文的"有弃权"和"无弃权"是同一件事。</figcaption></figure>
+<p>两组数字放在一起看。低重叠设置下精度从 <strong>95.10%</strong> 升到 <strong>98.17%</strong>，涨了 3.07 个百分点，按错误率算相对下降 <strong>62.65%</strong>。高重叠设置下精度从 87.59% 升到 89.94%，涨 2.35 个百分点，相对下降 <strong>18.94%</strong>。两处的目标覆盖率都是 90% 以上，图上标出的实测覆盖率是 <strong>0.91</strong>。</p>
+<figure><img src="figs/2610.09057-fig4a.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　横轴为覆盖率，纵轴为分类风险。虚线是不弃权时的风险水平，实线为开启弃权后的风险，阴影为标准差。覆盖率压到 0.9 附近时风险已降到虚线的一半上下，继续压到 0.7 以下收益迅速变缓。这里用的是低重叠设置。</figcaption></figure>
+<figure><img src="figs/2610.09057-fig4b.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　横轴为覆盖率，纵轴为分类风险。同一组坐标系下，高重叠设置的整体风险水平明显高于低重叠设置，曲线在覆盖率 0.9 附近才开始抬头。两张图在论文里同属图 4，MinerU 把它们拆成了两张。</figcaption></figure>
+<p>两张曲线图的形状值得对比。低重叠设置的曲线在覆盖率 0.9 附近还很平，说明弃权掉的样本大部分确实是难样本。高重叠设置的曲线在覆盖率 0.9 处已经开始上翘，要压到 0.6 附近才能换到明显更低的绝对风险。</p>
+<figure><img src="figs/2610.09057-fig7.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 7</b>　横轴为价 k 的取值，纵轴为精度。曲线在 k 小于 1.5 时最高，k 升到 2.2 附近落到平台，再往上基本不再变化。平台位置在类别数 3 附近，与定理 3.2 划出的分界位置相符。</figcaption></figure>
+<p>附录里这张消融是理论最直接的一块证据。类别数 C 取 3，理论预测 k 超过 3 之后弃权被关掉，这条曲线在 k 约 2.2 处就开始塌。<mark>论文正文的另一次消融把 k 扫到 5 附近，形状同样是平台加陡降，两次扫的点落在定理划出的有效区间内外两侧。</mark></p>
+<h3>4.2 真实报告数据</h3>
+<p>真实数据来自 MAUDE 与 510(k) 库，通过 Proto-OKN 的贡献知识图谱拿到。<mark>这份图谱当前有 1770 万个三元组、29 个类、887200 个主语，上层的报告清洗与标签映射都建在它上面。</mark></p>
+<div class="scroll"><table><thead><tr><th>项目</th><th>数值</th><th>取得条件</th></tr></thead><tbody><tr><td>报告总数</td><td><strong>266170</strong></td><td>清洗去重后的最终数据集</td></tr><tr><td>故障类</td><td>185477</td><td>按 MAUDE 事件类型字段映射</td></tr><tr><td>受伤类</td><td>44995</td><td>拆分前的合计</td></tr><tr><td>严重受伤类</td><td>33897</td><td>叙述命中严重受伤线索</td></tr><tr><td>死亡类</td><td>1801</td><td>按 MAUDE 事件类型字段映射</td></tr><tr><td>训练与验证与测试划分</td><td>64% 与 16% 与 20%</td><td>按结局类别分层</td></tr><tr><td>文本特征</td><td>最多 50000 个一元与二元</td><td>TF-IDF，不依赖预训练语言模型</td></tr><tr><td>无弃权基线精度</td><td>94.68%</td><td>目标覆盖率 90% 的同权重对照</td></tr><tr><td>开启弃权精度</td><td><strong>97.23%</strong></td><td>目标覆盖率 90%，实测覆盖率 0.90</td></tr><tr><td>分类错误相对下降</td><td><strong>47.93%</strong></td><td>同上，与无弃权基线相比</td></tr></tbody></table></div>
+<figure><img src="figs/2610.09057-fig6.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 6</b>　两个模型的精度与覆盖率，灰柱为不弃权，蓝柱为开启弃权。实测覆盖率标在柱顶，误差棒为多次随机初始化的标准差。</figcaption></figure>
+<figure><img src="figs/2610.09057-fig5b.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　横轴为覆盖率，纵轴为精度。模型在覆盖率 0.7 附近仍能维持约 0.99 的精度，弃权到只剩 0.7 的样本时才有明显代价。</figcaption></figure>
+<figure><img src="figs/2610.09057-fig5a.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5</b>　横轴为价 k，纵轴为精度。曲线在 k 小于 3 时贴在 0.99 附近，k 升到 3.5 到 4 之间迅速下滑，落到 0.95 附近的平台。这个任务的类别数是 4。论文里这张和上面的覆盖率曲线同属图 5。</figcaption></figure>
+<p>这三张图里最该看的是精度随价 k 变化那张的转折位置。这个任务是四分类，曲线在 k 升到 3.5 到 4 这一小段里从 0.99 掉到 0.95 附近，之后再往下压 k 也回不去。转折位置落在类别数略低的一侧，与定理 3.2 划出的分界方向一致，这是合成数据之外的第二处独立验证。</p>
+<p>第二个反直觉的地方在覆盖率与精度的关系。精度覆盖率那张显示覆盖率从 1.0 压到 0.7，精度只从 0.9468 升到约 0.99。再往下压，论文的说法是要付出大量弃权的代价去换接近满分的精度。弃权机制的收益不是均匀的，它在中间那一段最划算。</p>
+<p>第三个地方是弃权量的口径。<mark>论文算的是一成样本被推给人工，错误率减半。</mark>这个比例放在上市后监督的队列里可执行，因为排队等人工审本来就是常规活。</p>
+<h3>4.3 一节很短的玩具例子</h3>
+<p>第 III-A 节用一个二维三类的玩具数据集把机制画出来，每类样本数相同，一个两层各 32 个隐藏单元的全连接网络，输出层四个单元，训练 150 轮，全批量 Adam，学习率 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow></math></math>。</p>
+<figure><img src="figs/2610.09057-fig1a.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　二维特征平面上的三类决策区域，叉号为被弃权的样本，红色虚线围出弃权带。弃权样本集中在三个类别的分界附近。论文写这一段的训练设置时用的是"预留奖励 r = 2"这个记号，而正文的价符号是 k。</figcaption></figure>
+<figure><img src="figs/2610.09057-fig1c.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　保留样本与弃权样本的分类间隔分布。弃权样本整体偏向更小的间隔，两组分布只有少量重叠。这个可观测量说明弃权机制挑出来的确实是模型自己分不开的样本。论文里这张和上面的散点图同属图 1。</figcaption></figure>
+<p>这两张图承担的任务是给出可检验的推论。<u>判据落在分类间隔上，弃权样本的间隔分布整体左移，重叠区窄。</u>论文写的是覆盖率降到约 81% 时分类风险降低约 50%。</p>
+<p>这节要你记住的是，弃权划算的区间在覆盖率中段，不在两端。</p>
+<hr>
+<h2>五、局限</h2>
+<p>论文自己承认的局限有四条，逐条列在下面。</p>
+<ol><li>真实基准稀缺。论文的原话是当前缺少同时刻画制造缺陷与检测不确定性的真实基准，跨器械、跨缺陷类型、跨制造环境的更广评估仍然必要。</li><li>数据源是自发上报系统。MAUDE 的报告量反映的是上报行为、器械使用量和法规要求，不是确认的失效发生率。叙述文本完整程度差别很大，还可能包含重复。论文明确要求不要把结果读成器械失效率的估计。</li><li>任务性质被限定。论文把这套基准的定位写成&quot;带真实标签噪声的报告级严重度分类&quot;，并说明在这个条件下认识不确定性本来就会偏大，弃权也就相应地更有价值。</li><li>近似重复与切分方式。论文说已经按叙述文本完全相同去掉了重复，但 MAUDE 里还有同一事件的近似重复报告，来源可能是厂商与使用机构各报一次。随机切分有可能把这类报告同时放进训练侧与测试侧。论文把近似重复检测与按时间切分列为更接近部署条件的自然延伸。</li></ol>
+<p>以下三条是编者补充的，论文未将其列为局限。</p>
+<p>合成数据与真实数据之间的桥没有搭完。论文在真实数据上做的是报告文本分诊，在合成数据上做的是工艺量缺陷判定，两件事的输入端完全不同。<mark>论文没有给出任何一组&quot;同一套工艺量、既有合成也有真实标签&quot;的对照</mark>，所以弃权机制在产线检测工位上的实际收益仍然靠推断，没有实测。</p>
+<p>节拍一项在论文里没有出现。论文没有报告推理耗时、没有报告产线节拍，也没有报告人工复核一个弃权件要花多久。真实数据那一侧的弃权比例是按覆盖率目标设定的，不是按人力预算设定的。</p>
+<p>价 k 的选取仍然靠试。定理 3.2 给的是允许区间 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mi>&</mi><mi>l</mi><mi>t</mi><mi>;</mi><mi>k</mi><mi>&</mi><mi>l</mi><mi>t</mi><mi>;</mi><mi>C</mi></mrow></math></math>，这个区间在四分类任务上是宽度 3 的一段，论文的消融显示区间内部精度差异不大，但论文没有给出从错误代价与人工成本反解 k 的公式。</p>
+<p>这节要你记住的是，论文承认的是基准稀缺，编者担心的是产线收益没被直接测过。</p>
+<hr>
+<h2>六、我的评价</h2>
+<p>先说做得对的地方。这篇论文最扎实的一步是把弃权这件事从&quot;调个阈值&quot;变成&quot;解一个带约束的优化问题&quot;，然后把最优解的形状完整写出来。定理 3.1 给出的表达式里，门槛项同时含弃权档与价 k，模型自认越虚、价给得越低，被截到零的类别就越多。这个耦合关系是能拿去做工程判断的，比给一个固定阈值可靠。</p>
+<p>定理 3.2 是这篇里唯一一处可以直接指导选参的结果。它把 k 的有效区间钉在 1 与 C 之间，两端分别是全弃权与不弃权。论文的两次消融都在类别数附近出现转折，方向一致。合成基准的类别数是 3，转折出现在 k 约 2.2；真实任务的类别数是 4，转折出现在 k 约 3.75。第一次的差值是 0.8 左右，第二次是 0.25 左右，两次都落在有效区间内侧，这个系统性偏差论文没有解释。</p>
+<p>存疑的地方有三块。</p>
+<p>第一块是理论结果与实验口径对不上。定理 3.1 的推导前提是弃权档在最优解上严格大于零，这是一个关于最优解的表述，而论文的实验是拿梯度下降训练一个有限宽度的网络，训到早停就停。论文没有讨论训练解与定理最优解的差距，也没有给出任何一个样本上实际算出来的阈值与式 (6) 预测值的对照。</p>
+<p>第二块是同一个量挂着三个名字。玩具例子的那一节把超参写成&quot;预留奖励 r = 2&quot;，定理与正文叫它代价乘子 k，而图 5 与图 7 的横轴标注又是&quot;payoff k&quot;。这三个名字是不是同一个量，论文没有交代。如果 r 与 k 是同一个量，那么取 2 恰好落在三分类任务的退化点附近，最优解不唯一，玩具图上那条弃权带因此不能读成有唯一性的东西。</p>
+<p>第三块是数据侧的对照组缺位。真实数据实验里，无弃权基线是同一个网络的普通版本，公平性是够的。缺的是另一类对照，把弃权交给一个不依赖模型结构的后处理判据会怎样。论文的文献综述里提到过这类做法对过度自信模型的局限，实验里没有做这件事的对照。</p>
+<p>它想走去哪，论文最后一段说得很清楚。作者希望这项工作能推动更大、更多样的基准出现，并让弃权决策接上下游的根因分析、风险评估与人工复核。这个方向对产线是有意义的，因为人工复核这条支路的容量是有限的，而论文目前只给出了弃权量的比例，没有给出复核工作量的分布。</p>
+<p><strong>这节要你记住的是</strong>，定理给的是最优解，实验训的是早停网络，两者之间论文没搭桥。</p>
+<h2>七、可以接着做什么</h2>
+<p>论文缺一个节拍数字，这是一块可以直接补的空白。把弃权模型的推理耗时与产线节拍放在一起量，再测人工复核一个弃权件需要多久，就能把弃权比例的收益换算成每小时的复核件数。这条线索的入手点是给覆盖率目标加一条人力预算约束，让 k 由这个预算反解出来。</p>
+<p>再往下可以做近似重复报告的时间切分。论文自己把这条列为延伸，做法是把同源厂商与使用机构的报告按时间归到同一侧，再看弃权机制的性能是否还成立。这条能检验的是一件具体的事，看模型学的是缺陷模式还是报告者的措辞习惯。</p>
+<p>第三块可以把弃权接到第二级和第三级上。论文只改了第一级，第二级认机理、第三级估风险都还在原设定上跑。如果第一级的弃权信号能往下游传，那么&quot;第一级拿不准&quot;可以变成&quot;机理排序里少给几条候选&quot;，复核的人拿到的东西会更有指向性。这件事要做的话，接口处至少要定义清楚弃权信息以什么形式进入第二级的条件输入。</p>
+<div class="fine">以上三条是即时联想，没有实验，没有查证，只当线索。</div>
+<hr>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>术语</th><th>一句话解释</th></tr></thead><tbody><tr><td>认识不确定性</td><td>因为模型见过的同类样本太少而产生的不确定，多喂数据能减小它</td></tr><tr><td>偶然不确定性</td><td>数据本身随机性带来的不确定，多喂数据也减不掉</td></tr><tr><td>弃权</td><td>模型拒绝给出类别判定，把这个样本交给下游处置</td></tr><tr><td>覆盖率</td><td>模型给出判定的样本占总样本的比例，弃权率是它的补数</td></tr><tr><td>选择性风险</td><td>只在保留样本上统计的分类风险</td></tr><tr><td>预留变量</td><td>网络多出来的第 C+1 个输出，数值就是模型自认的不确定度</td></tr><tr><td>代价乘子 k</td><td>控制押类别与押弃权相对收益的正实数，论文称价</td></tr><tr><td>混合区</td><td>定理 3.2 划出的区间 1 &lt; k &lt; C，弃权与预测在这一段并存</td></tr><tr><td>退化</td><td>最优解不唯一的情形，出现在 k 等于 1 与 k 等于 C 两处</td></tr><tr><td>贝叶斯判据</td><td>在已知真实后验的条件下错误率最低的判定规则</td></tr><tr><td>交叉熵</td><td>衡量两个概率分布差距的常用损失，训练分类器的默认目标</td></tr><tr><td>独热标签</td><td>只有一个位置为 1 的向量，用来表示样本的真实类别</td></tr><tr><td>KKT 条件</td><td>带约束优化问题里最优解要满足的一组条件，用来推出解的表达式</td></tr><tr><td>拉格朗日乘子 λ</td><td>等式约束对应的乘子，在式 (6) 里起配额的作用</td></tr><tr><td>互补松弛</td><td>最优解上约束与其乘子不能同时为正，用来区分类别档是否失活</td></tr><tr><td>概率单纯形</td><td>各分量非负且和为 1 的向量集合，也就是所有合法概率分布</td></tr><tr><td>凹函数</td><td>曲线朝下的函数，在凸集合上最大化它不会掉进局部陷阱</td></tr><tr><td>吉布斯不等式</td><td>说两个概率分布之间的交叉熵不小于熵的定理，用来定出最优解</td></tr><tr><td>贝叶斯误差</td><td>最优判据也避免不了的那部分错误，是任务难度的下界</td></tr><tr><td>知识图谱</td><td>用实体与关系组成的数据组织方式，这里用来整合器械与报告</td></tr><tr><td>Proto-OKN</td><td>原型开放知识网络，论文发布这份医疗器械知识图谱的渠道</td></tr><tr><td>MAUDE</td><td>FDA 的器械不良事件上报库，被动上报，不是失效率的统计源</td></tr><tr><td>510(k)</td><td>器械上市前通告，与 MAUDE 通过器械标识连接</td></tr><tr><td>表面贴装</td><td>把元件焊到板面上的工艺，回流焊是其中一环</td></tr><tr><td>桥连与开路</td><td>两种典型焊接缺陷，前者是相邻焊点被锡连上，后者是该通的没通</td></tr><tr><td>TF-IDF</td><td>按词频与逆文档频率给词打权的文本表示，不用预训练模型</td></tr><tr><td>分层切分</td><td>按类别比例分训练与验证与测试，避免某类样本分配失衡</td></tr><tr><td>故障安全</td><td>系统失效时进入安全状态的工程要求，本文对应的是弃权转人工</td></tr></tbody></table></div>
+
+<a class="paperlink" href="https://arxiv.org/abs/2610.09057" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2610.09057） →</a>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-10-19 19:20</footer>
+</div></body></html>

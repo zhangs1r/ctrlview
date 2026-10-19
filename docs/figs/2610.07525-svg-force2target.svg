@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="980" height="540" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+  <rect width="980" height="540" fill="#ffffff"/>
+  <text x="24" y="36" font-size="19" font-weight="700" fill="#1c2530">力怎么变成动作目标，以及为什么它只是位置</text>
+
+  <!-- Step 1 -->
+  <rect x="24" y="62" width="292" height="182" rx="10" fill="#f2f7fb" stroke="#8fb8d8" stroke-width="1.3"/>
+  <text x="40" y="86" font-size="14" font-weight="700" fill="#1f4363">① 实测指尖力（3 维）</text>
+  <line x1="70" y1="196" x2="70" y2="112" stroke="#1c2530" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="70" y1="196" x2="160" y2="196" stroke="#1c2530" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="70" y1="196" x2="122" y2="150" stroke="#1c2530" stroke-width="1.5" marker-end="url(#ah)"/>
+  <line x1="70" y1="196" x2="156" y2="168" stroke="#b03b3b" stroke-width="2.4" marker-end="url(#ahr)"/>
+  <text x="162" y="164" font-size="13" fill="#b03b3b" font-weight="700">f_i,t</text>
+  <text x="88" y="214" font-size="11.5" fill="#7a8794">指尖坐标系</text>
+  <text x="40" y="236" font-size="12" fill="#3d4a58">每个指尖一块 120 taxel 的磁性阵列，</text>
+  <text x="40" y="252" font-size="12" fill="#3d4a58">合成一个三轴净接触力，取手基座系。</text>
+
+  <!-- Step 2 -->
+  <rect x="336" y="62" width="292" height="182" rx="10" fill="#f2f7fb" stroke="#8fb8d8" stroke-width="1.3"/>
+  <text x="352" y="86" font-size="14" font-weight="700" fill="#1f4363">② 雅可比转置搬到关节（12 维）</text>
+  <text x="352" y="130" font-size="16" fill="#1c2530" font-style="italic">τ_t^f = Σ J_i,t^T f_i,t</text>
+  <text x="352" y="164" font-size="12" fill="#3d4a58">J_i,t 是第 i 指的指尖坐标系</text>
+  <text x="352" y="180" font-size="12" fill="#3d4a58">对全部 n 个关节的平移雅可比，</text>
+  <text x="352" y="196" font-size="12" fill="#3d4a58">形状 3 × n。转置把 3 维力映成</text>
+  <text x="352" y="212" font-size="12" fill="#3d4a58">n 维等效力矩，求和只走受纠手指。</text>
+  <text x="352" y="234" font-size="11.5" fill="#7a8794">这一步不做逆，所以不涉及秩。</text>
+
+  <!-- Step 3 -->
+  <rect x="648" y="62" width="308" height="182" rx="10" fill="#f2f7fb" stroke="#8fb8d8" stroke-width="1.3"/>
+  <text x="664" y="86" font-size="14" font-weight="700" fill="#1f4363">③ 准静态虚拟弹簧换成位置</text>
+  <text x="664" y="130" font-size="16" fill="#1c2530" font-style="italic">Δa_t^f = K_f⁻¹ τ_t^f</text>
+  <text x="664" y="164" font-size="12" fill="#3d4a58">K_f = γ⁻¹ diag(k_ref) 是固定对角阵，</text>
+  <text x="664" y="180" font-size="12" fill="#3d4a58">k_ref 定各关节的相对软硬，</text>
+  <text x="664" y="196" font-size="12" fill="#3d4a58">γ 是无量纲缩放，全文取 0.05。</text>
+  <text x="664" y="218" font-size="12" font-weight="700" fill="#b03b3b">结果单位是角度，不是牛顿。</text>
+  <text x="664" y="236" font-size="11.5" fill="#7a8794">a_t^f = q_t + Δa_t^f</text>
+
+  <!-- arrows between -->
+  <line x1="318" y1="153" x2="334" y2="153" stroke="#1c2530" stroke-width="1.8" marker-end="url(#ah)"/>
+  <line x1="630" y1="153" x2="646" y2="153" stroke="#1c2530" stroke-width="1.8" marker-end="url(#ah)"/>
+
+  <!-- boundary warning box -->
+  <rect x="24" y="272" width="932" height="96" rx="10" fill="#fdf3f3" stroke="#d8a0a0" stroke-width="1.3"/>
+  <text x="40" y="296" font-size="13.5" font-weight="700" fill="#8f2f2f">两条容易画错的地方</text>
+  <text x="40" y="322" font-size="12.5" fill="#5c3434">K_f 固定、手指之间的关节集合不相交，所以力算出来的偏移只落在受纠手指上，不会渗到别的手指。</text>
+  <text x="40" y="346" font-size="12.5" fill="#5c3434">每个受纠指尖最多贡献 3 个独立测量方向；要反解一支三维指尖力，至少需要 3 个相互独立的方向。</text>
+
+  <!-- bottom: virtual cartesian displacement -->
+  <rect x="24" y="386" width="932" height="130" rx="10" fill="#f1f8f5" stroke="#4f9d8a" stroke-width="1.3"/>
+  <text x="40" y="410" font-size="14" font-weight="700" fill="#2f6255">力在笛卡尔空间里等效挪了指尖多远</text>
+  <text x="40" y="446" font-size="17" fill="#1c2530" font-style="italic">Δx_i,t^f = J_i,t K_f⁻¹ J_i,t^T · f_i,t</text>
+  <text x="470" y="426" font-size="12.5" fill="#3d4a58">中间那一坨记作 C_x,i,t，是 K_f 在当前位形下</text>
+  <text x="470" y="444" font-size="12.5" fill="#3d4a58">产生的局部虚拟笛卡尔柔顺。它是 3 × 3 的</text>
+  <text x="470" y="462" font-size="12.5" fill="#3d4a58">矩阵，随位形改变，用来把力换算成距离。</text>
+  <text x="470" y="486" font-size="12.5" fill="#7a8794">γ 变大这一位移就等比变大，所以它只是一个</text>
+  <text x="470" y="502" font-size="12.5" fill="#7a8794">选定的表示尺度，与机器人真实软硬无关。</text>
+
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#1c2530"/>
+    </marker>
+    <marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#b03b3b"/>
+    </marker>
+  </defs>
+</svg>

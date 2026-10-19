@@ -1,0 +1,253 @@
+{
+ "column": "cps",
+ "ranked": [
+  {
+   "id": "2610.12730",
+   "title": "ROAM: Reinforcement Learning Optimized Adaptive Moving Target Defense for Smart Grid",
+   "total": 80.0,
+   "coupling": 2,
+   "physical_process": 1,
+   "quant_analysis": 1,
+   "real_system": 2,
+   "loop_position": 2,
+   "why": "耦合最具体：恢复方案时延决定设计，盲窗占决策周期2.6%，HIL实测<18ms。"
+  },
+  {
+   "id": "2610.03275",
+   "title": "How suboptimal is my stochastic network controller allowed to be? Completion certificates with application to power grids hosting AI data centers",
+   "total": 52.5,
+   "coupling": 1,
+   "physical_process": 1,
+   "quant_analysis": 2,
+   "real_system": 0,
+   "loop_position": 1,
+   "why": "噪声定价控制权限、HJB次优界0.028/0.012定量强，但非通信约束、无实机。"
+  },
+  {
+   "id": "2610.18313",
+   "title": "Infrastructure-Aware Runtime Protection of Co-Deployed AI Services at the Industrial Edge",
+   "total": 50.0,
+   "coupling": 2,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 1,
+   "why": "网段饱和致输出陈旧、时延与热节流权重不同，耦合具体；缺定量界与实机。"
+  },
+  {
+   "id": "2610.10517",
+   "title": "Unsupervised Maneuver-Aware Acoustic Fault Detection for Autonomous Drones",
+   "total": 40.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 1,
+   "real_system": 2,
+   "loop_position": 1,
+   "why": "真机Jetson实测20ms时延，但无通信-回路耦合机制，仅测量层。"
+  },
+  {
+   "id": "2610.09069",
+   "title": "Localized Thermal Management of Induction-Heated Microrobots for Hyperthermia Applications",
+   "total": 35.0,
+   "coupling": 0,
+   "physical_process": 2,
+   "quant_analysis": 0,
+   "real_system": 2,
+   "loop_position": 0,
+   "why": "硬件实测且热动力学与时间尺度清晰，但无扰动耦合与回路介入。"
+  },
+  {
+   "id": "2610.14858",
+   "title": "An Adaptive Cyber-Resilient Framework for P2P Energy Trading under Optimal Stealthy Attacks",
+   "total": 32.5,
+   "coupling": 1,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 1,
+   "why": "点出P2P依赖通信与协调、介入市场信息层；无时延机制、无实机。"
+  },
+  {
+   "id": "2610.16905",
+   "title": "Counterfactual Action-Conditioned Graph Prediction for Cascading-Failure Mitigation in Power Systems",
+   "total": 30.0,
+   "coupling": 0,
+   "physical_process": 2,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 2,
+   "why": "级联动力学与五步时域清楚且再入环控制，但纯Grid2Op仿真，无通信耦合。"
+  },
+  {
+   "id": "2610.07232",
+   "title": "Benchmarking Time Series Foundation Models for Load Forecasting Under Covariate Uncertainty",
+   "total": 25.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 2,
+   "loop_position": 0,
+   "why": "真实负荷数据、预测层介入，但无耦合机制与延迟/丢包定量分析。"
+  },
+  {
+   "id": "2610.09546",
+   "title": "PCDT: A Predictive Cognitive Digital Twin Framework for Intelligent and Autonomous 6G Network Ecosystems",
+   "total": 25.0,
+   "coupling": 0,
+   "physical_process": 0,
+   "quant_analysis": 0,
+   "real_system": 2,
+   "loop_position": 2,
+   "why": "决策层闭环加真实流量trace，但无时延/丢包机制与定量界。"
+  },
+  {
+   "id": "2610.04337",
+   "title": "FLAT: Smoothing the Rugged Landscape for Learnable, Sample-Efficient Traffic Calibration",
+   "total": 17.5,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 1,
+   "loop_position": 0,
+   "why": "交通标定，真实场景但在仿真内评估，无回路耦合。"
+  },
+  {
+   "id": "2610.10720",
+   "title": "Safe Learning of Adaptive Control Policies for Remote Patient Monitoring",
+   "total": 15.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 1,
+   "why": "监护强度决策环，患者模型随机、结果纯仿真，无通信耦合。"
+  },
+  {
+   "id": "2610.13086",
+   "title": "Safety Graph: When Safety Responses Become Attack Surfaces in Cyber-Physical Systems",
+   "total": 15.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 1,
+   "why": "IT-OT级联形式化，田纳西伊士曼仿真，无时延/丢包定量。"
+  },
+  {
+   "id": "2610.07889",
+   "title": "ONDT: A Modular and Virtualized O-RAN Digital Twin for xApp/rApp Closed-Loop Experimentatio",
+   "total": 12.5,
+   "coupling": 0,
+   "physical_process": 0,
+   "quant_analysis": 0,
+   "real_system": 1,
+   "loop_position": 1,
+   "why": "O-RAN孪生验证平台，Juniper RIC实测，无耦合机制与定量界。"
+  },
+  {
+   "id": "2610.09012",
+   "title": "TwinGuard-Lite: A Rule-Based State-Admission Gateway for Generative Patient Digital Twins",
+   "total": 12.5,
+   "coupling": 0,
+   "physical_process": 0,
+   "quant_analysis": 0,
+   "real_system": 1,
+   "loop_position": 1,
+   "why": "患者孪生准入网关，半合成数据，无物理过程与回路耦合。"
+  },
+  {
+   "id": "2610.08390",
+   "title": "Infrastructure-Native Computing with Electric Power Grids",
+   "total": 10.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 0,
+   "why": "电网当计算算子，仿真概念验证，非控制回路耦合。"
+  },
+  {
+   "id": "2610.12859",
+   "title": "Closed-loop domain generation enhances battery health diagnosis",
+   "total": 10.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 0,
+   "why": "ML数据闭环，非信息-物理耦合；仅仿真误差指标。"
+  },
+  {
+   "id": "2610.19289",
+   "title": "A Decoupled Approach for Modeling N-k Interdiction with Induced Failures in Electric Power Grids",
+   "total": 10.0,
+   "coupling": 0,
+   "physical_process": 1,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 0,
+   "why": "N-k加级联黑箱，过渡动力学与时间尺度未说清，纯算例。"
+  },
+  {
+   "id": "2610.08684",
+   "title": "RenderBench: Benchmarking Render-to-Real Video Transfer with Reconstructed Digital Twins",
+   "total": 7.5,
+   "coupling": 0,
+   "physical_process": 0,
+   "quant_analysis": 0,
+   "real_system": 1,
+   "loop_position": 0,
+   "why": "渲染基准，仅真实场景视频可计真实数据，无物理过程。"
+  },
+  {
+   "id": "2610.06971",
+   "title": "AegisFlow: A Multi-Agent Agentic AI Framework for Autonomous Remediation and Self-Healing in Fragile Data Ecosystems",
+   "total": 0.0,
+   "coupling": 0,
+   "physical_process": 0,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 0,
+   "why": "数据管道自愈，无被控物理过程与通信耦合。"
+  },
+  {
+   "id": "2610.12654",
+   "title": "Symbolic-Permutation-Based Direct Sparse Jacobian Assembly for Accelerated Power-Flow Analysis",
+   "total": 0.0,
+   "coupling": 0,
+   "physical_process": 0,
+   "quant_analysis": 0,
+   "real_system": 0,
+   "loop_position": 0,
+   "why": "雅可比装配加速，纯数值基准，无物理过程与回路。"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.12730",
+   "title": "ROAM: Reinforcement Learning Optimized Adaptive Moving Target Defense for Smart Grid",
+   "total": 80.0,
+   "why": "L1首选：摘要明确指出ML恢复方案时延是决定性约束、量测盲窗占3s决策周期2.6%，HIL实测<18ms，聚合层介入，耦合+定量+真实系统三项有证据。"
+  },
+  {
+   "id": "2610.18313",
+   "title": "Infrastructure-Aware Runtime Protection of Co-Deployed AI Services at the Industrial Edge",
+   "total": 50.0,
+   "why": "L1次选：明确指出共享网段饱和致服务输出陈旧失真、不再反映被控对象，并按网络时延与热节流分别调权，属真实回路耦合讨论。"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.03275",
+   "title": "How suboptimal is my stochastic network controller allowed to be? Completion certificates with application to power grids hosting AI data centers",
+   "total": 52.5,
+   "why": "总分第2，但耦合只在过程噪声、非通信约束，且无真实系统验证，按L1优先项让位。"
+  },
+  {
+   "id": "2610.10517",
+   "title": "Unsupervised Maneuver-Aware Acoustic Fault Detection for Autonomous Drones",
+   "total": 40.0,
+   "why": "总分第4，但摘要无任何回路耦合讨论(仅机载声学监测)，命中L1压后条件。"
+  }
+ ]
+}

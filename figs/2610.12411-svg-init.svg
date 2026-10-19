@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" font-family="Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif">
+  <rect width="980" height="520" fill="#ffffff"/>
+  <text x="26" y="40" font-size="21" font-weight="bold" fill="#16212b">三段式起步，每一段只钉住一部分自由度</text>
+  <text x="26" y="66" font-size="14" fill="#5b6875">没有专门的激励机动，也没有外部航向源；三段都是粗解，残差留给后面的滑窗继续修</text>
+
+  <!-- timeline axis -->
+  <line x1="60" y1="104" x2="920" y2="104" stroke="#c3ced8" stroke-width="1.5"/>
+  <polygon points="920,104 908,99 908,109" fill="#c3ced8"/>
+  <text x="60" y="92" font-size="13" fill="#6b7a87">开机</text>
+  <text x="700" y="92" font-size="13" fill="#6b7a87">约 5 秒的 LIO-only 段</text>
+  <text x="866" y="92" font-size="13" fill="#6b7a87">进入紧耦合</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="124" width="278" height="248" rx="10" fill="#f6f8fa" stroke="#c3ced8" stroke-width="1.5"/>
+  <circle cx="66" cy="152" r="14" fill="#16212b"/>
+  <text x="66" y="157" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+  <text x="90" y="157" font-size="16" font-weight="bold" fill="#16212b">校平</text>
+  <text x="60" y="188" font-size="13.5" fill="#4a5763">静止段内对加速度计比力取均值</text>
+  <text x="60" y="210" font-size="13.5" fill="#4a5763">得到重力方向</text>
+  <text x="60" y="244" font-size="13.5" font-weight="bold" fill="#16212b">钉住</text>
+  <text x="60" y="266" font-size="13.5" fill="#26485f">初始横滚与俯仰</text>
+  <text x="60" y="300" font-size="13.5" font-weight="bold" fill="#16212b">仍然自由</text>
+  <text x="60" y="322" font-size="13.5" fill="#a3311f">航向　位置</text>
+  <text x="60" y="356" font-size="12.5" fill="#6b7a87">只给 2 维重力状态播种</text>
+
+  <!-- stage 2 -->
+  <rect x="340" y="124" width="278" height="248" rx="10" fill="#f6f8fa" stroke="#c3ced8" stroke-width="1.5"/>
+  <circle cx="366" cy="152" r="14" fill="#16212b"/>
+  <text x="366" y="157" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+  <text x="390" y="157" font-size="16" font-weight="bold" fill="#16212b">全局锚点</text>
+  <text x="360" y="188" font-size="13.5" fill="#4a5763">用码伪距解一个近似的 ECEF 原点</text>
+  <text x="360" y="210" font-size="13.5" fill="#4a5763">有基站用 DD 码解，没有就用 SPP</text>
+  <text x="360" y="244" font-size="13.5" font-weight="bold" fill="#16212b">同时播种</text>
+  <text x="360" y="266" font-size="13.5" fill="#26485f">四通道接收机钟漂，取自 Doppler</text>
+  <text x="360" y="300" font-size="13.5" font-weight="bold" fill="#16212b">仍然自由</text>
+  <text x="360" y="322" font-size="13.5" fill="#a3311f">全局航向</text>
+  <text x="360" y="356" font-size="12.5" fill="#6b7a87">锚点本身是粗的，水平位置后面还会被修</text>
+
+  <!-- stage 3 -->
+  <rect x="640" y="124" width="300" height="248" rx="10" fill="#eef5fb" stroke="#9dbdd8" stroke-width="1.5"/>
+  <circle cx="666" cy="152" r="14" fill="#16212b"/>
+  <text x="666" y="157" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+  <text x="690" y="157" font-size="16" font-weight="bold" fill="#16212b">航向</text>
+  <text x="660" y="188" font-size="13.5" fill="#4a5763">跑 5 秒 LIO-only</text>
+  <text x="660" y="210" font-size="13.5" fill="#4a5763">LiDAR 配准与 IMU 联合精修</text>
+  <text x="660" y="232" font-size="13.5" fill="#4a5763">这段轨迹的横滚俯仰与位置</text>
+  <text x="660" y="266" font-size="13.5" fill="#26485f">再把这段轨迹与同期 GNSS 位置</text>
+  <text x="660" y="288" font-size="13.5" fill="#26485f">做只含偏航的最小二乘拟合</text>
+  <text x="660" y="322" font-size="13.5" font-weight="bold" fill="#16212b">得到</text>
+  <text x="660" y="344" font-size="13.5" fill="#26485f">全局航向，顺带精修水平锚点</text>
+
+  <!-- arrows -->
+  <polygon points="324,240 336,246 324,252" fill="#8b9aa6"/>
+  <polygon points="624,240 636,246 624,252" fill="#8b9aa6"/>
+
+  <!-- footer -->
+  <rect x="40" y="396" width="900" height="100" rx="8" fill="#fbe3e0" stroke="#e08b80"/>
+  <text x="60" y="422" font-size="14" font-weight="bold" fill="#a3311f">滑窗接手之后做什么</text>
+  <text x="60" y="446" font-size="13.5" fill="#7d3b2c">重力状态进窗后继续被修，校平残差由此吸收，不压到加速度计零偏上</text>
+  <text x="60" y="468" font-size="13.5" fill="#7d3b2c">锚点误差与航向误差由窗口共享的外参 E_w T 吸收，弱 GNSS 段里它仍然保持可修</text>
+  <text x="60" y="488" font-size="12.5" fill="#8d6257">论文明确写了，这种粗到细的刻意安排就是为了让起步误差有地方去，而不是被冻死</text>
+</svg>

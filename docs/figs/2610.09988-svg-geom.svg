@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="900" height="480" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15.5px;font-weight:700}
+    .hd{fill:#1b1b1f;font-size:13.5px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .iv{fill:#2d5f8a;font-size:12px;font-weight:700}
+    .ok{fill:#3d7a52;font-size:12px;font-weight:700}
+    .no{fill:#a8562d;font-size:12px;font-weight:700}
+    .lb{fill:#1b1b1f;font-size:11.5px}
+  </style>
+
+  <text class="ttl" x="24" y="28">参数空间里一次投影要同时满足两个条件，拆成两步投影会掉出交集</text>
+
+  <!-- ============ 左panel ============ -->
+  <text class="hd" x="40" y="62">一次投影，落点就是两个条件的交点</text>
+  <text class="m" x="40" y="82">横轴 θ₁，纵轴 θ₂，都是判据参数 θ 的两个分量；方框是 Θ，斜线是衰减半空间的边界</text>
+
+  <!-- parameter box -->
+  <polygon points="110,380 450,380 450,100 110,100" fill="#fbfbfc" stroke="#c9c9d2" stroke-width="1.4"/>
+  <!-- feasible region = box ∩ decay halfspace (lower-left side of the line) -->
+  <polygon points="110,100 450,100 450,179 110,266" fill="#d8ecdc" opacity="0.9"/>
+  <line x1="110" y1="266" x2="450" y2="179" stroke="#3d7a52" stroke-width="2"/>
+  <text class="ok" x="330" y="196">p⊤θ = p⊤θ₀ − τa</text>
+  <text class="m" x="146" y="118">可行区 Kτ</text>
+
+  <!-- preferred destination, outside the box -->
+  <circle cx="397" cy="71" r="4.5" fill="#2d5f8a"/>
+  <text class="iv" x="406" y="62">θ + τv₀</text>
+  <!-- current parameter -->
+  <circle cx="308" cy="374" r="5.5" fill="#a8562d"/>
+  <text class="no" x="250" y="372">θ（当前）</text>
+
+  <!-- decay direction along +p -->
+  <line x1="308" y1="374" x2="353" y2="314" stroke="#3d7a52" stroke-width="3"/>
+  <polygon points="353,314 341,318 348,327" fill="#3d7a52"/>
+  <text class="ok" x="358" y="342">+p，沿它走 V̇ 变正</text>
+
+  <!-- projection drop -->
+  <line x1="308" y1="374" x2="308" y2="201" stroke="#1b1b1f" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <line x1="397" y1="71" x2="308" y2="201" stroke="#1b1b1f" stroke-width="1.6"/>
+  <circle cx="308" cy="201" r="5.5" fill="#1b1b1f"/>
+  <text class="lb" x="272" y="196">θ*</text>
+
+  <text class="lb" x="146" y="300">y* 取两个条件的交集里离 θ+τv₀ 最近的点</text>
+  <text class="lb" x="146" y="320">落点必在斜线上，除非它先撞到箱边</text>
+
+  <!-- ============ 右panel ============ -->
+  <text class="hd" x="540" y="62">拆成两步投影，顺序怎么选都会掉出交集</text>
+  <text class="m" x="540" y="82">横轴 θ₁，纵轴 θ₂；可行域是正卦限与半空间 v₁+v₂ ≤ 1 的交</text>
+
+  <polygon points="610,380 880,380 880,180 610,180" fill="#fbfbfc" stroke="#c9c9d2" stroke-width="1.4"/>
+  <polygon points="610,380 880,380 610,180" fill="#d8ecdc" opacity="0.9"/>
+  <line x1="610" y1="180" x2="880" y2="380" stroke="#3d7a52" stroke-width="2"/>
+  <text class="ok" x="786" y="204">v₁+v₂ = 1</text>
+  <text class="m" x="624" y="354">可行区</text>
+
+  <!-- desired point -->
+  <circle cx="740" cy="300" r="4.5" fill="#2d5f8a"/>
+  <text class="iv" x="736" y="296" text-anchor="end">想要的点</text>
+
+  <!-- step 1: project to orthant -->
+  <line x1="740" y1="300" x2="610" y2="300" stroke="#1b1b1f" stroke-width="1.6"/>
+  <circle cx="610" cy="300" r="5" fill="#a8562d"/>
+  <text class="no" x="600" y="322" text-anchor="end">先投正卦限，落点仍越过斜线</text>
+
+  <!-- step 2: project to halfspace -->
+  <line x1="740" y1="300" x2="683.3" y2="256.7" stroke="#1b1b1f" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <circle cx="683.3" cy="256.7" r="5" fill="#a8562d"/>
+  <text class="no" x="856" y="246" text-anchor="end">先投半空间，落点 θ₁ 变负，越出箱外</text>
+
+  <!-- bottom note -->
+  <line x1="40" y1="424" x2="860" y2="424" stroke="#e6e6ec" stroke-width="1.2"/>
+  <text class="m" x="40" y="448">颜色语义　浅绿是同时满足两个条件的位置，橙点是按单条件投影得到的落点，两个顺序都不可行</text>
+  <text class="m" x="40" y="466">两幅图的坐标都是参数的分量，不涉及时间和状态</text>
+</svg>

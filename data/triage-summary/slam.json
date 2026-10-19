@@ -1,0 +1,253 @@
+{
+ "column": "slam",
+ "ranked": [
+  {
+   "id": "2610.12411",
+   "title": "GLIO2: A GPU-Parallelized Tightly-Coupled LiDAR-Inertial-GNSS System for Robust and Real-Time Global Localization and Mapping",
+   "total": 92.5,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 2,
+   "init_scale": 1,
+   "eval_rigor": 2,
+   "why": "设计-退化-经典三项满分，基准与退化桥面实验最硬。"
+  },
+  {
+   "id": "2610.07278",
+   "title": "Embedded Bare-Metal Radar-Inertial Odometry",
+   "total": 82.5,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 1,
+   "eval_rigor": 2,
+   "why": "设计/退化/评测强，但经典继承仅1且偏系统集成。"
+  },
+  {
+   "id": "2610.18040",
+   "title": "Contractor Filters",
+   "total": 77.5,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 2,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "设计/退化/经典满分，缺尺度初始化且仅仿真验证。"
+  },
+  {
+   "id": "2610.20490",
+   "title": "Towards Certifiable State Estimation under Observability Degeneracy",
+   "total": 77.5,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 2,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "三项选文偏好满分，直击退化可观性；评测与初始化最弱。"
+  },
+  {
+   "id": "2610.11531",
+   "title": "RAGNAROK: Radar-Aided Gravity-Normalized Alignment for Robust Open Keyframe-based Radar-Visual-Kinematic-Inertial SLAM",
+   "total": 75.0,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 1,
+   "eval_rigor": 1,
+   "why": "设计/退化证据明确，经典继承与评测细节不足。"
+  },
+  {
+   "id": "2610.14042",
+   "title": "Reinforcement Learning from Real-Robot Interaction without High-Quality State Estimates",
+   "total": 75.0,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 0,
+   "eval_rigor": 2,
+   "why": "不可观状态处理明确、真机成功率对比硬，缺经典与尺度。"
+  },
+  {
+   "id": "2610.19742",
+   "title": "HyperLoop: Hyperspectral-Assisted Loop Closure Detection in 3D-SLAM for Planetary Exploration",
+   "total": 75.0,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 0,
+   "eval_rigor": 2,
+   "why": "退化（感知混叠）与数据集评测明确，经典关联一般。"
+  },
+  {
+   "id": "2610.03530",
+   "title": "DR-IPC: Disturbance-Resilient Integrated Planning and Control for LiDAR-Based Quadrotor Navigation",
+   "total": 75.0,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 0,
+   "eval_rigor": 2,
+   "why": "分层问题到统一NMPC设计清楚，扰动失败场景评测硬。"
+  },
+  {
+   "id": "2610.05546",
+   "title": "GR-LIO: A Local Ground-Aware LiDAR-Inertial Odometry System Using Body-to-Ground Height",
+   "total": 70.0,
+   "design_rationale": 2,
+   "degradation": 1,
+   "classic_link": 1,
+   "init_scale": 2,
+   "eval_rigor": 1,
+   "why": "初始化交代最清楚，退化只提垂漂、评测无数据集名。"
+  },
+  {
+   "id": "2610.05939",
+   "title": "Structural Foundations of Nonlinear Systems with Unknown Inputs: The UID-Induced Normal Form and Minimal-Sensing Structure-from-Motion",
+   "total": 67.5,
+   "design_rationale": 2,
+   "degradation": 0,
+   "classic_link": 2,
+   "init_scale": 2,
+   "eval_rigor": 1,
+   "why": "经典可观性继承与未知尺度交代明确，无退化讨论。"
+  },
+  {
+   "id": "2610.15156",
+   "title": "Sensor-Aware Joint Data Fusion and State Estimation under Sparse Multi-rate Distribution Grid Sensing",
+   "total": 67.5,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "设计/退化（可观性下降）明确，但属电网域且评测空。"
+  },
+  {
+   "id": "2610.19044",
+   "title": "RingNav: Task-Shaped Circular Memory for Visual Heading",
+   "total": 65.0,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 0,
+   "init_scale": 0,
+   "eval_rigor": 2,
+   "why": "设计动机与退化转移清楚，无经典继承也无尺度。"
+  },
+  {
+   "id": "2610.05639",
+   "title": "FOCUS: Fine-Grained Open-Vocabulary Change Detection for Uncertainty-Aware Semi-Static Scenes",
+   "total": 65.0,
+   "design_rationale": 2,
+   "degradation": 2,
+   "classic_link": 0,
+   "init_scale": 0,
+   "eval_rigor": 2,
+   "why": "退化歧义与数据集评测强，经典与尺度无证据。"
+  },
+  {
+   "id": "2610.20476",
+   "title": "Tiered-Resolution Volumetric Mapping for Real-Time Simultaneous Planning and Mapping on Natural Outdoor Environments",
+   "total": 62.5,
+   "design_rationale": 2,
+   "degradation": 1,
+   "classic_link": 1,
+   "init_scale": 0,
+   "eval_rigor": 2,
+   "why": "设计加评分协议清楚，退化仅提替代方案失效。"
+  },
+  {
+   "id": "2610.08469",
+   "title": "A Belief-State World Model for Catheter Navigation under Sparse Fluoroscopy: A Planar Proof of Concept",
+   "total": 55.0,
+   "design_rationale": 1,
+   "degradation": 2,
+   "classic_link": 1,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "不可观/不可靠讨论明确，设计偏薄且纯仿真。"
+  },
+  {
+   "id": "2610.12094",
+   "title": "Differentiable Systematic Resampling for Variational Sequential Monte Carlo",
+   "total": 52.5,
+   "design_rationale": 2,
+   "degradation": 0,
+   "classic_link": 2,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "经典滤波对立明确并给证明，无退化与尺度。"
+  },
+  {
+   "id": "2610.15966",
+   "title": "A Hardware-Partitioned micro-ROS Mini-Vehicle for Operator-Supervised Neural Driving",
+   "total": 45.0,
+   "design_rationale": 2,
+   "degradation": 1,
+   "classic_link": 0,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "分区设计有理由，其余四项摘要内几无证据。"
+  },
+  {
+   "id": "2610.23068",
+   "title": "Foundation Models for Autonomous Space Robotics: Architectures, Physical Adaptation, and Validation",
+   "total": 45.0,
+   "design_rationale": 1,
+   "degradation": 2,
+   "classic_link": 0,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "综述明确谈传感退化，非系统设计、无尺度。"
+  },
+  {
+   "id": "2610.11072",
+   "title": "Towards Path-Creative Navigation: Robot Navigation through Embodied Interaction",
+   "total": 45.0,
+   "design_rationale": 2,
+   "degradation": 1,
+   "classic_link": 0,
+   "init_scale": 0,
+   "eval_rigor": 1,
+   "why": "范式设计清楚，无退化场景、经典对立与尺度。"
+  },
+  {
+   "id": "2610.06809",
+   "title": "Block Disentanglement in CRL: Bridging Identifiability and Visual State Estimation",
+   "total": 12.5,
+   "design_rationale": 1,
+   "degradation": 0,
+   "classic_link": 0,
+   "init_scale": 0,
+   "eval_rigor": 0,
+   "why": "纯理论目标陈述，四项判据摘要内均无证据。"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.12411",
+   "title": "GLIO2: A GPU-Parallelized Tightly-Coupled LiDAR-Inertial-GNSS System for Robust and Real-Time Global Localization and Mapping",
+   "total": 92.5,
+   "why": "设计满分且由两个明确失效模式驱动架构，IMU预积分加因子图直接继承并批判经典路线，退化桥面与三大基准量化最硬。"
+  },
+  {
+   "id": "2610.20490",
+   "title": "Towards Certifiable State Estimation under Observability Degeneracy",
+   "total": 77.5,
+   "why": "退化可观性直击SLAM配准痛点，用对偶认证替代秩膨胀的SDP直解，对经典优化路线是明确修正，三项选文偏好全满。"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.07278",
+   "title": "Embedded Bare-Metal Radar-Inertial Odometry",
+   "total": 82.5,
+   "why": "总分第2，但偏雷达惯性在单核MCU上的系统集成，摘要无经典滤波继承或对立，按L1偏好让位于方法论贡献者。"
+  },
+  {
+   "id": "2610.18040",
+   "title": "Contractor Filters",
+   "total": 77.5,
+   "why": "与Certifiable同分，但属通用集合滤波理论、非SLAM，无尺度初始化且仅仿真无对齐说明，SLAM相关性略低。"
+  }
+ ]
+}

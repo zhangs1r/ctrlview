@@ -1,0 +1,253 @@
+{
+ "column": "automation",
+ "ranked": [
+  {
+   "id": "2610.08580",
+   "title": "Physical Design Automation for Planar Superconducting Quantum Chips",
+   "total": 30.0,
+   "real_line": 2,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "真实产线2分：自称制造就绪、产业化推动布局自动化；但无节拍良率、集成改造与兜底证据"
+  },
+  {
+   "id": "2610.21352",
+   "title": "Product Costing in Data Pipelines",
+   "total": 30.0,
+   "real_line": 2,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "真实产线2分：2.8e7实体真实生产数据管道；但属数据管道成本，无产线节拍良率与集成"
+  },
+  {
+   "id": "2610.14532",
+   "title": "GMM: Generalized OS Memory Management for Programmable XPUs",
+   "total": 22.5,
+   "real_line": 0,
+   "cycle_yield": 1,
+   "integration": 1,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "真实工业案例+推理服务切换延迟加速22.6x、显存省10%，计节拍与集成部分分；无产线实测"
+  },
+  {
+   "id": "2610.09057",
+   "title": "Epistemic Uncertainty-Aware Defect Detection for Quality Control in Medical Device Manufacturing",
+   "total": 20.0,
+   "real_line": 1,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 1,
+   "why": "266170条FDA MAUDE真实报告，弃权10%降错48%；弃权转人工属兜底，无节拍良率"
+  },
+  {
+   "id": "2610.07296",
+   "title": "Mapping E-textiles Design Pain Points and Generative AI Opportunities: Insights from Workshops in Shanghai and Winchester",
+   "total": 17.5,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 1,
+   "data_cost": 1,
+   "fail_safe": 0,
+   "why": "工作坊直指数据稀缺与样机到制造脱节，计数据成本与集成；无产线数据与节拍"
+  },
+  {
+   "id": "2610.17856",
+   "title": "MMTA: Benchmarking Multimodal Temporal Analysis with Time Series, Text, and Vision",
+   "total": 15.0,
+   "real_line": 1,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "九域真实来源基准并按效率考核，计真实数据部分分；无节拍良率与集成证据"
+  },
+  {
+   "id": "2610.04392",
+   "title": "Detecting Defects that Matter: An Application-Driven Benchmark for Anomaly Detection in Manufacturing and Retail Logistics (VAND 4.0 Challenge)",
+   "total": 15.0,
+   "real_line": 1,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "面向制造与物流真实部署的基准，计真实数据部分分；无节拍良率与集成改造"
+  },
+  {
+   "id": "2610.10352",
+   "title": "The Handover Problem: Governing Autonomy Transitions in Human-AI Collaboration",
+   "total": 15.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 1,
+   "data_cost": 0,
+   "fail_safe": 1,
+   "why": "多信号HRS+硬安全护栏与可回退审计，计集成与兜底部分分；无产线数据与节拍"
+  },
+  {
+   "id": "2610.15301",
+   "title": "Design for Machinability: Topology Optimization for Subtractive Machining Using Trimmed Neural Fields",
+   "total": 12.5,
+   "real_line": 0,
+   "cycle_yield": 1,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "仿真中明确称减少加工时间，计节拍部分分；属仿真研究，无产线实测与集成"
+  },
+  {
+   "id": "2610.14123",
+   "title": "Hierarchical Multi-Agent Reasoning Systems for Knowledge-Grounded Material Substitution",
+   "total": 10.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 1,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "实验室规模PFAS替代与可制造性评估，计集成部分分；无产线数据与节拍"
+  },
+  {
+   "id": "2610.03934",
+   "title": "SGAnalog: An End-to-End Circuit Benchmark from Open-Source Silicon Tapeouts",
+   "total": 7.5,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 1,
+   "fail_safe": 0,
+   "why": "基准取自开源源硅流片而非产线，作者称模型依赖具体样例，计数据成本部分分"
+  },
+  {
+   "id": "2610.11896",
+   "title": "Automated Assembly Instruction Generation from CAD Models Using Grounded Large Language Models: A Human-in-the-Loop Framework",
+   "total": 5.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 1,
+   "why": "人工复核通过前禁止导出PDF，计兜底部分分；案例仅内置六件参考装配"
+  },
+  {
+   "id": "2610.22741",
+   "title": "SAMS: A Structured Graph Framework for Securing Additive Manufacturing Systems",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "仅离线网格图分析，摘要无产线数据、节拍良率与集成证据，各项均0分"
+  },
+  {
+   "id": "2610.04105",
+   "title": "Transparent 3D-printed flow cells for porous media studies with proof-of-concept on two-phase flow-reversal asymmetry",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "实验室3D打印流室复现协议，属理想工况，无产线节拍良率与集成"
+  },
+  {
+   "id": "2610.21079",
+   "title": "Reliability and Preventive Maintenance for Multivariate Gamma Degradation with Shared Random Effects and Cumulative Environmental Shock Damage",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "只提出预防性维护优化，无产线数据、节拍与集成说明，各项0分"
+  },
+  {
+   "id": "2610.10874",
+   "title": "Ceramic Materials: From Atomic Bonding and Processing to Microstructure, Functional Properties, and Biomedical Applications",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "陶瓷材料综述，无产线数据、节拍良率与集成讨论，各项0分"
+  },
+  {
+   "id": "2610.22214",
+   "title": "GNN-Guided Local Refinement for Efficient Layout Decomposition with DSA-MP",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "版图分解仿真基准，无产线数据与节拍良率，各项0分"
+  },
+  {
+   "id": "2610.04262",
+   "title": "CADForge: Agentic Single-View CAD Reconstruction with Explicit Geometry Reasoning",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "单视图图像重建CAD，无产线节拍数据，失败仅指重建质量"
+  },
+  {
+   "id": "2610.06250",
+   "title": "Generative World Models Enable Predictive Control of Laser Melt Pool Dynamics",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "熔池世界模型仍属概念验证，无产线实测、节拍与集成兜底"
+  },
+  {
+   "id": "2610.11999",
+   "title": "Decentralized Latency Models and Information Flow for TSN Shapers - A Tutorial",
+   "total": 0.0,
+   "real_line": 0,
+   "cycle_yield": 0,
+   "integration": 0,
+   "data_cost": 0,
+   "fail_safe": 0,
+   "why": "TSN整形器教程，无产线实测与改造量，各项0分"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.08580",
+   "title": "Physical Design Automation for Planar Superconducting Quantum Chips",
+   "total": 30.0,
+   "why": "该栏真实产线证据最强：布局自动化自称制造就绪、已被产业采用，团队含超导硬件专家，值得精读核实是否真上产线。"
+  },
+  {
+   "id": "2610.09057",
+   "title": "Epistemic Uncertainty-Aware Defect Detection for Quality Control in Medical Device Manufacturing",
+   "total": 20.0,
+   "why": "唯一用真实器械报告（266170条FDA MAUDE）并正面处理异常兜底：弃权10%降错48%，弃权即转人工复核。"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.21352",
+   "title": "Product Costing in Data Pipelines",
+   "total": 30.0,
+   "why": "总分并列最高靠真实产线数据，但属数据管道成本分摊，无产线节拍良率、集成改造与停机兜底。"
+  },
+  {
+   "id": "2610.14532",
+   "title": "GMM: Generalized OS Memory Management for Programmable XPUs",
+   "total": 22.5,
+   "why": "真实工业案例与切换延迟加速亮眼，但面向XPU显存管理，无真实产线数据与良率，与栏目核心偏离。"
+  }
+ ]
+}

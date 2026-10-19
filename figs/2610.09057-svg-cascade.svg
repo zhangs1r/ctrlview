@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+  <rect width="960" height="500" fill="#ffffff"/>
+
+  <text x="480" y="32" text-anchor="middle" font-size="17" font-weight="600" fill="#1f3552">三级串行的根因链，弃权只挂在第一级上</text>
+
+  <!-- 输入 -->
+  <rect x="40" y="196" width="150" height="88" rx="10" fill="#eef4f9" stroke="#a8c0d8"/>
+  <text x="115" y="228" text-anchor="middle" font-size="13.5" fill="#1f3552">过程特征</text>
+  <text x="115" y="250" text-anchor="middle" font-size="12" fill="#4a6b8a">六维工艺量</text>
+  <text x="115" y="270" text-anchor="middle" font-size="12" fill="#4a6b8a">来自传板印刷</text>
+
+  <path d="M190 240 L232 240" fill="none" stroke="#8ba6c2" stroke-width="1.8"/>
+  <path d="M238 240 L228 235 L228 245 Z" fill="#8ba6c2"/>
+
+  <!-- Head 1 -->
+  <rect x="244" y="170" width="196" height="140" rx="10" fill="#fdeaea" stroke="#d08a8a" stroke-width="2"/>
+  <text x="342" y="200" text-anchor="middle" font-size="15" font-weight="600" fill="#8a2f2f">Head 1　判缺陷</text>
+  <text x="342" y="226" text-anchor="middle" font-size="12.5" fill="#7a4a4a">输出三类缺陷的边缘分布</text>
+  <text x="342" y="248" text-anchor="middle" font-size="12.5" fill="#7a4a4a">无缺陷 / 开路 / 桥连</text>
+  <text x="342" y="276" text-anchor="middle" font-size="12.5" fill="#8a2f2f">论文把弃权机制装在这里</text>
+  <text x="342" y="296" text-anchor="middle" font-size="12" fill="#a06060">判错的代价往下游传</text>
+
+  <path d="M440 240 L482 240" fill="none" stroke="#8ba6c2" stroke-width="1.8"/>
+  <path d="M488 240 L478 235 L478 245 Z" fill="#8ba6c2"/>
+
+  <!-- Head 2 -->
+  <rect x="494" y="176" width="192" height="128" rx="10" fill="#f4f7fa" stroke="#c9d6e4"/>
+  <text x="590" y="206" text-anchor="middle" font-size="15" font-weight="600" fill="#1f3552">Head 2　认机理</text>
+  <text x="590" y="232" text-anchor="middle" font-size="12.5" fill="#4a6b8a">在缺陷成立的前提下</text>
+  <text x="590" y="252" text-anchor="middle" font-size="12.5" fill="#4a6b8a">给出机理的后验概率</text>
+  <text x="590" y="280" text-anchor="middle" font-size="12" fill="#8496a8">本文沿用原文，未改动</text>
+
+  <path d="M686 240 L728 240" fill="none" stroke="#8ba6c2" stroke-width="1.8"/>
+  <path d="M734 240 L724 235 L724 245 Z" fill="#8ba6c2"/>
+
+  <!-- Head 3 -->
+  <rect x="740" y="176" width="180" height="128" rx="10" fill="#f4f7fa" stroke="#c9d6e4"/>
+  <text x="830" y="206" text-anchor="middle" font-size="15" font-weight="600" fill="#1f3552">Head 3　估风险</text>
+  <text x="830" y="232" text-anchor="middle" font-size="12.5" fill="#4a6b8a">按参数级风险打分</text>
+  <text x="830" y="252" text-anchor="middle" font-size="12.5" fill="#4a6b8a">输出可追溯的排序</text>
+  <text x="830" y="280" text-anchor="middle" font-size="12" fill="#8496a8">本文沿用原文，未改动</text>
+
+  <!-- 弃权支路 -->
+  <path d="M342 310 L342 392 L470 392" fill="none" stroke="#4a8a5a" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <path d="M476 392 L466 387 L466 397 Z" fill="#4a8a5a"/>
+  <rect x="484" y="356" width="252" height="72" rx="10" fill="#e9f5ec" stroke="#7aa88a"/>
+  <text x="610" y="382" text-anchor="middle" font-size="13.5" fill="#2f5f3f">暂不给结论，转人工复核</text>
+  <text x="610" y="404" text-anchor="middle" font-size="12" fill="#4a7a5a">论文把这步写成可能的后续处置</text>
+  <text x="610" y="421" text-anchor="middle" font-size="11.5" fill="#6a9a7a">本文没有实测这条支路的收益</text>
+
+  <!-- 底部说明 -->
+  <line x1="40" y1="450" x2="920" y2="450" stroke="#e2e8ef"/>
+  <text x="40" y="474" font-size="12.5" fill="#3c5570">深红色是本文动过刀的位置。Head 2 与 Head 3 沿用 Shenoy 与 Ameri 的原始设定，论文没有说明弃权信号是否会向这两级传递。</text>
+</svg>

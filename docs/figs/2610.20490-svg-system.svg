@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .t{font-size:15px;font-weight:700;fill:#1b1b1f}
+    .h{font-size:12.5px;font-weight:700;fill:#6b6b78}
+    .b{font-size:12.5px;fill:#1b1b1f}
+    .s{font-size:11.5px;fill:#6b6b78}
+    .in{fill:#f6f6f4;stroke:#d9d7d0;stroke-width:1.3}
+    .pr{fill:#eef3f8;stroke:#2d5f8a;stroke-width:1.5}
+    .ou{fill:#f2f7f3;stroke:#3f7d55;stroke-width:1.5}
+  </style>
+
+  <text class="t" x="30" y="34">RASER 四步流程</text>
+  <text class="s" x="30" y="54">本图依据 §IV-A、§IV-B、§IV-C 绘制，论文没有架构原图</text>
+
+  <text class="h" x="40"  y="88" text-anchor="middle">输入</text>
+  <text class="h" x="368" y="88" text-anchor="middle">处理</text>
+  <text class="h" x="724" y="88" text-anchor="middle">输出</text>
+
+  <!-- step 1 -->
+  <rect class="in" x="30"  y="104" width="250" height="80" rx="8"/>
+  <text class="b" x="42" y="131">状态 θ、测量雅可比 J</text>
+  <text class="s" x="42" y="153">不可观基 V_u = ker J</text>
+  <text class="s" x="42" y="172">可观基 V_o 与 V_u 正交</text>
+
+  <rect class="pr" x="306" y="104" width="256" height="80" rx="8"/>
+  <text class="b" x="318" y="128">① 切空间重映射</text>
+  <text class="s" x="318" y="148">θ(η) = θ₀ + V_o η</text>
+  <text class="s" x="318" y="168">§IV-A　式 (25)</text>
+
+  <rect class="ou" x="596" y="104" width="256" height="80" rx="8"/>
+  <text class="b" x="608" y="131">低维坐标 η、约化雅可比 J_o</text>
+  <text class="s" x="608" y="153">J_o 严格列满秩</text>
+  <text class="s" x="608" y="172">ker J_o = {0}</text>
+
+  <line x1="280" y1="144" x2="302" y2="144" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="562" y1="144" x2="592" y2="144" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- step 2 -->
+  <rect class="in" x="30"  y="204" width="250" height="80" rx="8"/>
+  <text class="b" x="42" y="231">锚点 θ₀、约化残差 r</text>
+  <text class="s" x="42" y="253">在 η 上做局部最小二乘</text>
+  <text class="s" x="42" y="272">初值来自上一步的 η</text>
+
+  <rect class="pr" x="306" y="204" width="256" height="80" rx="8"/>
+  <text class="b" x="318" y="228">② 局部搜索</text>
+  <text class="s" x="318" y="248">跑到驻点 η̂</text>
+  <text class="s" x="318" y="268">§IV-A　命题 1</text>
+
+  <rect class="ou" x="596" y="204" width="256" height="80" rx="8"/>
+  <text class="b" x="608" y="231">物理候选 θ̂_r = θ₀ + V_o η̂</text>
+  <text class="s" x="608" y="253">对原松弛问题严格可行</text>
+  <text class="s" x="608" y="272">残余梯度 g_o 随之记录</text>
+
+  <line x1="280" y1="244" x2="302" y2="244" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="562" y1="244" x2="592" y2="244" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- step 3 -->
+  <rect class="in" x="30"  y="304" width="250" height="80" rx="8"/>
+  <text class="b" x="42" y="331">候选 x̂、Q₀、A_i</text>
+  <text class="s" x="42" y="353">驻点条件的 θ 块行</text>
+  <text class="s" x="42" y="372">M(x̂) λ = b(x̂)</text>
+
+  <rect class="pr" x="306" y="304" width="256" height="80" rx="8"/>
+  <text class="b" x="318" y="328">③ 对偶乘子恢复</text>
+  <text class="s" x="318" y="348">Douglas-Rachford 分裂</text>
+  <text class="s" x="318" y="368">§IV-B　式 (29) 到 (31c)</text>
+
+  <rect class="ou" x="596" y="304" width="256" height="80" rx="8"/>
+  <text class="b" x="608" y="331">乘子 λ̂、常数 γ̂</text>
+  <text class="s" x="608" y="353">Cholesky 每个候选只做一次</text>
+  <text class="s" x="608" y="372">迭代里只做回代</text>
+
+  <line x1="280" y1="344" x2="302" y2="344" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="562" y1="344" x2="592" y2="344" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- step 4 -->
+  <rect class="in" x="30"  y="404" width="250" height="96" rx="8"/>
+  <text class="b" x="42" y="431">λ̂、Ŝ = H(λ̂, γ̂)</text>
+  <text class="s" x="42" y="453">μ_o = λ_min(J_oᵀJ_o)</text>
+  <text class="s" x="42" y="472">残余梯度 g_o</text>
+  <text class="s" x="42" y="491">机器精度 ε_mach</text>
+
+  <rect class="pr" x="306" y="404" width="256" height="96" rx="8"/>
+  <text class="b" x="318" y="428">④ 自适应认证</text>
+  <text class="s" x="318" y="448">检查 λ_min(Ŝ) ≥ −τ_cert</text>
+  <text class="s" x="318" y="468">τ_cert 由 μ_o 与 ‖g_o‖₂ 决定</text>
+  <text class="s" x="318" y="488">§IV-C　定理 2　式 (37)、(38)</text>
+
+  <rect class="ou" x="596" y="404" width="256" height="96" rx="8"/>
+  <text class="b" x="608" y="428">证书，或明确拒绝</text>
+  <text class="s" x="608" y="450">通过则候选为全局最优</text>
+  <text class="s" x="608" y="470">拒绝则不输出候选</text>
+  <text class="s" x="608" y="490">论文未给面部精度判据数值</text>
+
+  <line x1="280" y1="452" x2="302" y2="452" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="562" y1="452" x2="592" y2="452" stroke="#9a9a9a" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- feedback -->
+  <path d="M 434 404 L 434 296" fill="none" stroke="#b85028" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#r)"/>
+  <text class="s" x="442" y="356" fill="#b85028">认证没过，换初值重搜</text>
+
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#9a9a9a"/>
+    </marker>
+    <marker id="r" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto">
+      <path d="M0,9 L4.5,0 L9,9 z" fill="#b85028"/>
+    </marker>
+  </defs>
+</svg>

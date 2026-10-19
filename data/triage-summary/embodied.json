@@ -1,0 +1,253 @@
+{
+ "column": "embodied",
+ "ranked": [
+  {
+   "id": "2610.17709",
+   "title": "Where Small Mistakes Matter: Quantifying State Criticality for Imitation Learning",
+   "total": 82.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 2,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "真机+仿真验证，失败判据与数据管线双满分，仅缺闭环"
+  },
+  {
+   "id": "2610.22471",
+   "title": "Has GPT-6-Astra Achieved Embodied Intelligence?",
+   "total": 82.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 1,
+   "task_def": 1,
+   "closed_loop": 2,
+   "why": "8种真机配置实测，失败缺口分析充分，数据与任务定义偏弱"
+  },
+  {
+   "id": "2610.19913",
+   "title": "MUCO: A Mani-Unit-Structured Manipulation Framework for Compositional Long-Horizon Robot Tasks",
+   "total": 80.0,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 0,
+   "task_def": 2,
+   "closed_loop": 2,
+   "why": "真机五任务，成功/失败判据明确且闭环重试回退，数据管线无贡献"
+  },
+  {
+   "id": "2610.18053",
+   "title": "LADDER: A Long-Horizon Robot Manipulation Benchmark",
+   "total": 77.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 1,
+   "task_def": 1,
+   "closed_loop": 1,
+   "why": "长horizon基准隔离失败并给真机确证，数据与闭环贡献中等"
+  },
+  {
+   "id": "2610.10810",
+   "title": "Diagnosing and Recovering from Observation-Space Shift at Long-Horizon Skill Seams",
+   "total": 72.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 2,
+   "why": "专研技能接缝失效并真机闭环恢复，无数据管线贡献"
+  },
+  {
+   "id": "2610.12861",
+   "title": "Evidence-Guided Counterfactual Learning for Long-Tailed Robotic Policies",
+   "total": 72.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 1,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "真机验证并析长尾失败模式，数据管线仅部分贡献，无闭环"
+  },
+  {
+   "id": "2610.21453",
+   "title": "CarryOn: A Dual-Loop Harness for Personalized and Reliable Robot Assistance",
+   "total": 72.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 2,
+   "why": "真机闭环监督与失败恢复强，数据管线与任务定义弱"
+  },
+  {
+   "id": "2610.06137",
+   "title": "Robotizing Human Videos with Physically Consistent Interactions",
+   "total": 70.0,
+   "real_robot": 2,
+   "failure_modes": 1,
+   "data_pipeline": 2,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "人类视频转真机数据是管线贡献，真机验证，但无闭环"
+  },
+  {
+   "id": "2610.15675",
+   "title": "Recovering Low-Bit Failures in Vision-Language-Action Policies via Quantization-Conditioned Reinforcement Learning",
+   "total": 62.5,
+   "real_robot": 2,
+   "failure_modes": 2,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "4050次真机试验揭示量化失败，无数据管线与闭环"
+  },
+  {
+   "id": "2610.22337",
+   "title": "Sim-to-Real Reinforcement Learning for Path-Safe Target Reaching in Robotic Harvesting of Hydroponic Lettuce",
+   "total": 62.5,
+   "real_robot": 2,
+   "failure_modes": 1,
+   "data_pipeline": 0,
+   "task_def": 2,
+   "closed_loop": 1,
+   "why": "真机零微调迁移与消融失败分析，纯仿真训练无数据管线"
+  },
+  {
+   "id": "2610.07949",
+   "title": "Commit While Futures Agree: Consequence-Aware Adaptive Action Chunking for Robot Manipulation",
+   "total": 60.0,
+   "real_robot": 2,
+   "failure_modes": 1,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 2,
+   "why": "真机+仿真，闭环重规划表达清楚，失败判据与数据管线弱"
+  },
+  {
+   "id": "2610.12457",
+   "title": "SpatialHarness: Test-Time Spatial Scaffolding for Fine Robotic Manipulation",
+   "total": 60.0,
+   "real_robot": 2,
+   "failure_modes": 1,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 2,
+   "why": "真机四任务并指出可观测性失败源，无数据管线贡献"
+  },
+  {
+   "id": "2610.19495",
+   "title": "Robota-Embed: Unified VLA Embeddings for Robot In-Context Learning and Evolution",
+   "total": 55.0,
+   "real_robot": 2,
+   "failure_modes": 0,
+   "data_pipeline": 2,
+   "task_def": 0,
+   "closed_loop": 1,
+   "why": "真机提示微弱，数据管线贡献大，但无动作空间与失败分析"
+  },
+  {
+   "id": "2610.10857",
+   "title": "Self-Supervised Keyframe Discovery for Horizon-Invariant Behavior Cloning",
+   "total": 50.0,
+   "real_robot": 2,
+   "failure_modes": 1,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "真机长horizon验证，失败分析仅限既有架构，无管线与闭环"
+  },
+  {
+   "id": "2610.07594",
+   "title": "BiGym 2.0: Benchmarking Learned and Agent-Developed Policies for Humanoid Household Manipulation",
+   "total": 47.5,
+   "real_robot": 0,
+   "failure_modes": 1,
+   "data_pipeline": 2,
+   "task_def": 2,
+   "closed_loop": 0,
+   "why": "纯仿真人形基准，数据构成清楚，无真机、无失败判据"
+  },
+  {
+   "id": "2610.16313",
+   "title": "Listen Before Act: Audio-Conditioned Robot Manipulation with ListenVLA",
+   "total": 47.5,
+   "real_robot": 2,
+   "failure_modes": 0,
+   "data_pipeline": 1,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "真机三任务，音频条件VLA，无失败分析与闭环"
+  },
+  {
+   "id": "2610.16634",
+   "title": "Language2Drive: Do Vision-Language-Action Models Really Follow the Instructions in Autonomous Driving?",
+   "total": 47.5,
+   "real_robot": 0,
+   "failure_modes": 2,
+   "data_pipeline": 1,
+   "task_def": 1,
+   "closed_loop": 1,
+   "why": "仅仿真，失败判据出色，无真机与数据管线"
+  },
+  {
+   "id": "2610.08917",
+   "title": "CARE: Certifying Acceleration for Vision-Language-Action Inference",
+   "total": 37.5,
+   "real_robot": 0,
+   "failure_modes": 2,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 1,
+   "why": "仅仿真，失败判据强，但无真机、无数据管线"
+  },
+  {
+   "id": "2610.09708",
+   "title": "Black-Box Adversarial Patch Attacks on VLAs via Ancestor VLM Exploitation",
+   "total": 20.0,
+   "real_robot": 0,
+   "failure_modes": 1,
+   "data_pipeline": 0,
+   "task_def": 1,
+   "closed_loop": 0,
+   "why": "仅静态真实图像，失败分析有限，无真机与闭环"
+  },
+  {
+   "id": "2610.11322",
+   "title": "USDCraft: Geometrically Grounded Programmatic Modeling of Articulated 3D Assets for Simulation",
+   "total": 12.5,
+   "real_robot": 0,
+   "failure_modes": 1,
+   "data_pipeline": 0,
+   "task_def": 0,
+   "closed_loop": 0,
+   "why": "仿真资产生成，仅部分失败讨论，无真机与任务定义"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.17709",
+   "title": "Where Small Mistakes Matter: Quantifying State Criticality for Imitation Learning",
+   "total": 82.5,
+   "why": "真机+仿真验证，把失败形式化为动作扰动下最坏价值退化，失败判据明确；示教子集挑选本身是数据管线贡献，三项选文偏好全中"
+  },
+  {
+   "id": "2610.19913",
+   "title": "MUCO: A Mani-Unit-Structured Manipulation Framework for Compositional Long-Horizon Robot Tasks",
+   "total": 80.0,
+   "why": "五个真机任务；每个manipulation unit给出可观测成功/失败判据，失败遏制与错误传播分析强，并用视觉校验驱动重试/回退闭环"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.22471",
+   "title": "Has GPT-6-Astra Achieved Embodied Intelligence?",
+   "total": 82.5,
+   "why": "GPT-6-Astra能力评估报告，偏前沿模型能力盘点与基准铺量，数据管线非方法贡献，可复用方法少"
+  },
+  {
+   "id": "2610.18053",
+   "title": "LADDER: A Long-Horizon Robot Manipulation Benchmark",
+   "total": 77.5,
+   "why": "以2024仿真episode/系统为主的基准，真机仅作确证；数据管线与闭环恢复贡献弱于入选两篇"
+  }
+ ]
+}

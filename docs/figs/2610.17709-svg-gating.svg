@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="480" viewBox="0 0 760 480" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif">
+  <rect width="760" height="480" fill="#ffffff"/>
+  <text x="30" y="42" font-size="21" font-weight="bold" fill="#1c2b3a">示意图 B　只在关键状态上加扰动</text>
+  <text x="30" y="74" font-size="14" fill="#546e7a">成功率相对干净 rollout 的下降，单位是百分点。数据来自论文表 9。</text>
+  <rect x="540" y="30" width="14" height="14" fill="#c62828"/>
+  <text x="560" y="42" font-size="13" fill="#37474f">对抗者，高分状态</text>
+  <rect x="540" y="52" width="14" height="14" fill="#ef6c00"/>
+  <text x="560" y="64" font-size="13" fill="#37474f">对抗者，随机状态</text>
+  <rect x="540" y="74" width="14" height="14" fill="#fdd835"/>
+  <text x="560" y="86" font-size="13" fill="#37474f">均匀噪声，高分状态</text>
+  <line x1="80" y1="380" x2="730" y2="380" stroke="#37474f" stroke-width="1.6"/>
+  <line x1="80" y1="120" x2="80" y2="380" stroke="#37474f" stroke-width="1.6"/>
+  <g font-size="12" fill="#607d8b" text-anchor="end">
+    <text x="72" y="385">0</text>
+    <text x="72" y="319">5</text>
+    <text x="72" y="253">10</text>
+    <text x="72" y="187">15</text>
+    <text x="72" y="121">20</text>
+  </g>
+  <line x1="80" y1="316" x2="730" y2="316" stroke="#eceff1" stroke-width="1"/>
+  <line x1="80" y1="250" x2="730" y2="250" stroke="#eceff1" stroke-width="1"/>
+  <line x1="80" y1="184" x2="730" y2="184" stroke="#eceff1" stroke-width="1"/>
+  <line x1="80" y1="118" x2="730" y2="118" stroke="#eceff1" stroke-width="1"/>
+  <rect x="100" y="208" width="34" height="172" fill="#c62828"/>
+  <rect x="136" y="301" width="34" height="79" fill="#ef6c00"/>
+  <rect x="172" y="367" width="34" height="13" fill="#fdd835"/>
+  <rect x="270" y="208" width="34" height="172" fill="#c62828"/>
+  <rect x="306" y="327" width="34" height="53" fill="#ef6c00"/>
+  <rect x="342" y="380" width="34" height="1" fill="#fdd835"/>
+  <rect x="440" y="208" width="34" height="172" fill="#c62828"/>
+  <rect x="476" y="301" width="34" height="79" fill="#ef6c00"/>
+  <rect x="512" y="380" width="34" height="1" fill="#fdd835"/>
+  <rect x="610" y="116" width="34" height="264" fill="#c62828"/>
+  <rect x="646" y="367" width="34" height="13" fill="#ef6c00"/>
+  <rect x="682" y="340" width="34" height="40" fill="#fdd835"/>
+  <g font-size="13" font-weight="bold" fill="#b71c1c" text-anchor="middle">
+    <text x="117" y="200">13.0</text>
+    <text x="287" y="200">13.0</text>
+    <text x="457" y="200">13.0</text>
+    <text x="627" y="108">20.0</text>
+  </g>
+  <g font-size="12" fill="#e65100" text-anchor="middle">
+    <text x="153" y="293">6.0</text>
+    <text x="323" y="319">4.0</text>
+    <text x="493" y="293">6.0</text>
+    <text x="663" y="359">1.0</text>
+  </g>
+  <g font-size="12" fill="#9e9d24" text-anchor="middle">
+    <text x="189" y="359">1.0</text>
+    <text x="359" y="372">0.0</text>
+    <text x="529" y="372">0.0</text>
+    <text x="699" y="332">3.0</text>
+  </g>
+  <g font-size="15" font-weight="bold" fill="#1c2b3a" text-anchor="middle">
+    <text x="153" y="404">StackCube</text>
+    <text x="323" y="404">TurnFaucet</text>
+    <text x="493" y="404">PegInsertion</text>
+    <text x="663" y="404">Hammer</text>
+  </g>
+  <g font-size="12" fill="#607d8b" text-anchor="middle">
+    <text x="153" y="424">k = 5%</text>
+    <text x="323" y="424">k = 5%</text>
+    <text x="493" y="424">k = 30%</text>
+    <text x="663" y="424">k = 10%</text>
+  </g>
+  <text x="30" y="456" font-size="12" fill="#607d8b">竖轴是成功率下降的百分点数，数据来自论文表 9。k 是施加扰动的步数比例。</text>
+</svg>

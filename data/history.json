@@ -130,6 +130,83 @@
           "title": "Hybrid GA/MSDLO Approach to Solve a Greenfield Robotized Machine Tending Layout"
         }
       ]
+    },
+    {
+      "id": "2026-W42",
+      "date": "2026-10-19",
+      "note": "\n## 本轮登记：2026-W42（2026-10-19，周一 18:00 定时触发）\n\n轮次 id 说明：2026-10-19 的自然 ISO 周是 2026-W43，但站点既有两轮（2026-W40 记 09-28、2026-W41 记 10-01）是按周序递推编号的，取 W42 才能与它们连成无缺口的周序。若按严格 ISO 周则会出现 W40 → W40 → W43 的跳号。\n\n**窗口** 2026-10-02 → 2026-10-19（上一轮 2026-10-01 之后，共 18 天）。候选 3684 篇，去重后入队 3035（跳过历史 23 篇）。逐日覆盖度自检 10-02～10-16 每天 95～269 篇，10-17/18 是周六周日、10-19 周一但 arXiv 尚未公告（窗口内最新提交日为 10-16），属正常，非查询词覆盖不足。\n\n**选文口径**：每栏目 `triage.py --top 20` 短名单，逐篇读完整摘要照 `rubric.json` 打 0/1/2；摘要里判不出的必读项一律给 0。7 栏目短名单共 140 篇全部打分，`triage.py --rank --pick 2` exit 0。候选池三份账（shortlist + rest + offtopic）逐栏目相加均等于候选总数，无论文静默消失。\n\n### 各栏总分与压后理由\n\n**slam（候选 57 → 短名单 20）**\n- 2610.12411 GLIO2 92.5（设计 2/退化 2/经典 2/初始化 1/评测 2）：由两个明确失效模式（退化下漂移不可恢复、协方差过置信）驱动架构，IMU 预积分 + 滑窗因子图直接继承并批判经典优化路线，退化桥面与 UrbanNav / MARS-LVIG / M3DGR 量化最硬。\n- 2610.20490 Certifiable 77.5（2/2/2/0/1）：退化可观性直击 SLAM 配准痛点，用候选驱动对偶认证替代秩膨胀的 SDP 直解，对经典优化路线是明确修正。\n- 压后 2610.07278（82.5，总分第 2 但偏单核 MCU 系统集成、摘要无经典滤波继承/对立）、2610.18040（77.5，通用集合滤波理论、非 SLAM，无尺度初始化且仅仿真无对齐说明）。\n\n**embodied（候选 314 → 短名单 20）**\n- 2610.17709 SCRIM 82.5（真机 2/失败 2/数据 2/任务 1/闭环 0）：把失败形式化为专家动作扰动下的最坏价值退化，失败判据明确；示教子集挑选本身是数据管线贡献。\n- 2610.19913 MUCO 80.0（2/2/0/2/2）：五个真机任务，每个 manipulation unit 给出可观测成功/失败判据，视觉校验驱动重试/回退闭环。\n- 压后 2610.22471（82.5，GPT-6-Astra 能力评估报告，偏前沿模型能力盘点与基准铺量，数据管线非方法贡献）、2610.18053（77.5，以 2024 仿真 episode 为主，真机仅作确证）。\n\n**control（候选 647 → 短名单 20）**\n- 2610.09988 Continuous-Time Critic as a Lyapunov Function 95.0（问题形式 2/why hard 2/理论 2/经典谱系 2/松弛代价 1）：投影到速度集∩衰减半空间的约束优化，配条件状态稳定性定理、反例与局部保守证书。\n- 2610.05724 Data-driven control using quantized data 90.0（2/2/2/2/0）：以反馈增益为变量的 SDP，可行性即可镇定的可验证条件 + Lyapunov 量化更新下的指数收敛，落在经典 LMI 镇定谱系。\n- 压后 2610.12110（95.0，与 09988 同源同题、主题重复且收敛只到邻域）、2610.13631（95.0，联邦学习 DRO 训练目标，与栏目控制/优化经典谱系对接最弱）。\n\n**robotics（候选 872 → 短名单 20）**\n- 2610.10453 RFPO 95.0（真实平台 2/边界 2/系统取舍 2/系统构成 2/规模 1）：Go2 / Spot / H1 / G1 四平台真机验证单步执行，明说少步离散化会退化控制，单步延迟 4.39 ms → 0.08 ms。\n- 2610.07525 ReDex 87.5（2/2/2/1/1）：真机翻物 14% → 86%、拧螺丝 26% → 95.3%，以人手局部纠正替代触觉仿真，边界与系统取舍写清楚。\n- 压后 2610.12549（82.5，真机只定性完成多阶段任务、无重复统计，主证据来自仿真）、2610.04054（80.0，未交代传感器/执行器/算力）。\n\n**cps（候选 311 → 短名单 20）**\n- 2610.12730 ROAM 80.0（耦合 2/物理 1/定量 1/真实 2/介入点 2）：ML 恢复方案时延是决定性约束、量测盲窗占 3 s 决策周期 2.6%、HIL（OPAL-RT）实测 < 18 ms，介入点在聚合层测点。\n- 2610.18313 Industrial Edge 50.0（2/1/0/0/1）：共享网段饱和导致各 AI 服务输出陈旧失真、不再反映被控对象，并把网络时延与热节流作为不同调权情形，属真正回路耦合。\n- 压后 2610.03275（52.5，耦合只在过程噪声、非通信约束，无真实系统）、2610.10517（40.0，摘要无回路耦合讨论，命中 L1 压后条件）。\n- 说明：本栏短名单 20 篇里 `coupling` 给 2 的只有 2 篇、给 0 的有 16 篇，候选池客观偏弱，总分普遍低属预期。\n\n**security（候选 781 → 短名单 20）**\n- 2610.10616 MoE Router Telemetry 100.0（威胁模型 2/假设边界 2/机制 2/指标 2/防御代价 2）：跨 3 种 MoE 架构与 3 个域验证，五维都有摘要级证据，隐私泄露叙事非安全背景读者也易懂。\n- 2610.03434 Persona Guardrail 87.5（2/1/2/2/2）：生产级运行防御，威胁模型明确，给出时延预算与误拦/误放率等防御代价，并与通用 LLM 护栏基线对比。\n- 压后 2610.10909（90.0，无防御代价、硬件功耗侧信道迁移性弱）、2610.14215（90.0，仅 LLaMA-3.2-1B + 树莓派 5 单一模型/设备验证，无防御代价）。\n\n**automation（候选 53 → 短名单 20）**\n- 2610.08580 Physical Design Automation for Planar Superconducting Quantum Chips 30.0（产线 2/节拍 0/集成 0/数据 0/兜底 0）：该栏真实制造证据最强，布局自动化自称制造就绪、已被产业采用，值得精读核实是否真上产线。\n- 2610.09057 Epistemic Uncertainty-Aware Defect Detection 20.0（1/0/0/0/1）：用 266170 条 FDA MAUDE 器械真实报告做不确定性弃权，弃权 10% 降错 48%，弃权即转人工复核。\n- 压后 2610.21352（30.0，属数据管道成本分摊，无产线节拍良率、集成改造与停机兜底）、2610.14532（22.5，面向 XPU 显存管理，与栏目核心偏离）。\n- 说明：本栏候选池确实偏弱，20 篇里 `real_line` 给 2 的只有 2 篇，无一篇摘要给出真实产线节拍/良率数字，两项入选总分因此只有 30.0 / 20.0，属候选池客观限制。\n\n### 备注\n- `data/triage/`、`data/triage-ranked.md` 不入库（每周翻新），评分留档在 `data/scores.json` 的 `2026-W42` 段，共 140 篇有分。\n- 本轮无人为改分或越过评分表另立标准。\n",
+      "picks": [
+        {
+          "id": "2610.12411",
+          "column": "slam",
+          "title": "GLIO2: A GPU-Parallelized Tightly-Coupled LiDAR-Inertial-GNSS System for Robust and Real-Time Global Localization and Mapping"
+        },
+        {
+          "id": "2610.20490",
+          "column": "slam",
+          "title": "Towards Certifiable State Estimation under Observability Degeneracy"
+        },
+        {
+          "id": "2610.17709",
+          "column": "embodied",
+          "title": "Where Small Mistakes Matter: Quantifying State Criticality for Imitation Learning"
+        },
+        {
+          "id": "2610.19913",
+          "column": "embodied",
+          "title": "MUCO: A Mani-Unit-Structured Manipulation Framework for Compositional Long-Horizon Robot Tasks"
+        },
+        {
+          "id": "2610.05724",
+          "column": "control",
+          "title": "Data-driven control of linear systems using quantized data"
+        },
+        {
+          "id": "2610.09988",
+          "column": "control",
+          "title": "Continuous-Time Critic as a Lyapunov Function: Projected Adaptation and Cart-Pole Stabilization"
+        },
+        {
+          "id": "2610.10453",
+          "column": "robotics",
+          "title": "RFPO: Rectified Flow Policy Optimization for Embodied Control"
+        },
+        {
+          "id": "2610.07525",
+          "column": "robotics",
+          "title": "ReDex: Repairing Sim-to-Real Dexterous Policies by Finger-Level Compliant Interaction"
+        },
+        {
+          "id": "2610.12730",
+          "column": "cps",
+          "title": "ROAM: Reinforcement Learning Optimized Adaptive Moving Target Defense for Smart Grid"
+        },
+        {
+          "id": "2610.18313",
+          "column": "cps",
+          "title": "Infrastructure-Aware Runtime Protection of Co-Deployed AI Services at the Industrial Edge"
+        },
+        {
+          "id": "2610.10616",
+          "column": "security",
+          "title": "When Routing Reveals Membership: Privacy Leakage from MoE Router Telemetry"
+        },
+        {
+          "id": "2610.03434",
+          "column": "security",
+          "title": "Persona Guardrail: A Production-Grade Defense Framework for Agentic Systems"
+        },
+        {
+          "id": "2610.08580",
+          "column": "automation",
+          "title": "Physical Design Automation for Planar Superconducting Quantum Chips"
+        },
+        {
+          "id": "2610.09057",
+          "column": "automation",
+          "title": "Epistemic Uncertainty-Aware Defect Detection for Quality Control in Medical Device Manufacturing"
+        }
+      ]
     }
   ]
 }

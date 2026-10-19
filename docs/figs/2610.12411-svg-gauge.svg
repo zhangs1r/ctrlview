@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560" font-family="Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif">
+  <rect width="980" height="560" fill="#ffffff"/>
+  <text x="26" y="40" font-size="21" font-weight="bold" fill="#16212b">窗口切空间拆成两块，每一路传感器只往自己那一块放信息</text>
+  <text x="26" y="66" font-size="14" fill="#5b6875">N 个位姿共 6N 个未知数；相对 LiDAR 因子的信息矩阵秩为 6N − 6，缺的那 6 维是整窗共同刚体运动</text>
+
+  <!-- left: gauge -->
+  <rect x="26" y="92" width="440" height="386" rx="10" fill="#f6f8fa" stroke="#c3ced8" stroke-width="1.5"/>
+  <text x="46" y="124" font-size="17" font-weight="bold" fill="#16212b">𝒢　全局刚体模态，6 维</text>
+  <rect x="46" y="136" width="200" height="24" rx="12" fill="#fbe3e0" stroke="#e08b80"/>
+  <text x="58" y="153" font-size="13" fill="#a3311f">LiDAR 在这里恒为 0</text>
+  <text x="46" y="184" font-size="13.5" fill="#4a5763">整窗一起平移或一起转动，所有相对残差一个字都不变</text>
+
+  <rect x="46" y="202" width="400" height="52" rx="7" fill="#ffffff" stroke="#c3ced8"/>
+  <text x="60" y="224" font-size="14" font-weight="bold" fill="#16212b">平移　3 维</text>
+  <text x="60" y="244" font-size="13" fill="#4a5763">由 DD 伪距因子钉住，几何和 IMU 位置共用同一套视线</text>
+
+  <rect x="46" y="262" width="400" height="52" rx="7" fill="#ffffff" stroke="#c3ced8"/>
+  <text x="60" y="284" font-size="14" font-weight="bold" fill="#16212b">横滚与俯仰　2 维</text>
+  <text x="60" y="304" font-size="13" fill="#4a5763">由重力方向钉住，重力模长固定为 g₀，只估方向</text>
+
+  <rect x="46" y="322" width="400" height="52" rx="7" fill="#ffffff" stroke="#c3ced8"/>
+  <text x="60" y="344" font-size="14" font-weight="bold" fill="#16212b">航向　1 维</text>
+  <text x="60" y="364" font-size="13" fill="#4a5763">单历元 GNSS 定不了航向，靠 Doppler 约束的运动加航向拟合</text>
+
+  <rect x="46" y="388" width="400" height="72" rx="7" fill="#eef5fb" stroke="#9dbdd8"/>
+  <text x="60" y="412" font-size="13.5" fill="#26485f">把相对 LiDAR 因子的权重加大，这一块的信息一点也不涨</text>
+  <text x="60" y="434" font-size="13.5" fill="#26485f">全局基准只能由别的模态通过共享外参送进来</text>
+  <text x="60" y="454" font-size="12.5" fill="#6b7a87">这正是式 (19) 到式 (23) 那条论证的落点</text>
+
+  <!-- right: relative shape -->
+  <rect x="492" y="92" width="462" height="386" rx="10" fill="#f6f8fa" stroke="#c3ced8" stroke-width="1.5"/>
+  <text x="512" y="124" font-size="17" font-weight="bold" fill="#16212b">𝒢⊥　窗口内相对形状，6N − 6 维</text>
+  <rect x="512" y="136" width="250" height="24" rx="12" fill="#dceaf7" stroke="#7ba9cd"/>
+  <text x="524" y="153" font-size="13" fill="#1f5583">dense S2MS LiDAR 因子在这里供信息</text>
+  <text x="512" y="184" font-size="13.5" fill="#4a5763">每个位姿相对重叠关键帧的体素对应残差都落在这块里</text>
+
+  <rect x="512" y="202" width="422" height="112" rx="7" fill="#ffffff" stroke="#c3ced8"/>
+  <text x="526" y="226" font-size="14" font-weight="bold" fill="#16212b">几何退化削弱的是这一块</text>
+  <text x="526" y="248" font-size="13" fill="#4a5763">体素法向方向不够丰富时，Hᵢᵢ 在少数方向上变弱</text>
+  <text x="526" y="268" font-size="13" fill="#4a5763">桥面直线段、平坦地面、贴墙立面都属于这一类</text>
+  <text x="526" y="290" font-size="13" fill="#4a5763">IMU 与 GNSS 要替它兜的，就是这里的欠约束方向</text>
+  <text x="526" y="308" font-size="12.5" fill="#6b7a87">图 5(b) 的矩阵结构就是这块空间的位置说明</text>
+
+  <rect x="512" y="326" width="422" height="134" rx="7" fill="#fbe3e0" stroke="#e08b80"/>
+  <text x="526" y="350" font-size="14" font-weight="bold" fill="#a3311f">两种秩缺，处理方式各走一路</text>
+  <text x="526" y="374" font-size="13" fill="#7d3b2c">结构性的那 6 维与场景无关，加多少 LiDAR 权重都补不上</text>
+  <text x="526" y="394" font-size="13" fill="#7d3b2c">场景性的那一类随环境变，靠 IMU 与 GNSS 在窗口里补</text>
+  <text x="526" y="418" font-size="13" fill="#7d3b2c">论文用秩分析把两者分开，没有用拒绝观测的办法回避</text>
+  <text x="526" y="442" font-size="12.5" fill="#8d6257">把 6 维共同模态当成需要 LiDAR 去补的方向，是这里最容易画错的一处</text>
+
+  <!-- bottom formula -->
+  <rect x="26" y="486" width="928" height="62" rx="8" fill="#eef5fb" stroke="#9dbdd8"/>
+  <text x="44" y="512" font-size="15" font-weight="bold" fill="#26485f">rank Hᴸ = 6N − 6，结构性秩缺恒为 6 维</text>
+  <text x="44" y="536" font-size="14" fill="#26485f">要定住全局基准，最少要 6 个独立观测，且分别落在平移、横滚俯仰、航向三个方向</text>
+</svg>

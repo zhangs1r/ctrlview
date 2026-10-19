@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" font-family="Helvetica, Arial, sans-serif">
+  <rect width="960" height="540" fill="#ffffff"/>
+  <text x="40" y="42" font-size="21" font-weight="bold" fill="#1a1a1a">示意图 A　四段数据流（编者绘制）</text>
+  <text x="40" y="70" font-size="14" fill="#555555">横向是数据依赖，不是时间轴。方框表示信息在哪里被加工，箭头表示传出去的东西。</text>
+
+  <rect x="40" y="104" width="200" height="86" rx="6" fill="#eef3fb" stroke="#4a6fa5" stroke-width="1.6"/>
+  <text x="140" y="134" font-size="14.5" font-weight="bold" text-anchor="middle" fill="#1f3d6b">指令与初始三视角 RGB</text>
+  <text x="140" y="158" font-size="12.5" text-anchor="middle" fill="#39527a">任务书与第一帧画面</text>
+  <text x="140" y="177" font-size="12.5" text-anchor="middle" fill="#39527a">只在开头用一次</text>
+
+  <line x1="240" y1="147" x2="296" y2="147" stroke="#555555" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="268" y="137" font-size="11.5" text-anchor="middle" fill="#555555">输入</text>
+
+  <rect x="300" y="104" width="210" height="86" rx="6" fill="#ffffff" stroke="#333333" stroke-width="1.8"/>
+  <text x="405" y="132" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">① 单元构造器</text>
+  <text x="405" y="155" font-size="12.5" text-anchor="middle" fill="#333333">冻结的多模态语言模型</text>
+  <text x="405" y="174" font-size="12.5" text-anchor="middle" fill="#333333">输出结构固定，键限定在词表</text>
+
+  <line x1="510" y1="147" x2="566" y2="147" stroke="#555555" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="538" y="137" font-size="11.5" text-anchor="middle" fill="#555555">记录</text>
+
+  <rect x="570" y="104" width="350" height="86" rx="6" fill="#ffffff" stroke="#333333" stroke-width="1.8"/>
+  <text x="745" y="132" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">有序单元记录 ξ₁ 到 ξ_K</text>
+  <text x="745" y="155" font-size="12.5" text-anchor="middle" fill="#333333">每条含规范键 zᵢ、局部目标描述 ℓᵢ</text>
+  <text x="745" y="174" font-size="12.5" text-anchor="middle" fill="#333333">成功判据 cᵢ⁺、失败判据 cᵢ⁻、时限 Tᵢ</text>
+
+  <rect x="40" y="266" width="270" height="96" rx="6" fill="#f2f7f0" stroke="#4a7a43" stroke-width="1.6"/>
+  <text x="175" y="292" font-size="15" font-weight="bold" text-anchor="middle" fill="#2f5529">② 离线能力注册表（冻结）</text>
+  <text x="175" y="315" font-size="12.5" text-anchor="middle" fill="#3b6334">每个执行器存接口描述 b_k</text>
+  <text x="175" y="334" font-size="12.5" text-anchor="middle" fill="#3b6334">校准成功率 q̂ 与兼容掩码</text>
+
+  <line x1="310" y1="314" x2="366" y2="314" stroke="#555555" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="338" y="304" font-size="11.5" text-anchor="middle" fill="#555555">可用集</text>
+
+  <rect x="370" y="266" width="250" height="96" rx="6" fill="#ffffff" stroke="#333333" stroke-width="1.8"/>
+  <text x="495" y="292" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">③ 匹配器与派发器</text>
+  <text x="495" y="315" font-size="12.5" text-anchor="middle" fill="#333333">按规范化描述判是否兼容</text>
+  <text x="495" y="334" font-size="12.5" text-anchor="middle" fill="#333333">在兼容集里取 q̂ 最大的一个</text>
+
+  <line x1="620" y1="314" x2="676" y2="314" stroke="#555555" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="648" y="304" font-size="11.5" text-anchor="middle" fill="#555555">适配</text>
+
+  <rect x="680" y="266" width="240" height="96" rx="6" fill="#ffffff" stroke="#333333" stroke-width="1.8"/>
+  <text x="800" y="292" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">策略模型 π_k</text>
+  <text x="800" y="315" font-size="12.5" text-anchor="middle" fill="#333333">各自原生控制频率</text>
+  <text x="800" y="334" font-size="12.5" text-anchor="middle" fill="#333333">不联合训练，不共享主干</text>
+
+  <line x1="800" y1="362" x2="800" y2="402" stroke="#555555" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="806" y="387" font-size="11.5" fill="#555555">连续动作 a_t</text>
+
+  <rect x="620" y="406" width="300" height="96" rx="6" fill="#fdf4e8" stroke="#a5762a" stroke-width="1.6"/>
+  <text x="770" y="432" font-size="15" font-weight="bold" text-anchor="middle" fill="#7d5715">④ 视觉核验器</text>
+  <text x="770" y="455" font-size="12.5" text-anchor="middle" fill="#8a6520">每 Δ 秒读一次三视角 RGB</text>
+  <text x="770" y="474" font-size="12.5" text-anchor="middle" fill="#8a6520">给出继续、成功、失败三种信号</text>
+
+  <line x1="620" y1="454" x2="500" y2="454" stroke="#555555" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="560" y="443" font-size="11.5" text-anchor="middle" fill="#555555">边界信号</text>
+
+  <rect x="150" y="406" width="350" height="96" rx="6" fill="#fdeceb" stroke="#a5413a" stroke-width="1.6"/>
+  <text x="325" y="432" font-size="15" font-weight="bold" text-anchor="middle" fill="#7d2b25">边界状态 s 回到下一单元</text>
+  <text x="325" y="455" font-size="12.5" text-anchor="middle" fill="#8a3831">成功就推进到 i+1，失败就留在 i</text>
+  <text x="325" y="474" font-size="12.5" text-anchor="middle" fill="#8a3831">已核验的单元不重放</text>
+
+  <path d="M150 454 L96 454 L96 196 L405 196 L405 266" fill="none" stroke="#a5413a" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+  <text x="112" y="352" font-size="11.5" fill="#8a3831" transform="rotate(-90 112 352)">新边界观测与新历史回到第 ③ 步</text>
+
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#555555"/>
+    </marker>
+  </defs>
+</svg>

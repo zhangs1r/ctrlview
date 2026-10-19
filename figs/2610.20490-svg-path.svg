@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .t{font-size:15px;font-weight:700;fill:#1b1b1f}
+    .h{font-size:12.5px;font-weight:700;fill:#1b1b1f}
+    .b{font-size:12.5px;fill:#1b1b1f}
+    .s{font-size:11.5px;fill:#6b6b78}
+    .good{fill:#3f7d55}
+    .bad{fill:#b85028}
+  </style>
+
+  <text class="t" x="30" y="32">障碍参数减小的时候，内点法解的秩收敛到哪里</text>
+  <text class="s" x="30" y="52">纵轴是幂等参数 rank 的计数口径，横轴是障碍参数 μ，从右向左减小；两条曲线的数据来源是式 (7) 与 Assumption 1</text>
+
+  <!-- axes -->
+  <line x1="110" y1="440" x2="820" y2="440" stroke="#5c5c5c" stroke-width="1.6"/>
+  <line x1="110" y1="440" x2="110" y2="80" stroke="#5c5c5c" stroke-width="1.6"/>
+
+  <text class="h" x="820" y="464" text-anchor="end">μ 减小 →</text>
+  <text class="s" x="110" y="464">μ 大（远离最优）</text>
+
+  <text class="h" x="98" y="86" text-anchor="end">rank = N</text>
+  <text class="h" x="98" y="212" text-anchor="end">rank = N − 2</text>
+  <text class="h" x="98" y="350" text-anchor="end">rank = 2</text>
+  <text class="h" x="98" y="436" text-anchor="end">rank = 1</text>
+
+  <!-- guide lines -->
+  <g stroke="#e2e0da" stroke-width="1.2" stroke-dasharray="4 4">
+    <line x1="110" y1="82" x2="820" y2="82"/>
+    <line x1="110" y1="208" x2="820" y2="208"/>
+    <line x1="110" y1="346" x2="820" y2="346"/>
+    <line x1="110" y1="432" x2="820" y2="432"/>
+  </g>
+
+  <!-- green curve: rank -> 1 -->
+  <path d="M 110 82 C 300 84, 560 130, 700 300 C 760 380, 795 424, 806 430"
+        fill="none" stroke="#3f7d55" stroke-width="2.6"/>
+  <circle cx="806" cy="430" r="5" fill="#3f7d55"/>
+  <text class="b good" x="700" y="404" text-anchor="end">完全激励，秩收敛到 1</text>
+
+  <!-- orange curve: rank -> N-2 -->
+  <path d="M 110 82 C 260 86, 430 120, 540 170 C 610 200, 680 205, 806 207"
+        fill="none" stroke="#b85028" stroke-width="2.6" stroke-dasharray="9 5"/>
+  <circle cx="806" cy="207" r="5" fill="#b85028"/>
+  <text class="b bad" x="620" y="196">存在保观测对称轨道，秩卡在 N − 2</text>
+
+  <!-- cost tightness band -->
+  <rect x="110" y="452" width="710" height="30" rx="6" fill="#f4f6f8" stroke="#ccd4dc" stroke-width="1.2"/>
+  <text class="b" x="126" y="472">两条曲线的整个下半段代价都紧，即 p*_SDP = p*_QCQP，差别只落在秩这一件事上</text>
+
+  <!-- footnote -->
+  <text class="s" x="110" y="508">绿色是 Assumption 1 的情形（corank H⋆ = 1），橙色是 Theorem 1 的情形（corank H⋆ ≥ 2）。N 为提升后状态 x 的维数。</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 480" width="980" height="480" font-family="Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif">
+  <rect width="980" height="480" fill="#ffffff"/>
+  <text x="26" y="40" font-size="21" font-weight="bold" fill="#16212b">两条离线后端流水线，差别在点云要不要再配一遍</text>
+  <text x="26" y="66" font-size="14" fill="#5b6875">同一条 30 分钟的 Whampoa 序列，两套后端各自的最佳解</text>
+
+  <!-- GLIO2 track -->
+  <rect x="26" y="88" width="928" height="164" rx="10" fill="#eef5fb" stroke="#9dbdd8" stroke-width="1.6"/>
+  <text x="46" y="116" font-size="16" font-weight="bold" fill="#1f5583">GLIO2 后端</text>
+
+  <rect x="46" y="130" width="228" height="86" rx="8" fill="#ffffff" stroke="#7ba9cd"/>
+  <text x="60" y="154" font-size="13.5" font-weight="bold" fill="#16212b">在线前端</text>
+  <text x="60" y="176" font-size="12.5" fill="#4a5763">滑窗内每轮迭代重新关联体素对应</text>
+  <text x="60" y="196" font-size="12.5" fill="#4a5763">并重新线性化全部 LiDAR 因子</text>
+
+  <polygon points="282,172 302,178 282,184" fill="#5b6875"/>
+  <rect x="310" y="130" width="228" height="86" rx="8" fill="#ffffff" stroke="#7ba9cd"/>
+  <text x="324" y="154" font-size="13.5" font-weight="bold" fill="#16212b">边缘化时缓存</text>
+  <text x="324" y="176" font-size="12.5" fill="#4a5763">每帧只留一个紧凑的相对位姿因子</text>
+  <text x="324" y="196" font-size="12.5" fill="#4a5763">带着在线配准收敛后的信息矩阵</text>
+
+  <polygon points="546,172 566,178 546,184" fill="#5b6875"/>
+  <rect x="574" y="130" width="228" height="86" rx="8" fill="#ffffff" stroke="#7ba9cd"/>
+  <text x="588" y="154" font-size="13.5" font-weight="bold" fill="#16212b">离线 batch</text>
+  <text x="588" y="176" font-size="12.5" fill="#4a5763">LM 只重线性化紧凑残差</text>
+  <text x="588" y="196" font-size="12.5" fill="#4a5763">原始点云直接丢弃</text>
+
+  <rect x="818" y="130" width="118" height="86" rx="8" fill="#dceaf7" stroke="#7ba9cd"/>
+  <text x="877" y="158" font-size="15" font-weight="bold" fill="#1f5583" text-anchor="middle">24.2 s</text>
+  <text x="877" y="180" font-size="12.5" fill="#26485f" text-anchor="middle">15,346 节点</text>
+  <text x="877" y="200" font-size="12.5" fill="#26485f" text-anchor="middle">3D ATE 2.99 m</text>
+
+  <!-- GLIO track -->
+  <rect x="26" y="268" width="928" height="150" rx="10" fill="#f6f8fa" stroke="#c3ced8" stroke-width="1.6"/>
+  <text x="46" y="296" font-size="16" font-weight="bold" fill="#4a5763">GLIO 后端</text>
+
+  <rect x="46" y="310" width="228" height="86" rx="8" fill="#ffffff" stroke="#c3ced8"/>
+  <text x="60" y="334" font-size="13.5" font-weight="bold" fill="#16212b">在线 S2M 前端</text>
+  <text x="60" y="356" font-size="12.5" fill="#4a5763">每帧压成一个绝对位姿先验</text>
+  <text x="60" y="376" font-size="12.5" fill="#4a5763">先缩成位姿再进融合</text>
+
+  <polygon points="282,352 302,358 282,364" fill="#8b9aa6"/>
+  <rect x="310" y="310" width="492" height="86" rx="8" fill="#ffffff" stroke="#c3ced8"/>
+  <text x="324" y="334" font-size="13.5" font-weight="bold" fill="#16212b">离线 batch</text>
+  <text x="324" y="356" font-size="12.5" fill="#4a5763">重新配准点云做 S2MS，再与 DD 伪距和 Doppler 做全局批量优化</text>
+  <text x="324" y="376" font-size="12.5" fill="#4a5763">需要前端不发散才能拿到有效初值，且只保留约每三帧一个关键帧</text>
+
+  <rect x="818" y="310" width="118" height="86" rx="8" fill="#e9edf1" stroke="#c3ced8"/>
+  <text x="877" y="338" font-size="15" font-weight="bold" fill="#4a5763" text-anchor="middle">280 s</text>
+  <text x="877" y="360" font-size="12.5" fill="#5b6875" text-anchor="middle">4,603 节点</text>
+  <text x="877" y="380" font-size="12.5" fill="#5b6875" text-anchor="middle">3D ATE 5.97 m</text>
+
+  <rect x="26" y="432" width="928" height="34" rx="8" fill="#fbe3e0" stroke="#e08b80"/>
+  <text x="44" y="455" font-size="13" fill="#7d3b2c">这一组对比同时含两层差异，重不重配准，以及优化全部帧还是关键帧子集，不能只当成优化器快慢来读</text>
+</svg>

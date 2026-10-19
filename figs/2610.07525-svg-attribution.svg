@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+  <rect width="960" height="520" fill="#ffffff"/>
+
+  <text x="24" y="34" font-size="19" font-weight="700" fill="#1c2530">一次 rollout 里，12 个手指关节的控制权归谁</text>
+
+  <!-- legend -->
+  <g font-size="13" fill="#3d4a58">
+    <rect x="24" y="52" width="16" height="12" rx="2" fill="#8fb8d8" stroke="#5b8cb4" stroke-width="1"/>
+    <text x="46" y="63">基座策略在控</text>
+    <rect x="146" y="52" width="16" height="12" rx="2" fill="#e8a961" stroke="#c4832f" stroke-width="1"/>
+    <text x="168" y="63">人手在纠</text>
+    <rect x="248" y="52" width="16" height="12" rx="2" fill="#4f9d8a" stroke="#35705f" stroke-width="1"/>
+    <text x="270" y="63">软化后的受纠关节（增益降为 k_cmp）</text>
+  </g>
+
+  <!-- axes -->
+  <line x1="70" y1="120" x2="70" y2="430" stroke="#1c2530" stroke-width="1.6"/>
+  <line x1="70" y1="430" x2="880" y2="430" stroke="#1c2530" stroke-width="1.6"/>
+  <text x="30" y="118" font-size="13" fill="#3d4a58">时间</text>
+  <text x="30" y="134" font-size="11" fill="#7a8794">控制步</text>
+  <text x="836" y="452" font-size="13" fill="#3d4a58">一次 rollout 的推进</text>
+
+  <!-- mask bands: rows are joints -->
+  <text x="78" y="404" font-size="11.5" fill="#7a8794">关节 1</text>
+  <text x="78" y="372" font-size="11.5" fill="#7a8794">关节 2</text>
+  <text x="78" y="340" font-size="11.5" fill="#7a8794">关节 3</text>
+  <text x="78" y="308" font-size="11.5" fill="#7a8794">关节 4</text>
+  <text x="78" y="276" font-size="11.5" fill="#7a8794">关节 5</text>
+  <text x="78" y="244" font-size="11.5" fill="#7a8794">关节 6</text>
+  <text x="78" y="212" font-size="11.5" fill="#7a8794">关节 7</text>
+  <text x="78" y="180" font-size="11.5" fill="#7a8794">关节 8</text>
+
+  <!-- base policy: all joints, spanning whole time -->
+  <g stroke-width="0" opacity="0.95">
+    <rect x="112" y="392" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="360" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="328" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="296" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="264" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="232" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="200" width="740" height="18" fill="#8fb8d8"/>
+    <rect x="112" y="168" width="740" height="18" fill="#8fb8d8"/>
+  </g>
+  <text x="118" y="405" font-size="10.5" fill="#1f4363">基座策略目标 a^RL</text>
+
+  <!-- intervention window -->
+  <rect x="420" y="150" width="250" height="272" fill="#e8a961" opacity="0.30"/>
+  <line x1="420" y1="150" x2="420" y2="422" stroke="#c4832f" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <line x1="670" y1="150" x2="670" y2="422" stroke="#c4832f" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="424" y="166" font-size="11.5" fill="#8a5a15">干预起点</text>
+  <text x="600" y="166" font-size="11.5" fill="#8a5a15">释放</text>
+
+  <!-- overridden joints during window (green) : joints 1,2 (index finger) -->
+  <rect x="420" y="392" width="250" height="18" fill="#4f9d8a"/>
+  <rect x="420" y="360" width="250" height="18" fill="#4f9d8a"/>
+  <text x="426" y="405" font-size="10.5" fill="#ffffff">引导目标 a^h（跟住实测 qₜ）</text>
+
+  <!-- blend zones: min-jerk interpolation at both boundaries -->
+  <rect x="392" y="360" width="28" height="50" fill="#c9dced"/>
+  <rect x="670" y="360" width="28" height="50" fill="#c9dced"/>
+  <rect x="392" y="392" width="28" height="18" fill="#c9dced"/>
+  <rect x="670" y="392" width="28" height="18" fill="#c9dced"/>
+  <text x="700" y="330" font-size="11.5" fill="#3d4a58">两侧淡蓝带</text>
+  <text x="700" y="346" font-size="11.5" fill="#3d4a58">最小 jerk 插值</text>
+
+  <!-- annotation: unselected joints unaffected -->
+  <line x1="700" y1="344" x2="700" y2="360" stroke="#5b8cb4" stroke-width="1.4"/>
+  <line x1="700" y1="360" x2="640" y2="360" stroke="#5b8cb4" stroke-width="1.4"/>
+  <text x="714" y="344" font-size="11.5" fill="#1f4363">两侧淡蓝带是最小 jerk 插值，</text>
+  <text x="714" y="360" font-size="11.5" fill="#1f4363">把人工段与基座段接平。</text>
+
+  <!-- note: measured q of corrected fingers still feeds the policy -->
+  <rect x="112" y="466" width="740" height="40" rx="6" fill="#faeeda" stroke="#e8a961" stroke-width="1.2"/>
+  <text x="126" y="484" font-size="12.5" fill="#7a4d10">受纠关节的实测位置 qₜ 仍然进入基座策略的观测历史，所以未选中的手指会跟着修正后的状态继续协调。</text>
+  <text x="126" y="500" font-size="12.5" fill="#7a4d10">训练标签 a★ 只在橙色窗口内把受控关节换成 a^f，窗口外保留 a^RL。</text>
+</svg>

@@ -1,0 +1,253 @@
+{
+ "column": "security",
+ "ranked": [
+  {
+   "id": "2610.10616",
+   "title": "When Routing Reveals Membership: Privacy Leakage from MoE Router Telemetry",
+   "total": 100.0,
+   "threat_model": 2,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 2,
+   "why": "五维证据齐全：黑盒遥测、机制溯源、带量纲指标与遥测扰动的代价权衡。"
+  },
+  {
+   "id": "2610.10909",
+   "title": "Power Side-Channel Membership Inference Attack on Embedded Machine Learning",
+   "total": 90.0,
+   "threat_model": 2,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "假设极宽容且跨4数据集、两类架构、2平台16组配置验证，唯缺防御代价。"
+  },
+  {
+   "id": "2610.14215",
+   "title": "Physical Side-Channel Attacks on Edge LLMs: Extracting Output Tokens and User Prompts",
+   "total": 90.0,
+   "threat_model": 2,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "三种威胁假设与有限迹数清晰，指标完整，但仅单一模型与单一设备。"
+  },
+  {
+   "id": "2610.03434",
+   "title": "Persona Guardrail: A Production-Grade Defense Framework for Agentic Systems",
+   "total": 87.5,
+   "threat_model": 2,
+   "assumption_bounds": 1,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 2,
+   "why": "生产级运行防御，给出时延预算与误拦误放率代价，威胁模型较明确。"
+  },
+  {
+   "id": "2610.13928",
+   "title": "AI Models Can Provably Hide Arbitrary Capabilities",
+   "total": 87.5,
+   "threat_model": 2,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 1,
+   "defense_cost": 1,
+   "why": "全权重可见下仍有密码学保证，但指标仅定性、防御代价讨论偏弱。"
+  },
+  {
+   "id": "2610.03502",
+   "title": "Certified Mechanistic Edits: Behavioral Guarantees for Skill Removal and Preservation",
+   "total": 85.0,
+   "threat_model": 1,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 2,
+   "why": "形式化保证与移除-保留权衡突出，但偏理论、适用网络规模有限。"
+  },
+  {
+   "id": "2610.16305",
+   "title": "ATTCK-R: Knowledge-Aware Long-Horizon Jailbreaking for Protected LLMs",
+   "total": 82.5,
+   "threat_model": 2,
+   "assumption_bounds": 1,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 1,
+   "why": "ASR定义与9模型对比清楚，查询预算与防御代价交代不足。"
+  },
+  {
+   "id": "2610.04985",
+   "title": "Hidden Risks of Jev: An Empirical Study of Security, Privacy, and Dual Use",
+   "total": 82.5,
+   "threat_model": 2,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 1,
+   "defense_cost": 0,
+   "why": "黑盒API与白盒本地双设定，多类攻击面完整，指标仅定性且无代价。"
+  },
+  {
+   "id": "2610.22943",
+   "title": "When Core-Network Elements Become Reachable: Field-Level Exploitability Analysis in Diameter",
+   "total": 77.5,
+   "threat_model": 2,
+   "assumption_bounds": 1,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "字段级可利用性与指标强，但威胁模型只称所考虑的、无代价分析。"
+  },
+  {
+   "id": "2610.06401",
+   "title": "RAISED: Self-Distillation for Robustness to Prompt Injection in LLM Agents",
+   "total": 67.5,
+   "threat_model": 2,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 1,
+   "defense_cost": 2,
+   "why": "效用漂移与效用保持论证好，ASR无量化、攻击者访问假设缺失。"
+  },
+  {
+   "id": "2610.17542",
+   "title": "Discovery or Memorization? A Faithful Benchmark for Real-World Business-Logic Vulnerability Discovery",
+   "total": 65.0,
+   "threat_model": 1,
+   "assumption_bounds": 2,
+   "mechanism": 1,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "黑灰盒双赛道与基准指标扎实，但非攻防机制、无防御代价。"
+  },
+  {
+   "id": "2610.19039",
+   "title": "Combining Post-Quantum Cryptography and Quantum Key Distribution: Taxonomy, Constructions, Proofs, Standards, Deployments and Open Problems",
+   "total": 65.0,
+   "threat_model": 1,
+   "assumption_bounds": 2,
+   "mechanism": 2,
+   "metrics": 0,
+   "defense_cost": 1,
+   "why": "假设与可容忍妥协成体系比较，无量化指标，属综述性工作。"
+  },
+  {
+   "id": "2610.04269",
+   "title": "Self-Reflection Fine-Tuning: Enhancing Agent Security against Prompt Injection Attacks from Failure Experience",
+   "total": 62.5,
+   "threat_model": 2,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 1,
+   "defense_cost": 1,
+   "why": "训练环节具体且声称保任务性能，无量化ASR与访问假设。"
+  },
+  {
+   "id": "2610.09552",
+   "title": "Constitution-Guided Watermarking",
+   "total": 60.0,
+   "threat_model": 1,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 2,
+   "why": "机制与质量-鲁棒性权衡明确，威胁模型与访问假设摘要缺失。"
+  },
+  {
+   "id": "2610.06258",
+   "title": "SatBleed: Security of Commoditized Communication Modules in Satellites",
+   "total": 57.5,
+   "threat_model": 2,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 1,
+   "defense_cost": 0,
+   "why": "COM入口与接管目标明确，无访问假设、指标仅计数。"
+  },
+  {
+   "id": "2610.03820",
+   "title": "From Requirements to Attack Trees: Grounded LLM Agents for Design-Time Security Review",
+   "total": 55.0,
+   "threat_model": 1,
+   "assumption_bounds": 1,
+   "mechanism": 2,
+   "metrics": 1,
+   "defense_cost": 0,
+   "why": "设计期攻击树机制完整，攻击者模型与量化指标薄弱。"
+  },
+  {
+   "id": "2610.04396",
+   "title": "JASPER: Special Session on Joint Reliability And Security Assessment of SPlit Computing for Edge Robustness",
+   "total": 50.0,
+   "threat_model": 1,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "环节与指标明确，但缺攻击者模型与防御代价。"
+  },
+  {
+   "id": "2610.13170",
+   "title": "Understanding Verification Vulnerabilities in Cross-chain Bridges: An Empirical Study",
+   "total": 50.0,
+   "threat_model": 1,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "跨链验证语义分类细致，无威胁模型与访问假设。"
+  },
+  {
+   "id": "2610.08066",
+   "title": "Systematically Optimized CNN-Transformer with Focal Loss for Imbalanced Intrusion Detection on NSL-KDD",
+   "total": 40.0,
+   "threat_model": 0,
+   "assumption_bounds": 0,
+   "mechanism": 2,
+   "metrics": 2,
+   "defense_cost": 1,
+   "why": "纯检测模型调优，无威胁模型与访问边界。"
+  },
+  {
+   "id": "2610.06507",
+   "title": "An Evaluation of the Semantic Understanding Capabilities of Large Language Models for Web Attack Payloads",
+   "total": 30.0,
+   "threat_model": 1,
+   "assumption_bounds": 0,
+   "mechanism": 0,
+   "metrics": 2,
+   "defense_cost": 0,
+   "why": "评测基准，无攻防机制、无威胁模型。"
+  }
+ ],
+ "picks": [
+  {
+   "id": "2610.10616",
+   "title": "When Routing Reveals Membership: Privacy Leakage from MoE Router Telemetry",
+   "total": 100.0,
+   "why": "威胁模型、假设边界、机制、量纲与防御代价五维均有摘要级证据，跨3种MoE架构与3个域验证，隐私泄露叙事非安全背景读者也易懂。"
+  },
+  {
+   "id": "2610.03434",
+   "title": "Persona Guardrail: A Production-Grade Defense Framework for Agentic Systems",
+   "total": 87.5,
+   "why": "生产级运行防御，威胁模型明确，给出时延预算与误拦/误放率等防御代价，并与通用LLM护栏基线对比，非安全背景读者易读。"
+  }
+ ],
+ "rejected_top": [
+  {
+   "id": "2610.10909",
+   "title": "Power Side-Channel Membership Inference Attack on Embedded Machine Learning",
+   "total": 90.0,
+   "why": "总分并列第二，但全文未讨论防御代价，硬件功耗侧信道场景迁移性弱。"
+  },
+  {
+   "id": "2610.14215",
+   "title": "Physical Side-Channel Attacks on Edge LLMs: Extracting Output Tokens and User Prompts",
+   "total": 90.0,
+   "why": "仅在LLaMA-3.2-1B与树莓派5这一单一模型/设备上验证，且无防御代价讨论。"
+  }
+ ]
+}
