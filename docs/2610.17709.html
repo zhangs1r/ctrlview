@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261019192040"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.17709.html?force=20261019192040" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.17709.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">具身智能与 VLA · 论文精读</div>
@@ -41,7 +41,7 @@ arXiv:2610.17709 · 2026-10-19 · 精读约 30 分钟</div>
 <hr>
 <h2>二、总体结构</h2>
 <p>论文没有画架构图，改进的部分不在网络里。下面的图 1 是它用来定义问题的总图，左边真机叠方块，右边真机挂胶带，红线上是 SCRIM 沿演示的取值。</p>
-<figure><img src="figs/2610.17709-fig1.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　论文原图。左右各是一条真机演示，上面是 rollout 连环截图，下面是同时刻的 SCRIM 分值，横轴是时间（秒）。左边叠方块在 7.3 秒和 12.9 秒各起一个峰，右边挂胶带在 20.9 秒对准处起峰，三个峰对应的画面里手指都还没有稳稳接触物体。</figcaption></figure>
+<figure><img src="figs/2610.17709-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　论文原图。左右各是一条真机演示，上面是 rollout 连环截图，下面是同时刻的 SCRIM 分值，横轴是时间（秒）。左边叠方块在 7.3 秒和 12.9 秒各起一个峰，右边挂胶带在 20.9 秒对准处起峰，三个峰对应的画面里手指都还没有稳稳接触物体。</figcaption></figure>
 <p>整条链子只有四段，从冻结策略出发，经过一个对抗者，落回演示数据本身。</p>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>冻结基座策略</td><td>§3 §4</td><td>演示数据与模仿策略 π</td><td>一个不再更新的基座控制器</td></tr><tr><td>造残差 MDP</td><td>§4 式 (3) (4)</td><td>原 MDP 与扰动预算 ε</td><td>动作空间只剩偏移量的新 MDP</td></tr><tr><td>训对抗者与评估器</td><td>§4 式 (5) (6)，附录 A.1</td><td>环境 rollout</td><td>每个状态的最坏价值增量 ΔQ</td></tr><tr><td>用分数</td><td>§5.1 §5.2，附录 A.3</td><td>全部演示状态的 ΔQ</td><td>加权训练或四分之一的子集</td></tr></tbody></table></div>
 <p><mark>四段用的都是同一个 ΔQ，没有第二套判据</mark>。这一点比选题本身更值得看，很多工作的诊断指标和训练信号是两套东西，最后对不上账。</p>
@@ -77,7 +77,7 @@ arXiv:2610.17709 · 2026-10-19 · 精读约 30 分钟</div>
 <h3>3.4 预算怎么定，这是全文最容易做错的一步</h3>
 <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003F5;</mi></mrow></math></math> 定得太小，任何扰动都改不动结果，所有状态的分数都是零。定得太大，基座策略本来就全崩了，每个状态看起来都关键，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><mi>Q</mi></mrow></math></math> 反而分不出差别。</p>
 <p>论文用一层随机残差扫描来定它。把冻住的基座策略配上均匀随机残差 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>&#x003C0;</mi><mo stretchy="false">&#x00028;</mo><mi>s</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003F5;</mi><mi>u</mi><mo>&#x0002C;</mo><mi>u</mi><mi>&#x0007E;</mi><mi>&#x1D4B0;</mi><mo stretchy="false">[</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002C;</mo><mn>1</mn><msup><mo stretchy="false">]</mo><mi>d</mi></msup></mrow></math></math>，每步重采一次，看成功率掉到哪，见下面的示意图 A。</p>
-<figure><img src="figs/2610.17709-svg-budget.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）横轴是逐轴扰动上界 ε，竖轴是冻住的基座策略成功率。数据取自论文表 7 的 StackCube 一行，每个 ε 跑 50 个 episode。ε 取 0 时成功率 72.0，取 0.05 时已经掉到 0。论文选的是 0.005，对应 24.0 这一档，也就是随机扰动已经能打掉一大半、但还没有全部打光的位置。左边那段扰动改不动结果，右边那段所有状态都像关键状态，只有中间一段 ΔQ 还能分辨状态。</figcaption></figure>
+<figure><img src="figs/2610.17709-svg-budget.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）横轴是逐轴扰动上界 ε，竖轴是冻住的基座策略成功率。数据取自论文表 7 的 StackCube 一行，每个 ε 跑 50 个 episode。ε 取 0 时成功率 72.0，取 0.05 时已经掉到 0。论文选的是 0.005，对应 24.0 这一档，也就是随机扰动已经能打掉一大半、但还没有全部打光的位置。左边那段扰动改不动结果，右边那段所有状态都像关键状态，只有中间一段 ΔQ 还能分辨状态。</figcaption></figure>
 <p>真机的实测值也说明了预算的量级。对抗训练只用了 50 次叠方块的 rollout 和 150 次挂胶带的 rollout 就收敛了，作者把这当成方法在真机上可行的证据。</p>
 <h3>3.5 分数到采样分布，锐度要对齐</h3>
 <p>两条下游用法都要先把逐状态分数变成一个采样分布，用的是同一套与度量无关的流程。</p>
@@ -116,7 +116,7 @@ arXiv:2610.17709 · 2026-10-19 · 精读约 30 分钟</div>
 <p>表 1，加权训练，成功率单位是百分比，每格 100 次 rollout，最优值加粗。</p>
 <p>最后一列是这张表最该看的地方。最强的基线 Q 函数方差只比均匀采样高 0.7 个百分点，而两个几何启发式直接把成绩打到 34.0 和 2.0，因为它们把真正关键的帧降权了。本文那行在四个任务里赢了三个，PegInsertion 上从 26.0 掉到 25.0，差一个点，论文写的是&quot;essentially matching&quot;，也就是基本持平。优势必须双向说清楚，到物体的距离这个基线不需要价值函数也不需要环境交互，只要目标位姿就够，在物体位置固定、动作空间规整的场合它最便宜。</p>
 <p>加权到底改了什么，论文图 4 给了直接对照。它把每个状态的动作误差百分位和 SCRIM 百分位做成二维直方图，看两者怎么相关。</p>
-<figure><img src="figs/2610.17709-fig4.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　论文原图。两块分别是 StackCube 和 PegInsertion，每块左边是均匀行为克隆、右边是 SCRIM 加权。横轴是关键性百分位，纵轴是动作误差百分位，每格标了 Spearman 相关 ρ 和成功率。StackCube 上从 ρ = 0.18、成功率 0.68 变成 ρ = 0.09、成功率 0.91，相关被压平。PegInsertion 上从 −0.07、0.26 变成 −0.32、0.25，关键性高的地方动作误差本来就小，加权没能改善成功率。</figcaption></figure>
+<figure><img src="figs/2610.17709-fig4.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　论文原图。两块分别是 StackCube 和 PegInsertion，每块左边是均匀行为克隆、右边是 SCRIM 加权。横轴是关键性百分位，纵轴是动作误差百分位，每格标了 Spearman 相关 ρ 和成功率。StackCube 上从 ρ = 0.18、成功率 0.68 变成 ρ = 0.09、成功率 0.91，相关被压平。PegInsertion 上从 −0.07、0.26 变成 −0.32、0.25，关键性高的地方动作误差本来就小，加权没能改善成功率。</figcaption></figure>
 <p>论文从这张图推出一个适用条件。<u>加权只在基座策略于关键状态上本来就不准时有用</u>。反过来，基座策略在关键状态上已经很准，加权改不了总分，因为它没有探索新行为的能力。PegInsertion 就是后一种情形。</p>
 <p>筛选那一组只留 25% 的演示，其余条件不变，见论文表 3。</p>
 <div class="scroll"><table><thead><tr><th>数据</th><th>方法</th><th>StackCube</th><th>TurnFaucet</th><th>PegInsertion</th><th>Hammer</th><th>平均</th></tr></thead><tbody><tr><td>100%</td><td>均匀（行为克隆）</td><td>68.0</td><td>39.0</td><td>26.0</td><td>61.0</td><td>48.5</td></tr><tr><td>25%</td><td>均匀采样</td><td>73.0</td><td>41.0</td><td><strong>14.0</strong></td><td>60.0</td><td>47.0</td></tr><tr><td>25%</td><td>Q 值差距 [13]</td><td>81.0</td><td>29.0</td><td>11.0</td><td>73.0</td><td>48.5</td></tr><tr><td>25%</td><td><strong>SCRIM（本文）</strong></td><td><strong>83.0</strong></td><td><strong>43.0</strong></td><td>13.0</td><td><strong>77.0</strong></td><td><strong>54.0</strong></td></tr></tbody></table></div>
@@ -134,7 +134,7 @@ arXiv:2610.17709 · 2026-10-19 · 精读约 30 分钟</div>
 <p>残差 RL 那一行是这张表的对照重点。它拿到的真实回合数和对抗者一样多，在叠方块上只从 56.0 抬到 60.0，在挂胶带上从 56.0 掉到 4.0，论文的说法是 severely degrades。用四分之一的数据，本文在两格上仍然高于均匀挑选。样本量偏小这件事要记住，每格只有 25 次 rollout。</p>
 <h3>4.5 因果验证与评估器容错</h3>
 <p>前面几节都是相关性。论文另外做了一组门控实验，只在分数最高的一小部分步数上施加扰动。</p>
-<figure><img src="figs/2610.17709-svg-gating.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）四个任务上施加扰动的成功率下降，数据取自论文表 9。竖轴是相对干净 rollout 的下降幅度，单位是百分点。门控比例 k 在 StackCube 和 TurnFaucet 上是 5%，PegInsertion 是 30%，Hammer 是 10%。同一个对抗者加在高分状态上掉 13.0、13.0、13.0、20.0，加在随机选的状态上只掉 6.0、4.0、6.0、1.0，换用均匀噪声只掉 1.0、0.0、0.0、3.0。</figcaption></figure>
+<figure><img src="figs/2610.17709-svg-gating.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）四个任务上施加扰动的成功率下降，数据取自论文表 9。竖轴是相对干净 rollout 的下降幅度，单位是百分点。门控比例 k 在 StackCube 和 TurnFaucet 上是 5%，PegInsertion 是 30%，Hammer 是 10%。同一个对抗者加在高分状态上掉 13.0、13.0、13.0、20.0，加在随机选的状态上只掉 6.0、4.0、6.0、1.0，换用均匀噪声只掉 1.0、0.0、0.0、3.0。</figcaption></figure>
 <p>论文的结论是，SCRIM 抓到的是通向失败的特定方向，不是对随机噪声的一般敏感度。这句判断直接由上面三组数支持，最后一组尤其干净，<mark>位置一样、幅度一样，只是方向从对抗者换成随机噪声，效果就没了</mark>。表 9 同时给了四个任务在干净执行下的成功率，分别是 69.0、29.0、13.0、66.0，下降都是相对这组基线算的。</p>
 <p>评估器本身有误差，论文也量了。给打分里每一次评估器查询注入高斯噪声，噪声尺度取标准差的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi></mrow></math></math> 倍。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>0.003</mn></mrow></math></math> 时候分数信噪比在 4.1 到 18.4 之间，成功率下降和没有噪声时差不多。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>0.01</mn></mrow></math></math> 时下降还有 8 到 19 个百分点。噪声再大，效果就随任务而变，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math></math> 时下降到 −1 到 5 个百分点。论文另外用训练到中点的检查点做了同样实验，在 Hammer 上和中点差别不大，在三个 ManiSkill 任务上下降到最多 5 个百分点，和随机门控一个水平。所以论文写明不声称对评估器欠训练的一般鲁棒性。</p>
 <p>附录 A.6 还有一段值得单说的结果。论文把真机叠方块的演示搬进仿真，做了一次 real2sim 重建。它在这个重建场景里训了一个视觉扩散策略，也训了整套 SCRIM。得到的分数与真机交互得到的分数相关，关键相位也一致。用它加权训练把仿真里的成功率从 40% 提到 66%。往回迁移到真机这件事论文没有做，明确留给了将来。</p>
@@ -189,5 +189,5 @@ arXiv:2610.17709 · 2026-10-19 · 精读约 30 分钟</div>
 <h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li>Policy Decorator<span style="color:var(--ink3);font-size:13px">　它训的是修正残差、把策略往好里推，靠稀疏奖励从零学修正方向；本文复用同一个残差形式但把目标反过来，训残差去破坏基座，理由是能破坏任务的动作比修正动作多</span></li><li>Establishing appropriate trust via critical states<span style="color:var(--ink3);font-size:13px">　它用最优动作价值减平均价值这个全动作空间的期望差当关键性，需要处处准确的 Q；本文只在对抗者搜出的局部邻域取最坏值，判据是最坏价值增量。原文只给 DOI</span></li></ul>
 <a class="paperlink" href="https://arxiv.org/abs/2610.17709" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2610.17709） →</a>
-<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-10-19 19:20</footer>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
 </div></body></html>

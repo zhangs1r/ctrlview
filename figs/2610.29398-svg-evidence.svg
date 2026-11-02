@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 486" width="920" height="486" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#5f6068;font-size:12px}
+    .num{fill:#1b1b1f;font-size:14px;font-weight:700}
+    .arr{stroke:#8a8a96;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .in{fill:#eef1f5;stroke:#a9b2bf;stroke-width:1.6}
+    .gate{fill:#f6f1f8;stroke:#c2a8cf;stroke-width:1.6}
+    .dec{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.6}
+    .nok{fill:#b23b3b;font-size:12px;font-weight:650}
+    .ok{fill:#3f7a4f;font-size:12px;font-weight:650}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a96"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="34">一件针阀的 36 帧怎么压成 1 个 OK/NOK</text>
+  <text class="sm" x="30" y="56">角度位置 θ 由伺服分度台给出，20° 一步，18 步一圈；两个相机在同一停位各曝一次</text>
+
+  <rect class="in" x="30" y="86" width="205" height="150" rx="8"/>
+  <text class="blk" x="46" y="112">座面 18 帧</text>
+  <text class="sm" x="46" y="136">θ = 0°, 20°, …, 340°</text>
+  <text class="sm" x="46" y="158">每帧 1280×1024</text>
+  <text class="sm" x="46" y="180">每帧独立过 R1 到 R10</text>
+  <text class="sm" x="46" y="202">输出该帧有无保留检测</text>
+  <text class="sm" x="46" y="224">不做跨视角对应</text>
+
+  <rect class="in" x="30" y="266" width="205" height="150" rx="8"/>
+  <text class="blk" x="46" y="292">轴面 18 帧</text>
+  <text class="sm" x="46" y="316">同一组 18 个角度位置</text>
+  <text class="sm" x="46" y="338">每帧 1280×1024</text>
+  <text class="sm" x="46" y="360">每帧 1 个二值结论</text>
+  <text class="sm" x="46" y="382">Rotation OK 或 Bad</text>
+  <text class="sm" x="46" y="404">不做位置定位</text>
+
+  <path class="arr" d="M237,161 L300,161"/>
+  <path class="arr" d="M237,341 L300,341"/>
+
+  <rect class="gate" x="304" y="86" width="276" height="150" rx="8"/>
+  <text class="blk" x="320" y="112">座面这一路是或门</text>
+  <text class="sm" x="320" y="136">尺寸超限的检测直接保留</text>
+  <text class="sm" x="320" y="158">尺寸合格进容许池，池内计数定去留</text>
+  <text class="sm" x="320" y="180">密封线区只放行 1 个，第 2 个即保留</text>
+  <text class="num" x="320" y="210">n_seat ≥ 1 即座面 NOK</text>
+  <text class="sm" x="320" y="228">n_seat 为 18 帧里有保留检测的帧数</text>
+
+  <rect class="gate" x="304" y="266" width="276" height="150" rx="8"/>
+  <text class="blk" x="320" y="292">轴面这一路是计数门</text>
+  <text class="sm" x="320" y="316">先逐帧二值化，再数报 Bad 的帧数</text>
+  <text class="sm" x="320" y="338">单帧报 Bad 不算轴面不合格</text>
+  <text class="sm" x="320" y="360">18 帧里至少 3 帧，才判轴面不合格</text>
+  <text class="num" x="320" y="390">n_shaft ≥ 3 即轴面 NOK</text>
+  <text class="sm" x="320" y="408">n_shaft 为 18 帧里报 Bad 的帧数</text>
+
+  <path class="arr" d="M582,175 C620,175 620,205 648,215"/>
+  <path class="arr" d="M582,327 C620,327 620,297 648,287"/>
+
+  <rect class="dec" x="652" y="176" width="240" height="176" rx="8"/>
+  <text class="blk" x="668" y="202">整件判定</text>
+  <text class="nok" x="668" y="226">轴面成立，直接判 NOK</text>
+  <text class="sm" x="668" y="248">这一条走在前面，属快速失败</text>
+  <text class="ok" x="668" y="272">轴面不成立，再看座面</text>
+  <text class="sm" x="668" y="294">座面带保留检测即为 NOK</text>
+  <text class="sm" x="668" y="316">输出 OK 或 NOK</text>
+  <text class="sm" x="668" y="338">附缺陷类别与代表帧号</text>
+
+  <text class="sm" x="30" y="448">36 帧没有平均，没有加权投票，也没有拼成一张大图。座面按任一帧取证，轴面按 3 帧计数，两条结论在最后一格汇合。</text>
+  <text class="sm" x="30" y="470">计数阈值 5 出现在帧内容许池，阈值 2 出现在密封线区，四个数字都由图纸公差经光学标定换算而来。</text>
+</svg>

@@ -207,6 +207,209 @@
           "title": "Epistemic Uncertainty-Aware Defect Detection for Quality Control in Medical Device Manufacturing"
         }
       ]
+    },
+    {
+      "id": "2026-W45",
+      "date": "2026-11-02",
+      "note": "W45 周批。窗口 2026-10-20→2026-11-02，候选 1961 篇；逐日覆盖 10-20~10-30 每天都有料，10-31/11-01 是周末、11-02 当日 arXiv 尚未公告（已直接查 API 复核：10-31 起 cs.RO/cs.LG 全类目 totalResults=0，属上游未发布，不是 columns.json 覆盖不到）。7 栏各 2 篇共 14 篇。各栏终选总分（rubric 口径 Σ score/2×weight）：slam 77.5/77.5（并列第二），embodied 90.0/80.0，control 100.0/95.0，robotics 87.5/85.0，cps 100.0/75.0，security 90.0/87.5，automation 95.0/80.0。压后理由：① slam 排第一的 2610.32487 是电力系统状态估计（IEEE 14-118 母线），无机器人平台、无尺度与初始化，栏目定位不符，改取并列第二的两篇（多曝光直接进因子图、隧道出口光照剧变是退化主线；编码器紧耦合 VIO、自建实车数据集与开源代码）；② security 排第二的 2610.30914 黑盒迁移仅 7.16%、无防御代价讨论，按 L1「优先有防御代价讨论的」让位 2610.28364（防御侧，293-404ms 延迟代价与 PoisonedRAG 界外召回近零都写明）；③ 纯应用调参（2610.35342）、纯仿真刷分（2610.27732 等）、纯 benchmark（2610.35642 VPR-Space、2610.34535）按 L1 一律压后。140 篇短名单全部打分，triage 三份账逐栏对齐。",
+      "picks": [
+        {
+          "id": "2610.33174",
+          "column": "slam",
+          "title": "Bracketing Shows the Way: Adaptive Multi-Exposure Policy as Input for Robust Visual SLAM",
+          "score": 77.5,
+          "scores": {
+            "design_rationale": 2,
+            "degradation": 2,
+            "classic_link": 2,
+            "init_scale": 0,
+            "eval_rigor": 1
+          },
+          "note": "曝光包围直接作为因子图约束、不靠 HDR 合成，隧道出口 32 m/s 光照剧变下误差降 78%，退化场景是主线"
+        },
+        {
+          "id": "2610.41768",
+          "column": "slam",
+          "title": "Visual-Inertial RGB-D SLAM with Encoders for a Differential Wheeled Robot",
+          "score": 77.5,
+          "scores": {
+            "design_rationale": 2,
+            "degradation": 2,
+            "classic_link": 2,
+            "init_scale": 0,
+            "eval_rigor": 1
+          },
+          "note": "针对特征缺失/快机动失效引入编码器，给出生成式量测模型并推 MAP 与 Jacobian，经典优化路线的直接继承；尺度重力未交代，仅自建数据集"
+        },
+        {
+          "id": "2610.31569",
+          "column": "embodied",
+          "title": "Echo: Coupled Action and Task Status Signal Denoising for Vision Language Action Models",
+          "score": 90.0,
+          "scores": {
+            "real_robot": 2,
+            "failure_modes": 2,
+            "data_pipeline": 1,
+            "task_def": 2,
+            "closed_loop": 2
+          },
+          "note": "stop/failure 两个信号直接作为 action chunk 的两个维度一起去噪，成功/失败/恢复三类轨迹自监督构造，真机实验；动作空间与 episode 判定定义明确，失败即恢复触发条件。"
+        },
+        {
+          "id": "2610.32271",
+          "column": "embodied",
+          "title": "From Tabletop to Walking Bot: Deploying a VLA Model on a Legged Manipulator Robot",
+          "score": 80.0,
+          "scores": {
+            "real_robot": 2,
+            "failure_modes": 1,
+            "data_pipeline": 2,
+            "task_def": 1,
+            "closed_loop": 2
+          },
+          "note": "真机 Go2+Piper 闭环 loco-manipulation，把 demo 覆盖度与模型容量分离（覆盖度扩展使 held-out 末端误差降 30%），数据管线本身就是方法贡献；失败只点到「dataset composition shapes success and failure」。"
+        },
+        {
+          "id": "2610.31540",
+          "column": "control",
+          "title": "Dispersive Tree Agreements for Multi-Robot Coordination",
+          "score": 100.0,
+          "scores": {
+            "problem_form": 2,
+            "why_hard": 2,
+            "theory": 2,
+            "classic_spectrum": 2,
+            "relaxation_cost": 2
+          },
+          "note": "摘要给出联合空间最优控制形式与联合约束，用局部约束替代机器人间耦合并证明准最优一致性（quiescent 极限），仿真加六机实机，五条全命中。"
+        },
+        {
+          "id": "2610.38417",
+          "column": "control",
+          "title": "Using delays for prescribed-time static output feedback stabilization of LTI controllable and observable systems",
+          "score": 95.0,
+          "scores": {
+            "problem_form": 2,
+            "why_hard": 2,
+            "theory": 2,
+            "classic_spectrum": 2,
+            "relaxation_cost": 1
+          },
+          "note": "设计问题写全（任何可控可观 LTI 的静态输出反馈增益显式构造）、规定时间收敛带条件、广义可控-可观 Gramian 直接接上经典谱系；代价讨论偏弱。"
+        },
+        {
+          "id": "2610.33186",
+          "column": "robotics",
+          "title": "Interpretable Collision Avoidance and Feasibility Guarantees through an Uncertainty Aware Pipeline",
+          "score": 87.5,
+          "scores": {
+            "real_platform": 2,
+            "bounds": 2,
+            "system_tradeoff": 2,
+            "sensing_compute": 1,
+            "scale": 1
+          },
+          "note": "实测 Jackal UGV 部署 + 12.7ms/周期，摘要直接给出基线的碰撞率与不可行率，安全保证与求解可行性解耦是明确系统取舍。"
+        },
+        {
+          "id": "2610.39367",
+          "column": "robotics",
+          "title": "Utility-WAM: Correcting Future-Induced Action Changes",
+          "score": 85.0,
+          "scores": {
+            "real_platform": 2,
+            "bounds": 2,
+            "system_tradeoff": 2,
+            "sensing_compute": 0,
+            "scale": 2
+          },
+          "note": "60 次真机双臂试验 53 成功，明确给出精度任务掉 54 分的负迁移失效模式与 38% 延迟削减的算力取舍。"
+        },
+        {
+          "id": "2610.27971",
+          "column": "cps",
+          "title": "Execution-Time Validation of Context-Carrying Action Intents in Industrial Cyber-Physical Systems",
+          "score": 100.0,
+          "scores": {
+            "coupling": 2,
+            "physical_process": 2,
+            "quant_analysis": 2,
+            "real_system": 2,
+            "loop_position": 2
+          },
+          "note": "耦合=2：执行间隔（推理+确认+传输）内 plant 已变，命令陈旧性由控制器扫描内的版本条件命令闭合，100ms 级逃逸窗口实测；真实 PLC/ARM/RISC-V 板验证。"
+        },
+        {
+          "id": "2610.31864",
+          "column": "cps",
+          "title": "Model-Free Generative Stealthy Attacks on Safety-Critical Vehicle Cyber-Physical Systems",
+          "score": 75.0,
+          "scores": {
+            "coupling": 1,
+            "physical_process": 2,
+            "quant_analysis": 2,
+            "real_system": 1,
+            "loop_position": 2
+          },
+          "note": "耦合=1：闭环测量完整性与隐蔽预算（残差影响界+可观测隐蔽预算）是主机制，介入点在测量；但决定性约束是隐蔽性而非时延/丢包，耦合记 1。"
+        },
+        {
+          "id": "2610.31246",
+          "column": "security",
+          "title": "Weaponizing the Exit: Input Privacy Leakage via Exit Routing Manipulation in Multi-Exit Networks",
+          "score": 90.0,
+          "scores": {
+            "threat_model": 2,
+            "assumption_bounds": 2,
+            "mechanism": 2,
+            "metrics": 2,
+            "defense_cost": 0
+          },
+          "note": "攻击者能力边界写得最干净：不读输入/中间态/输出，只靠每查询时延；供应链投毒假设明示，四数据集十属性、F1 0.73 vs 基线 0.25，并报出精度降<1.3%、加速退化<0.1 的代价。"
+        },
+        {
+          "id": "2610.28364",
+          "column": "security",
+          "title": "Context-Aware Prompt Injection Detection via Small Language Models in RAG Pipelines: nokast-secureRAG",
+          "score": 87.5,
+          "scores": {
+            "threat_model": 2,
+            "assumption_bounds": 1,
+            "mechanism": 2,
+            "metrics": 2,
+            "defense_cost": 2
+          },
+          "note": "威胁模型自己划了边界（instruction-consistency；承认 PoisonedRAG 落在界外、召回近零），机制是检索→生成之间的语义防火墙，延迟 293-404ms 与 FPR 0.026 两个代价都有数。"
+        },
+        {
+          "id": "2610.34304",
+          "column": "automation",
+          "title": "Real-Time Conveyor Belt Defect Detection via Edge TPU-Accelerated YOLOv11 on Raspberry Pi 5",
+          "score": 95.0,
+          "scores": {
+            "real_line": 2,
+            "cycle_yield": 2,
+            "integration": 2,
+            "data_cost": 2,
+            "fail_safe": 1
+          },
+          "note": "水泥厂现场部署：30-40 FPS、端到端 70-90 ms、粉尘下热平衡且零丢帧；RTSP PoE 工业相机+IP 防护箱，3000+ 样本含产线采集与增强。"
+        },
+        {
+          "id": "2610.29398",
+          "column": "automation",
+          "title": "Region-Aware Multi-View Inspection Using Deep Learning and Domain-Informed Decision Fusion",
+          "score": 80.0,
+          "scores": {
+            "real_line": 2,
+            "cycle_yield": 2,
+            "integration": 2,
+            "data_cost": 0,
+            "fail_safe": 1
+          },
+          "note": "PLC 同步 36 视角成像、380 支真实喷油嘴；按 SOP 做决策融合，部件误剔率 57.6%->10.9%、NOK 召回 100%。"
+        }
+      ]
     }
   ]
 }

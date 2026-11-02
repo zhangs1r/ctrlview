@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="900" height="500" fill="#ffffff"/>
+  <defs>
+    <marker id="b1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a6b86"/>
+    </marker>
+  </defs>
+
+  <!-- 上：滚动窗口 -->
+  <text x="40" y="34" font-size="14.5" font-weight="700" fill="#16212b">上　滚动窗口的关系（横轴单位是窗口长度 Δ，一格一个窗口）</text>
+
+  <rect x="100" y="62" width="700" height="34" rx="5" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.4"/>
+  <text x="112" y="85" font-size="13" fill="#33475a">搜索树覆盖的 T 个窗口，每轮从当前状态重新长</text>
+
+  <path d="M100,124 H820" stroke="#8b9aa7" stroke-width="1.4" marker-end="url(#b1)"/>
+  <g stroke="#8b9aa7" stroke-width="1">
+    <path d="M100,118 V130 M170,118 V130 M240,118 V130 M310,118 V130 M380,118 V130 M450,118 V130 M520,118 V130 M590,118 V130 M660,118 V130 M730,118 V130 M800,118 V130"/>
+  </g>
+  <text x="100" y="150" font-size="12.5" fill="#5b6b79" text-anchor="middle">t_n</text>
+  <text x="170" y="150" font-size="12.5" fill="#5b6b79" text-anchor="middle">+Δ</text>
+  <text x="450" y="150" font-size="12.5" fill="#5b6b79" text-anchor="middle">+5Δ</text>
+  <text x="796" y="150" font-size="12.5" fill="#5b6b79" text-anchor="middle">+10Δ，视野末端</text>
+
+  <rect x="100" y="176" width="70" height="30" rx="5" fill="#fdf1dd" stroke="#b7791f" stroke-width="1.6"/>
+  <text x="112" y="196" font-size="12.5" font-weight="700" fill="#4a3a12">Δ_s</text>
+  <path d="M170,191 H196" stroke="#b7791f" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="204" y="196" font-size="12.5" fill="#5a4715">只提交最前面这一段，其余扔掉，下一轮重算</text>
+  <path d="M100,164 V176 M135,164 V176" stroke="#b7791f" stroke-width="1.4"/>
+  <text x="60" y="196" font-size="12.5" fill="#5a4715" text-anchor="end">执行区间</text>
+
+  <line x1="40" y1="228" x2="860" y2="228" stroke="#dfe6ec" stroke-width="1.2"/>
+
+  <!-- 下：pick 周期 -->
+  <text x="40" y="258" font-size="14.5" font-weight="700" fill="#16212b">下　一个 pick 周期（横轴单位是毫秒，按仿真设置 τ = 20 ms、δ_comm = 30 ms 画，与上图不同尺度）</text>
+
+  <rect x="100" y="290" width="456" height="60" rx="5" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.4"/>
+  <rect x="556" y="290" width="304" height="60" rx="5" fill="#fdf1dd" stroke="#b7791f" stroke-width="1.6"/>
+
+  <text x="114" y="314" font-size="13" font-weight="700" fill="#33475a">在途上限 δ_comm</text>
+  <text x="114" y="336" font-size="12.5" fill="#5b6b79">这之前发出的消息，保证在 t_n 前到齐</text>
+  <text x="570" y="314" font-size="13" font-weight="700" fill="#4a3a12">τ 余量</text>
+  <text x="570" y="336" font-size="12.5" fill="#5a4715">只做挑解与提交，不发消息</text>
+
+  <g stroke="#8b9aa7" stroke-width="1.3" stroke-dasharray="5 4">
+    <path d="M100,272 V360 M556,272 V360 M860,272 V360"/>
+  </g>
+  <path d="M100,360 H868" stroke="#8b9aa7" stroke-width="1.4" marker-end="url(#b1)"/>
+  <text x="100" y="384" font-size="12.5" fill="#5b6b79" text-anchor="middle">t_n − δ_comm</text>
+  <text x="100" y="402" font-size="12" fill="#8b9aa7" text-anchor="middle">此后一台机也不发</text>
+  <text x="556" y="384" font-size="12.5" fill="#5b6b79" text-anchor="middle">t_n</text>
+  <text x="556" y="402" font-size="12" fill="#8b9aa7" text-anchor="middle">到齐、挑解</text>
+  <text x="855" y="384" font-size="12.5" fill="#5b6b79" text-anchor="middle">(n+1)Δ_s</text>
+  <text x="855" y="402" font-size="12" fill="#8b9aa7" text-anchor="middle">新窗口开始执行</text>
+
+  <text x="40" y="438" font-size="12.5" fill="#33475a">① 这一轮若在 t_n − δ_comm 之前就已静息，提交解与 ρ 稳健最优之间的差有证书，差值为 Γ_n + L_Φ·ρ。</text>
+  <text x="40" y="460" font-size="12.5" fill="#5a4715">② 没静息就交此刻最好的全局背书解，证书失效，只剩实测的接近程度（§VI-C 的对照）。</text>
+  <text x="40" y="486" font-size="12" fill="#8b9aa7">两段横轴量的都是时间，没有换算成距离或漂移；刻度来源是算法 1 的第 2、4、13、15 行。</text>
+</svg>

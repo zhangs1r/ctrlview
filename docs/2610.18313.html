@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261019192040"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.18313.html?force=20261019192040" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.18313.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">信息物理系统 · 论文精读</div>
@@ -47,7 +47,7 @@ arXiv:2610.18313 · 2026-10-19 · 精读约 32 分钟</div>
 <h2>二、总体结构</h2>
 <h3>2.1 三个区</h3>
 <p>论文把部署分成三个区，云端、工业边缘区和现场区。云端只负责分发模型更新和配置，不参与运行时决策。<u>所有运行时协调都发生在工业边缘区</u>，单台设备跑一个或多个 agent，外加一层薄协调子层，负责本地算分、跟同伴交换、在阈值越界时动作。同一时刻有一台设备担任协调者角色，每台同伴都存着足够的状态以便接管。现场区是传感器和执行器所在的地方。</p>
-<figure><img src="figs/2610.18313-fig1.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　论文的三区架构。云端只下发应用与更新，工业边缘区里每一台边缘设备跑若干 agent 与一套协调应用，设备之间靠任务重分配互相支援，现场区是 PLC 与 HMI 以及它们下面的传感器和执行器。（原图，取自论文 arXiv 2610.18313）</figcaption></figure>
+<figure><img src="figs/2610.18313-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　论文的三区架构。云端只下发应用与更新，工业边缘区里每一台边缘设备跑若干 agent 与一套协调应用，设备之间靠任务重分配互相支援，现场区是 PLC 与 HMI 以及它们下面的传感器和执行器。（原图，取自论文 arXiv 2610.18313）</figcaption></figure>
 <p>图 1 里画了 Dashboard、Policy Engine 和 Task reallocation 这些模块名，正文没有提。正文只说了一台设备有一个协调子层，每个 agent 有本地评分。我把图当分区结构的示意看，模块名以正文为准。</p>
 <p>分数是跨设备共享的，这里再多说一句。正文说 agent 把分发布在一条开放的点对点发现通道上，具体是哪条通道论文没有指定。协调子层在每台设备上都有一份扰动后验，所以一台设备被打断以后，<mark>新接手的设备不需要重新标定，用同一套模板就能接着算分</mark>。</p>
 <h3>2.2 阶段对照</h3>
@@ -175,5 +175,5 @@ arXiv:2610.18313 · 2026-10-19 · 精读约 32 分钟</div>
 <h2>相关</h2><p style="color:var(--ink2);font-size:14px">站上已有的精读</p><ul><li><a href="2610.03434.html">给客服 agent 划一条功能边界，让它在越界时自己收手</a><span style="color:var(--ink3);font-size:13px">　正文提及</span></li></ul>
 <a class="paperlink" href="https://arxiv.org/abs/2610.18313" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2610.18313） →</a>
-<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-10-19 19:20</footer>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
 </div></body></html>

@@ -2107,6 +2107,2113 @@
      "note": "摘要只讲弱化干预假设下的可辨识性与受控具身应用，属理论目标陈述；退化场景、经典滤波/优化、尺度、具体评测均无证据。"
     }
    ]
+  },
+  "2026-W45": {
+   "date": "2026-11-02",
+   "pick_per_column": 2,
+   "complete": true,
+   "records": [
+    {
+     "id": "2610.34304",
+     "column": "automation",
+     "title": "Real-Time Conveyor Belt Defect Detection via Edge TPU-Accelerated YOLOv11 on Raspberry Pi 5",
+     "total": 95.0,
+     "picked": true,
+     "scores": {
+      "real_line": 2,
+      "cycle_yield": 2,
+      "integration": 2,
+      "data_cost": 2,
+      "fail_safe": 1
+     },
+     "note": "水泥厂现场部署：30-40 FPS、端到端 70-90 ms、粉尘下热平衡且零丢帧；RTSP PoE 工业相机+IP 防护箱，3000+ 样本含产线采集与增强。"
+    },
+    {
+     "id": "2610.29398",
+     "column": "automation",
+     "title": "Region-Aware Multi-View Inspection Using Deep Learning and Domain-Informed Decision Fusion",
+     "total": 80.0,
+     "picked": true,
+     "scores": {
+      "real_line": 2,
+      "cycle_yield": 2,
+      "integration": 2,
+      "data_cost": 0,
+      "fail_safe": 1
+     },
+     "note": "PLC 同步 36 视角成像、380 支真实喷油嘴；按 SOP 做决策融合，部件误剔率 57.6%->10.9%、NOK 召回 100%。"
+    },
+    {
+     "id": "2610.29594",
+     "column": "automation",
+     "title": "A Transfer Learning-Driven Methodology for Efficient and Sustainable Indoor Localization Using VLC",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "real_line": 2,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 2,
+      "fail_safe": 0
+     },
+     "note": "BOSCH 工厂实测数据集；迁移学习针对环境变化降低现场采集与逐点标定成本。"
+    },
+    {
+     "id": "2610.29638",
+     "column": "automation",
+     "title": "Cross-Area Transfer Learning for VLC-based Indoor Localization with a Transfer Efficiency Score",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "real_line": 2,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 2,
+      "fail_safe": 0
+     },
+     "note": "Bosch 厂区四区域实测：仅用 40% 目标域数据恢复 97% 全量性能，未见区域 3.28 cm；直接压低部署采集与标定成本。"
+    },
+    {
+     "id": "2610.29220",
+     "column": "automation",
+     "title": "Delay-Guided Attention for Quality Prediction in Multistage Manufacturing",
+     "total": 52.5,
+     "picked": false,
+     "scores": {
+      "real_line": 2,
+      "cycle_yield": 1,
+      "integration": 1,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": "真实 LiquidSugar 多级产线数据；滞后分布自估，推理时无需厂方给定级间延迟（换型免重配）。"
+    },
+    {
+     "id": "2610.41199",
+     "column": "automation",
+     "title": "Beyond CLIP: Calibrated (Few-Shot) Defect Detection With System One Decision Models",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "real_line": 1,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 2,
+      "fail_safe": 1
+     },
+     "note": "动机正是高良率/小批量下缺陷样本稀缺（k=2 参考图），并做概率校准改善检验决策；五个制造案例但未见现场部署。"
+    },
+    {
+     "id": "2610.28949",
+     "column": "automation",
+     "title": "Online Open-World Wafer Defect Discovery using Hyperdimensional Computing",
+     "total": 40.0,
+     "picked": false,
+     "scores": {
+      "real_line": 1,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 2,
+      "fail_safe": 0
+     },
+     "note": "无标签、无预设类别数即可增量建缺陷记忆，免全量历史归档与重训，缓解标注成本。"
+    },
+    {
+     "id": "2610.40421",
+     "column": "automation",
+     "title": "Uncertainty-aware Feedback Loop Diagnosis: integrating reinforcement learning and conformal prediction for reliable wafer defect classification",
+     "total": 32.5,
+     "picked": false,
+     "scores": {
+      "real_line": 1,
+      "cycle_yield": 1,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.38194",
+     "column": "automation",
+     "title": "Prototype-Guided Dynamic Domain Modulation and a Large-Scale Multi-SKU Benchmark for Shampoo Bottle Surface Defect Detection",
+     "total": 22.5,
+     "picked": false,
+     "scores": {
+      "real_line": 1,
+      "cycle_yield": 0,
+      "integration": 0,
+      "data_cost": 1,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.37121",
+     "column": "automation",
+     "title": "Prospector: learning a compact graph traversal policy for scientific reasoning",
+     "total": 17.5,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 1,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.30411",
+     "column": "automation",
+     "title": "AcoustiPrint: Physics-Guided Neural Design of Manufacturable Acoustic Structures",
+     "total": 17.5,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 1,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.38201",
+     "column": "automation",
+     "title": "From Natural Language to Real Schematics: An Automated Workflow for Power Electronics Schematic Synthesis",
+     "total": 15.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 0,
+      "fail_safe": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33374",
+     "column": "automation",
+     "title": "An In-depth Study of Stochastic Stellarator Coil Optimization",
+     "total": 12.5,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 1,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.35410",
+     "column": "automation",
+     "title": "Multimode continuous-variable quantum key distribution with CMOS-compatible photonic-electronic integration",
+     "total": 10.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33515",
+     "column": "automation",
+     "title": "Collective Collaboration of Recursive Autonomous Agents",
+     "total": 10.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 1,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.37445",
+     "column": "automation",
+     "title": "Hosting is not capturing: an exposure-capability framework and Hungary's electric-vehicle battery bet",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29614",
+     "column": "automation",
+     "title": "Perpendicular Magnetization from Crystallite Boundaries in Polycrystalline Antiferromagnetic $γ$-FeMn",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33345",
+     "column": "automation",
+     "title": "Elasto-Plastocapillarity: Surface-Tension-Driven Flows of Yield-Stress Fluids",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33720",
+     "column": "automation",
+     "title": "Optical imaging with only the evanescent fields and without diffraction",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27825",
+     "column": "automation",
+     "title": "Early-stage local melting during solid-state sintering of a Cu-Ni-Ti-Zr-Hf alloy: A combined thermodynamic and kinetic analysis",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "real_line": 0,
+      "cycle_yield": 0,
+      "integration": 0,
+      "data_cost": 0,
+      "fail_safe": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31540",
+     "column": "control",
+     "title": "Dispersive Tree Agreements for Multi-Robot Coordination",
+     "total": 100.0,
+     "picked": true,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 2
+     },
+     "note": "摘要给出联合空间最优控制形式与联合约束，用局部约束替代机器人间耦合并证明准最优一致性（quiescent 极限），仿真加六机实机，五条全命中。"
+    },
+    {
+     "id": "2610.38417",
+     "column": "control",
+     "title": "Using delays for prescribed-time static output feedback stabilization of LTI controllable and observable systems",
+     "total": 95.0,
+     "picked": true,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 1
+     },
+     "note": "设计问题写全（任何可控可观 LTI 的静态输出反馈增益显式构造）、规定时间收敛带条件、广义可控-可观 Gramian 直接接上经典谱系；代价讨论偏弱。"
+    },
+    {
+     "id": "2610.33878",
+     "column": "control",
+     "title": "Using artificial delays for prescribed/fixed-time static output feedback control of linear systems",
+     "total": 95.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 1
+     },
+     "note": "相对阶≥2 下用人工延迟做 prescribe/fixed-time ISS，明确退化到积分器链时避开高增益，条件与延迟界写清；只有数值例子。"
+    },
+    {
+     "id": "2610.35390",
+     "column": "control",
+     "title": "Square-Root Clustered Lasso for High-Dimensional Linear Regression with Finite-Sample Theory and Efficient Algorithm Implementation",
+     "total": 90.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 0
+     },
+     "note": "目标函数与复合罚项写清，非光滑性即不能直解的障碍，全局收敛+局部线性/超线性速率；但与 clustered Lasso、d-ADMM 谱系清楚，无控制内容。"
+    },
+    {
+     "id": "2610.32703",
+     "column": "control",
+     "title": "Necessary and Sufficient Criteria for Global PID Regulation of Nonlinear Uncertain System",
+     "total": 90.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 0
+     },
+     "note": "把无穷维不确定性类的全局 PID 调节等价到边界线性系统的 Routh–Hurwitz 判据，充要条件完整、经典谱系定位最清楚；无近似代价讨论。"
+    },
+    {
+     "id": "2610.29559",
+     "column": "control",
+     "title": "Certified Neural Approximation of Robust Nonlinear Model Predictive Control",
+     "total": 85.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 2
+     },
+     "note": "把网络逼近误差当有界扰动处理，给出部署前的递归可行性与稳定性设计条件（先验构造而非事后验证或在线安全滤波），代价是保守性；仅仿真。"
+    },
+    {
+     "id": "2610.34922",
+     "column": "control",
+     "title": "Explicit Globally Asymptotically Stable Attitude Control with Reaction Wheel Angular Momentum and Torque Constraints",
+     "total": 80.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 1,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 0
+     },
+     "note": "硬力矩/角动量约束下不求解在线优化的显式 Lyapunov 设计，GAS 与约束满足对任意 SPD 惯量矩阵可证；无近似代价讨论。"
+    },
+    {
+     "id": "2610.41892",
+     "column": "control",
+     "title": "Online Learning of Heterogeneous Locomotion Dynamics under Reinforcement Learning Policies for Precise Loco-Manipulation",
+     "total": 70.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 1,
+      "relaxation_cost": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.30524",
+     "column": "control",
+     "title": "LLM2Cert: LLM Synthesis of Certificates with SMT/Lean Verification",
+     "total": 70.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 1,
+      "classic_spectrum": 2,
+      "relaxation_cost": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.28623",
+     "column": "control",
+     "title": "Planning under Noise with Neural Operators",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 0,
+      "classic_spectrum": 2,
+      "relaxation_cost": 2
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29897",
+     "column": "control",
+     "title": "Observability Inequality for a Multi-Dimensional Degenerate Schrödinger Equation with an Interior Degeneracy Point",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 0,
+      "why_hard": 2,
+      "theory": 2,
+      "classic_spectrum": 1,
+      "relaxation_cost": 2
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.30911",
+     "column": "control",
+     "title": "Energy-Efficient Risk-Constrained Adaptive Semantic Communications Under Uncertain Adversarial Threats",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 2,
+      "why_hard": 2,
+      "theory": 0,
+      "classic_spectrum": 1,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29906",
+     "column": "control",
+     "title": "Reinforcement Learning for Global-Local Control of Dynamic Networks with Applications to Systemic Risk",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 1,
+      "theory": 2,
+      "classic_spectrum": 1,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27414",
+     "column": "control",
+     "title": "Real-Time Disturbance-Aware Koopman Model Predictive Control for Quadrotors in Spatially Varying Winds",
+     "total": 50.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 0,
+      "classic_spectrum": 1,
+      "relaxation_cost": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.34802",
+     "column": "control",
+     "title": "Stability of Multidimensional Linear Discrete Systems",
+     "total": 50.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 0,
+      "why_hard": 1,
+      "theory": 2,
+      "classic_spectrum": 2,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31885",
+     "column": "control",
+     "title": "Optimal Control of a Fluxonium Circuit with the Q-PRONTO Numerical Method",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 1,
+      "theory": 1,
+      "classic_spectrum": 1,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27732",
+     "column": "control",
+     "title": "Prescribed Performance Guided Safe Reinforcement Learning for Roundabout Navigation of Autonomous Vehicles",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 0,
+      "classic_spectrum": 1,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29311",
+     "column": "control",
+     "title": "Interpretable Cutting Plane Selection for Mixed-Integer Linear Programming Using Genetic Programming",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 1,
+      "theory": 0,
+      "classic_spectrum": 2,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.34789",
+     "column": "control",
+     "title": "ISB-NMPC: Interception-Oriented Spherical-Bearing Nonlinear Model Predictive Control for Quadrotors",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 1,
+      "why_hard": 2,
+      "theory": 0,
+      "classic_spectrum": 1,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.35342",
+     "column": "control",
+     "title": "VisGeo-PipeTrack: A Visual Geometric Servo Control Framework with MPC-RCAPID Control for UAV-Based Dynamic Pipes Tracking",
+     "total": 10.0,
+     "picked": false,
+     "scores": {
+      "problem_form": 0,
+      "why_hard": 0,
+      "theory": 0,
+      "classic_spectrum": 1,
+      "relaxation_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27971",
+     "column": "cps",
+     "title": "Execution-Time Validation of Context-Carrying Action Intents in Industrial Cyber-Physical Systems",
+     "total": 100.0,
+     "picked": true,
+     "scores": {
+      "coupling": 2,
+      "physical_process": 2,
+      "quant_analysis": 2,
+      "real_system": 2,
+      "loop_position": 2
+     },
+     "note": "耦合=2：执行间隔（推理+确认+传输）内 plant 已变，命令陈旧性由控制器扫描内的版本条件命令闭合，100ms 级逃逸窗口实测；真实 PLC/ARM/RISC-V 板验证。"
+    },
+    {
+     "id": "2610.31864",
+     "column": "cps",
+     "title": "Model-Free Generative Stealthy Attacks on Safety-Critical Vehicle Cyber-Physical Systems",
+     "total": 75.0,
+     "picked": true,
+     "scores": {
+      "coupling": 1,
+      "physical_process": 2,
+      "quant_analysis": 2,
+      "real_system": 1,
+      "loop_position": 2
+     },
+     "note": "耦合=1：闭环测量完整性与隐蔽预算（残差影响界+可观测隐蔽预算）是主机制，介入点在测量；但决定性约束是隐蔽性而非时延/丢包，耦合记 1。"
+    },
+    {
+     "id": "2610.32661",
+     "column": "cps",
+     "title": "AquaSense-ICS: A Hybrid Real-Simulated Cyber-Physical Dataset and Leakage-Aware Benchmark for Smart Water Quality Monitoring and Attack Detection",
+     "total": 67.5,
+     "picked": false,
+     "scores": {
+      "coupling": 1,
+      "physical_process": 2,
+      "quant_analysis": 1,
+      "real_system": 2,
+      "loop_position": 1
+     },
+     "note": "耦合=1：采样率(1-2s)与传感噪声被显式建模、攻击在测量端注入，但贡献是数据集/基准而非回路耦合；真实 8h 边端记录给 real=2。"
+    },
+    {
+     "id": "2610.28324",
+     "column": "cps",
+     "title": "Latency-Neutral Passive Cyber Monitoring for Grid-Edge Operational Technology Networks",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "coupling": 1,
+      "physical_process": 1,
+      "quant_analysis": 2,
+      "real_system": 1,
+      "loop_position": 2
+     },
+     "note": "耦合=1：把监测时延压进主控制回路的微秒级时序预算（32927 次 RTT，实测差<0.12ms），但只做延迟预算比对、未做延迟入稳定性的耦合建模；真实系统仅实验室回路，记 1。"
+    },
+    {
+     "id": "2610.33202",
+     "column": "cps",
+     "title": "Terra-Fi: Decoupling Sensing and Wireless Depths for Sustainable Deep Underground Monitoring",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "coupling": 2,
+      "physical_process": 1,
+      "quant_analysis": 1,
+      "real_system": 0,
+      "loop_position": 1
+     },
+     "note": "耦合=2：土壤衰减同时压缩通信与无线供能半径，通信约束直接决定可达传感深度，是真耦合；仅数值算例，真实系统 0。"
+    },
+    {
+     "id": "2610.38256",
+     "column": "cps",
+     "title": "Belief-Driven Search in Connectivity-Constrained Mobile Sensor Networks with Convergence Guarantees",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "coupling": 2,
+      "physical_process": 1,
+      "quant_analysis": 1,
+      "real_system": 0,
+      "loop_position": 1
+     },
+     "note": "耦合=2：连通性约束直接进原始-对偶规划梯度，通信约束决定轨迹与信念收敛；有收敛速率与搜索时间界，但纯仿真（real=0）。"
+    },
+    {
+     "id": "2610.40955",
+     "column": "cps",
+     "title": "A Mixed $H_{\\infty}$--Passivity Approach for Leveraging Heat-Pump-Connected District Heating Systems as Frequency Support in Electric Power Systems",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "coupling": 1,
+      "physical_process": 2,
+      "quant_analysis": 1,
+      "real_system": 0,
+      "loop_position": 2
+     },
+     "note": "耦合=1：热电跨时间尺度耦合（热侧扰动在二次调频时标进入电气接口）讲得具体，但无通信/采样机制，耦合记 1；全网模型验证，真实系统 0。"
+    },
+    {
+     "id": "2610.31037",
+     "column": "cps",
+     "title": "Stability-Preserving Reinforcement Learning for Heterogeneity-Aware Composite Max-Pressure Traffic Signal Control",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "coupling": 1,
+      "physical_process": 2,
+      "quant_analysis": 0,
+      "real_system": 1,
+      "loop_position": 2
+     },
+     "note": "耦合=1：异质/退化感知只作为鲁棒性条件出现，未给出时延/采样/丢包的定量约束；45 交叉口路网是否实测存疑，real 记 1。"
+    },
+    {
+     "id": "2610.28108",
+     "column": "cps",
+     "title": "Control of Isolated Four-Quadrant Single-Stage Three-/Single-Phase X-Rectifier for EV On-Board Chargers",
+     "total": 30.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 2,
+      "loop_position": 1
+     },
+     "note": "耦合=0：纯功率变换器控制，无信息层介入，不属本栏核心；5.5kVA 样机与真实负载给 real=2。"
+    },
+    {
+     "id": "2610.33148",
+     "column": "cps",
+     "title": "Modeling Liquid-Cooled Data Centers in EnergyPlus",
+     "total": 30.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 2,
+      "quant_analysis": 1,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=0：建筑能耗仿真对象，耦合发生在水环路与芯片结温之间（物理-物理），无信息层介入。"
+    },
+    {
+     "id": "2610.37428",
+     "column": "cps",
+     "title": "Joint Antenna Positioning and Pilot Power Allocation for Uplink Fluid Antenna-Aided Cell-Free Massive MIMO Systems",
+     "total": 27.5,
+     "picked": false,
+     "scores": {
+      "coupling": 1,
+      "physical_process": 0,
+      "quant_analysis": 1,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=1：把 URLLC 时延要求映射为 NMSE 阈值是定量信息约束，但没有被控物理过程，实为通信优化，物理项 0。"
+    },
+    {
+     "id": "2610.36420",
+     "column": "cps",
+     "title": "SO-101 Bench: Accessible Spatial Manipulation",
+     "total": 25.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 2,
+      "loop_position": 0
+     },
+     "note": "耦合=0：仿真基准 + Isaac Lab 数字孪生，孪生是评测工具而非同步/偏差处理讨论；真机复现（Spearman=1.00）给 real=2，但回路耦合无。"
+    },
+    {
+     "id": "2610.29969",
+     "column": "cps",
+     "title": "FaultGene: LLM-Assisted Fault-Augmented Test Generation for Hardware-in-the-Loop Validation of Autonomous Driving Systems",
+     "total": 22.5,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 1,
+      "loop_position": 1
+     },
+     "note": "耦合=0：故障注入测试生成，摘要未指出时延/采样/丢包/量化中哪一项决定回路行为，CPS 只是场景标签。"
+    },
+    {
+     "id": "2610.38180",
+     "column": "cps",
+     "title": "Machine learning-guided real-time AC optimal transmission switching",
+     "total": 15.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 0,
+      "loop_position": 1
+     },
+     "note": "耦合=0：ML 代理只加速组合拓扑搜索，50s 是计算预算，未讨论时延/采样/丢包对物理回路的作用。"
+    },
+    {
+     "id": "2610.33894",
+     "column": "cps",
+     "title": "WMEval: Evaluating Interactive World Models Grounded on Physical Simulations",
+     "total": 10.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=0：世界模型评测基准，digital twin 只作应用背景，无物理-信息回路耦合。"
+    },
+    {
+     "id": "2610.30446",
+     "column": "cps",
+     "title": "Strategic Arbitrage in Electricity Markets: A Multi-Agent Policy Optimization Framework",
+     "total": 10.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=0：市场博弈均衡求解，电网只是算例背景，无物理-信息回路耦合。"
+    },
+    {
+     "id": "2610.32696",
+     "column": "cps",
+     "title": "Foundation Models Meet Power Grid Topology for Cascade Prediction",
+     "total": 10.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 1,
+      "quant_analysis": 0,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=0：级联严重度预测模型，无回路耦合讨论——正是 L1 要压后的『预测模型』类，即便 F1 好看。"
+    },
+    {
+     "id": "2610.28776",
+     "column": "cps",
+     "title": "Complexity-Aware Surgical Video Reasoning Segmentation with Digital Twin and Context Memory",
+     "total": 7.5,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 0,
+      "quant_analysis": 0,
+      "real_system": 1,
+      "loop_position": 0
+     },
+     "note": "耦合=0：手术视频推理分割，digital twin 指特征表示，只报 FPS 不谈回路耦合，非 CPS。"
+    },
+    {
+     "id": "2610.28430",
+     "column": "cps",
+     "title": "A Digital Twin to Improve Cyber-Social Impact",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 0,
+      "quant_analysis": 0,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=0：数字孪生+CSVSS 风险打分框架，虚拟 ICS 无物理过程、无回路耦合，属监控/评分界面类，全项压后。"
+    },
+    {
+     "id": "2610.28818",
+     "column": "cps",
+     "title": "Brittle by Design? Multi-Scenario Reinforcement Learning for Robust Mission Coordination in Systems of Systems",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "coupling": 0,
+      "physical_process": 0,
+      "quant_analysis": 0,
+      "real_system": 0,
+      "loop_position": 0
+     },
+     "note": "耦合=0：任务级 agent 仿真 + RL 调度，数字任务模型不是同步孪生，无回路耦合。"
+    },
+    {
+     "id": "2610.31569",
+     "column": "embodied",
+     "title": "Echo: Coupled Action and Task Status Signal Denoising for Vision Language Action Models",
+     "total": 90.0,
+     "picked": true,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 2,
+      "data_pipeline": 1,
+      "task_def": 2,
+      "closed_loop": 2
+     },
+     "note": "stop/failure 两个信号直接作为 action chunk 的两个维度一起去噪，成功/失败/恢复三类轨迹自监督构造，真机实验；动作空间与 episode 判定定义明确，失败即恢复触发条件。"
+    },
+    {
+     "id": "2610.32271",
+     "column": "embodied",
+     "title": "From Tabletop to Walking Bot: Deploying a VLA Model on a Legged Manipulator Robot",
+     "total": 80.0,
+     "picked": true,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 1,
+      "data_pipeline": 2,
+      "task_def": 1,
+      "closed_loop": 2
+     },
+     "note": "真机 Go2+Piper 闭环 loco-manipulation，把 demo 覆盖度与模型容量分离（覆盖度扩展使 held-out 末端误差降 30%），数据管线本身就是方法贡献；失败只点到「dataset composition shapes success and failure」。"
+    },
+    {
+     "id": "2610.40532",
+     "column": "embodied",
+     "title": "BURGER: Benchmarking and Understanding Robotic Generalization via Embodied Drawing",
+     "total": 75.0,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 1,
+      "data_pipeline": 2,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": "prompt 驱动的 28,200 条示教生成管线 + Franka 真机 reactively 画图；只在摘要里声称「distinct failure patterns」，无具体失败判据。"
+    },
+    {
+     "id": "2610.28259",
+     "column": "embodied",
+     "title": "Large Multimodal Models for Direct Robot Control: GPT-6 as a Beginning",
+     "total": 72.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 2,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 2
+     },
+     "note": "闭环 agent 框架下系统体检 GPT-6 Astra：语义推理与物理执行脱节、LIBERO-GeoMotion 零样本 11.1%，真机补证；无数据管线贡献。"
+    },
+    {
+     "id": "2610.31613",
+     "column": "embodied",
+     "title": "Progress Probes $P^2$: Lightweight Runtime Monitoring for Vision-Language-Action Models",
+     "total": 67.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 2,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": "以「执行是否跑偏」为核心命题，真机+仿真上与 VLM monitor 比失败检测；线性探针只用示教数据，产能贡献有限。"
+    },
+    {
+     "id": "2610.29329",
+     "column": "embodied",
+     "title": "Plan First, Act Later: Streaming Reasoning for Executable Memory in Robot Control",
+     "total": 62.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 2,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": "分层记忆 + subtask_list，两阶段数据生成（扩稀疏监督 + 自标注验证）；真机四任务 60.83% vs MemER 45%，无失败分析。"
+    },
+    {
+     "id": "2610.32093",
+     "column": "embodied",
+     "title": "DiscoDemo: Discovering Efficient and Diverse Robot Demonstrations for Imitation Learning",
+     "total": 62.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 2,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": "把 RL 当数据生成器：privileged latent-conditioned 生成器 + 多样性目标产出多解示教，真机 39%→78%；无失败分析。"
+    },
+    {
+     "id": "2610.28019",
+     "column": "embodied",
+     "title": "PACT-VLA: Speculative Action-Chunk Verification with Pre-Commit Observations",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 1,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 2
+     },
+     "note": "真机 3 任务 60%→82%（同一 frozen π0.5），并把「推理延迟导致动作块条件在过期观测上」这一失败机理讲清；无数据管线贡献。"
+    },
+    {
+     "id": "2610.32102",
+     "column": "embodied",
+     "title": "Coupling Execution Horizon and Sampling Depth in Flow-Matching VLA Policies",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 1,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 2
+     },
+     "note": "揭示 solver 深度与执行 horizon 的耦合（粗积分在长开环承诺下当正则项抑制漂移），真机 Franka 验证；无数据管线，失败只给机理不给案例。"
+    },
+    {
+     "id": "2610.34356",
+     "column": "embodied",
+     "title": "RynnVLA-Latent: Scaling Robotic Manipulation Foundation Models with 3D-Grounded Latent Actions",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 2,
+      "task_def": 1,
+      "closed_loop": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.28880",
+     "column": "embodied",
+     "title": "Real2Sem2Real: 3D Semantic Augmentations for Robot Learning from a Single Human RGB Demonstration",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 2,
+      "task_def": 1,
+      "closed_loop": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.30105",
+     "column": "embodied",
+     "title": "Asymmetric On-Policy Distillation Learns In-Context Exploration",
+     "total": 52.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 1,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29452",
+     "column": "embodied",
+     "title": "Distance Field Driven Reinforcement Learning for Reactive and Robust Collision Avoidance",
+     "total": 47.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 2
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31166",
+     "column": "embodied",
+     "title": "Memory before Goal: Role of Pre-History Memory for Humanoid Loco-Manipulation",
+     "total": 42.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.28109",
+     "column": "embodied",
+     "title": "FIT-MAC: A Closed-Loop Multi-Agent Framework for Robust Vision-Language-Action Models",
+     "total": 42.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 0,
+      "failure_modes": 2,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 2
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29866",
+     "column": "embodied",
+     "title": "GeoMem-VLA: Internalizing 3D Scene Understanding into Temporal Memory for Vision-Language-Action Models",
+     "total": 42.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 2,
+      "failure_modes": 0,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.41377",
+     "column": "embodied",
+     "title": "MolmoSpaces-CommonSense: Evaluating Commonsense in Robotic Manipulation Policies",
+     "total": 32.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 0,
+      "failure_modes": 2,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27861",
+     "column": "embodied",
+     "title": "RoboCasa-Shift: Stage-Aware Robustness Evaluation of Vision-Language-Action Policies in Long-Horizon Household Manipulation",
+     "total": 32.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 0,
+      "failure_modes": 2,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33807",
+     "column": "embodied",
+     "title": "RoboWorM: Evaluating Movement Realism, Consistency and Acceleration Affects in Embodied Video World Models",
+     "total": 22.5,
+     "picked": false,
+     "scores": {
+      "real_robot": 0,
+      "failure_modes": 1,
+      "data_pipeline": 1,
+      "task_def": 0,
+      "closed_loop": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.32971",
+     "column": "embodied",
+     "title": "RobustRLlib: A Unified Library and Benchmark for Robust Reinforcement Learning Algorithms",
+     "total": 20.0,
+     "picked": false,
+     "scores": {
+      "real_robot": 0,
+      "failure_modes": 1,
+      "data_pipeline": 0,
+      "task_def": 1,
+      "closed_loop": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33186",
+     "column": "robotics",
+     "title": "Interpretable Collision Avoidance and Feasibility Guarantees through an Uncertainty Aware Pipeline",
+     "total": 87.5,
+     "picked": true,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 2,
+      "system_tradeoff": 2,
+      "sensing_compute": 1,
+      "scale": 1
+     },
+     "note": "实测 Jackal UGV 部署 + 12.7ms/周期，摘要直接给出基线的碰撞率与不可行率，安全保证与求解可行性解耦是明确系统取舍。"
+    },
+    {
+     "id": "2610.39367",
+     "column": "robotics",
+     "title": "Utility-WAM: Correcting Future-Induced Action Changes",
+     "total": 85.0,
+     "picked": true,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 2,
+      "system_tradeoff": 2,
+      "sensing_compute": 0,
+      "scale": 2
+     },
+     "note": "60 次真机双臂试验 53 成功，明确给出精度任务掉 54 分的负迁移失效模式与 38% 延迟削减的算力取舍。"
+    },
+    {
+     "id": "2610.38234",
+     "column": "robotics",
+     "title": "SimRetract: Zero-Shot Sim-to-Real Robotic Assistance for Retractor Take-Over in Open Surgery",
+     "total": 82.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 2,
+      "system_tradeoff": 1,
+      "sensing_compute": 1,
+      "scale": 2
+     },
+     "note": "真机 50 次 presentation + 1200 次仿真/真机试验，按组件定位 sim-to-real 差距并承认仅限相似抓取几何。"
+    },
+    {
+     "id": "2610.38233",
+     "column": "robotics",
+     "title": "HERON: Real-Time Obstacle-Aware Reachability Maps for Mobile Manipulators",
+     "total": 80.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 1,
+      "bounds": 2,
+      "system_tradeoff": 2,
+      "sensing_compute": 2,
+      "scale": 1
+     },
+     "note": "活体深度相机 + Jetson Orin INT8 部署，115ms vs cuRobo 90min，并承认工作空间边界处精度下降。"
+    },
+    {
+     "id": "2610.39267",
+     "column": "robotics",
+     "title": "RAIBO-Wagon: Real-Time Navigation System for a Legged Robot Towing a Wagon",
+     "total": 80.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 2,
+      "sensing_compute": 1,
+      "scale": 2
+     },
+     "note": "真机 40 次试验 85% 成功率、拖 40kg，全机载实时约束下 CFM+MPPI 的分工取舍写清。"
+    },
+    {
+     "id": "2610.35429",
+     "column": "robotics",
+     "title": "MATE-BT: A Behavior-Tree-Based Framework for Hierarchically Decentralized Mission Autonomy in Heterogeneous Multi-Robot Teams",
+     "total": 75.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 2,
+      "sensing_compute": 1,
+      "scale": 1
+     },
+     "note": "Webots + 真机，全机载算力实测（Orin Nano/Pi 5），30 机 120 目标的 130ms 响应与插件权衡明确。"
+    },
+    {
+     "id": "2610.39385",
+     "column": "robotics",
+     "title": "UMI-Live for In-The-Wild Bimanual Robotics Data Collection",
+     "total": 72.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 2,
+      "scale": 1
+     },
+     "note": "自制相机+LiDAR-惯性硬件、机载算力与电源交代完整，真机 10/10、8/10 并放出 40 小时数据。"
+    },
+    {
+     "id": "2610.32969",
+     "column": "robotics",
+     "title": "DexPort: A Hand-Held Skill Interface for Dexterous Hand Data Collection",
+     "total": 70.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 1,
+      "scale": 2
+     },
+     "note": "2500 条真机采集、4 任务含野外，用同一手硬件消除实体差距，成功率从 11%/36% 的提升暴露了边界。"
+    },
+    {
+     "id": "2610.32130",
+     "column": "robotics",
+     "title": "TravSUITE: Traversability via Self-Supervised, Uncertainty-Aware IRL and Terrain Estimation",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 1,
+      "scale": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.37557",
+     "column": "robotics",
+     "title": "Learning Visuomotor Quadrotor Flight Through Dynamic Narrow Gaps via Differentiable Simulation",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 1,
+      "scale": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27870",
+     "column": "robotics",
+     "title": "Enumeration-Guided Training of Neural Hamilton-Jacobi Safety Certificates",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 0,
+      "scale": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29586",
+     "column": "robotics",
+     "title": "End-to-End Reinforcement Learning for Quadrupedal Jumping in Lunar Gravity",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 1,
+      "bounds": 2,
+      "system_tradeoff": 1,
+      "sensing_compute": 1,
+      "scale": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.36968",
+     "column": "robotics",
+     "title": "Omni-IGN: Onboard Image-Goal Navigation for Drones with Omnidirectional Vision",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 0,
+      "system_tradeoff": 2,
+      "sensing_compute": 1,
+      "scale": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.39454",
+     "column": "robotics",
+     "title": "Kairos: Semantics-Aware Orchestration of Planning Engines across Classical, Numeric, Temporal and Hybrid PDDL",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 0,
+      "bounds": 2,
+      "system_tradeoff": 2,
+      "sensing_compute": 0,
+      "scale": 2
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.32855",
+     "column": "robotics",
+     "title": "Regularised RL improves sim-to-real transfer",
+     "total": 52.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 2,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 0,
+      "scale": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33916",
+     "column": "robotics",
+     "title": "Real-Time Human Trajectory Prediction from RGB-D for Mobile Robots Using Bi-Mamba",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 1,
+      "bounds": 0,
+      "system_tradeoff": 1,
+      "sensing_compute": 2,
+      "scale": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.35385",
+     "column": "robotics",
+     "title": "EmbodiedLab: Benchmarking Embodied Agents That Act to Know",
+     "total": 40.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 0,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 1,
+      "scale": 2
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33565",
+     "column": "robotics",
+     "title": "WorldFailBench: Do World Models Understand Policy Failures?",
+     "total": 32.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 1,
+      "bounds": 1,
+      "system_tradeoff": 0,
+      "sensing_compute": 0,
+      "scale": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31617",
+     "column": "robotics",
+     "title": "DiffDreamer: Coupling World Models with Differentiable Simulation for Agile Quadrotor Control",
+     "total": 25.0,
+     "picked": false,
+     "scores": {
+      "real_platform": 1,
+      "bounds": 0,
+      "system_tradeoff": 1,
+      "sensing_compute": 0,
+      "scale": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.28121",
+     "column": "robotics",
+     "title": "Interruption-Aware Recurrent Reinforcement Learning for UAS Navigation Under Temporary Overrides",
+     "total": 22.5,
+     "picked": false,
+     "scores": {
+      "real_platform": 0,
+      "bounds": 1,
+      "system_tradeoff": 1,
+      "sensing_compute": 0,
+      "scale": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.30914",
+     "column": "security",
+     "title": "MIG-COW: Transferable Adversarial Attacks on Deepfake Detectors via Gradient Decomposition",
+     "total": 90.0,
+     "picked": true,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 2,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": "白盒代理/黑盒目标分开报，ASR+SSIM+挑战赛基线齐全，机制落在集成梯度分解上；但黑盒迁移只有 7.16%，且无防御代价讨论。"
+    },
+    {
+     "id": "2610.31246",
+     "column": "security",
+     "title": "Weaponizing the Exit: Input Privacy Leakage via Exit Routing Manipulation in Multi-Exit Networks",
+     "total": 90.0,
+     "picked": true,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 2,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": "攻击者能力边界写得最干净：不读输入/中间态/输出，只靠每查询时延；供应链投毒假设明示，四数据集十属性、F1 0.73 vs 基线 0.25，并报出精度降<1.3%、加速退化<0.1 的代价。"
+    },
+    {
+     "id": "2610.28364",
+     "column": "security",
+     "title": "Context-Aware Prompt Injection Detection via Small Language Models in RAG Pipelines: nokast-secureRAG",
+     "total": 87.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 2
+     },
+     "note": "威胁模型自己划了边界（instruction-consistency；承认 PoisonedRAG 落在界外、召回近零），机制是检索→生成之间的语义防火墙，延迟 293-404ms 与 FPR 0.026 两个代价都有数。"
+    },
+    {
+     "id": "2610.28987",
+     "column": "security",
+     "title": "PerMIT: Securing Persistent Memory for LLM Agents via Machine-Checked Integrity Theorems and Scalable Community Trust",
+     "total": 87.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 2,
+      "mechanism": 2,
+      "metrics": 1,
+      "defense_cost": 1
+     },
+     "note": "信任假设写死（只信用户键入与门确认值）且 Lean 4 机检两条完整性定理，攻击归约到一次可审计判定；但只有零观测攻击成功、单套基准，指标可比性弱。"
+    },
+    {
+     "id": "2610.33437",
+     "column": "security",
+     "title": "Combinatorial Lock for Trojan-Resilient AI Engines via Hash-Assisted Spectral Filtering",
+     "total": 87.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 2
+     },
+     "note": "多触发后门威胁模型清楚（机制异质、单一静态假设失效），ASR 0.1% / 干净精度 97.8%，六模型+3 组基线，19-20% 延迟与 ASIC-FPGA 实现把防御代价写实了。"
+    },
+    {
+     "id": "2610.34535",
+     "column": "security",
+     "title": "SentryBench: A Cost-Sensitive Benchmark for Adversarial Robustness of Tool-Using LLM Agents in Public-Safety Deployments",
+     "total": 87.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 2
+     },
+     "note": "把'过度拒绝'当成本项正式写进指标，攻击成功率与两类误判同表；信任门零过度拒绝、代价（拒绝更多真急单）有证明与 840 episode 支撑。"
+    },
+    {
+     "id": "2610.34435",
+     "column": "security",
+     "title": "CyberDual: AI Attackers versus AI Code Reviewers in Real Software Maintenance",
+     "total": 82.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 1
+     },
+     "note": "攻击者把 bug 摊到真实上游 commit 上，判分靠 PoC 复跑而非 agent 自述；1088 次攻击、85-91% 拦截率可核，换厂商评审器补 2/3 漏检的代价也有数。"
+    },
+    {
+     "id": "2610.37741",
+     "column": "security",
+     "title": "Agentic Backdoors via Pretraining Poisoning",
+     "total": 82.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 2,
+      "mechanism": 2,
+      "metrics": 1,
+      "defense_cost": 0
+     },
+     "note": "端到端最可信：0.6/1.7/4B 从头预训练再后训练成 CLI agent，0.1% 与 0.0005% 两个投毒率都有 ASR，规模趋势清楚；缺与已有投毒攻击的对比、无防御代价。"
+    },
+    {
+     "id": "2610.30226",
+     "column": "security",
+     "title": "PhishGen: Understanding LLM Capabilities in Automated Phishing Website Generation",
+     "total": 77.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29196",
+     "column": "security",
+     "title": "A Unified Evaluation Framework of Physical Adversarial Robustness in the Edge VLM Era",
+     "total": 77.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31294",
+     "column": "security",
+     "title": "Practical Auditing of Differentially Private Graph Release Mechanisms: Methodology, Toolkit, and Case Study",
+     "total": 77.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31404",
+     "column": "security",
+     "title": "AgentPhishing: A Benchmark of LLM Email Agents Under Adaptive Attack",
+     "total": 77.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.29379",
+     "column": "security",
+     "title": "Where AI Vulnerability Discovery Harnesses Go Quiet: Structural False Negatives and Hidden Vulnerabilities",
+     "total": 70.0,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 1,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.33753",
+     "column": "security",
+     "title": "Ring-0 by Default: Agents as Operating Systems (AaOS)",
+     "total": 70.0,
+     "picked": false,
+     "scores": {
+      "threat_model": 2,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 1,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.35151",
+     "column": "security",
+     "title": "SoK: Timestamps Are Not a Time Model: Rethinking Temporal Reasoning in Host-Based Intrusion Detection",
+     "total": 67.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 1,
+      "assumption_bounds": 2,
+      "mechanism": 2,
+      "metrics": 1,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.34064",
+     "column": "security",
+     "title": "Back to Basics: Formal Analysis Hints Improve Weak-to-Strong Monitoring",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "threat_model": 1,
+      "assumption_bounds": 1,
+      "mechanism": 2,
+      "metrics": 1,
+      "defense_cost": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.36731",
+     "column": "security",
+     "title": "Beyond LWE: Post-Quantum Assumptions under a Counterfactual Break of the Dihedral Coset Problem",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 1,
+      "assumption_bounds": 2,
+      "mechanism": 1,
+      "metrics": 1,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.27548",
+     "column": "security",
+     "title": "Act on Your Behalf, Beyond Your Authorization: Benchmarking LLM Agent Authorization Alignment",
+     "total": 57.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 1,
+      "assumption_bounds": 1,
+      "mechanism": 1,
+      "metrics": 2,
+      "defense_cost": 1
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.30184",
+     "column": "security",
+     "title": "Self-Evolving Static Analysis via LLM Pseudo-Labeling",
+     "total": 25.0,
+     "picked": false,
+     "scores": {
+      "threat_model": 0,
+      "assumption_bounds": 0,
+      "mechanism": 1,
+      "metrics": 2,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.31844",
+     "column": "security",
+     "title": "SEMPRE: Semantic-Aware Protocol Reverse Engineering via Consistency-Driven Joint Optimization",
+     "total": 17.5,
+     "picked": false,
+     "scores": {
+      "threat_model": 0,
+      "assumption_bounds": 0,
+      "mechanism": 1,
+      "metrics": 1,
+      "defense_cost": 0
+     },
+     "note": ""
+    },
+    {
+     "id": "2610.32487",
+     "column": "slam",
+     "title": "State Estimation as In-context Tabular Prediction",
+     "total": 85.0,
+     "picked": true,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 2,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 2
+     },
+     "note": "把 SE 重构成表格上下文预测并冻结权重，明确对标 WLS 在低可观性/坏数据下的失效，IEEE 14-118 母线全量评测；但电力系统 SE，无尺度/初始化概念"
+    },
+    {
+     "id": "2610.41768",
+     "column": "slam",
+     "title": "Visual-Inertial RGB-D SLAM with Encoders for a Differential Wheeled Robot",
+     "total": 77.5,
+     "picked": true,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 2,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "针对特征缺失/快机动失效引入编码器，给出生成式量测模型并推 MAP 与 Jacobian，经典优化路线的直接继承；尺度重力未交代，仅自建数据集"
+    },
+    {
+     "id": "2610.33174",
+     "column": "slam",
+     "title": "Bracketing Shows the Way: Adaptive Multi-Exposure Policy as Input for Robust Visual SLAM",
+     "total": 77.5,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 2,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "曝光包围直接作为因子图约束、不靠 HDR 合成，隧道出口 32 m/s 光照剧变下误差降 78%，退化场景是主线"
+    },
+    {
+     "id": "2610.35642",
+     "column": "slam",
+     "title": "VPR-Space: A Benchmark for Visual Place Recognition in Space Analog Domains",
+     "total": 75.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 2,
+      "classic_link": 1,
+      "init_scale": 0,
+      "eval_rigor": 2
+     },
+     "note": "特征贫乏外行域 VPR 基准，GT 按「对下游 SLAM 是否有用」由 RPE 集成定义，评测量化口径少见地严谨"
+    },
+    {
+     "id": "2610.31051",
+     "column": "slam",
+     "title": "Tilt-Rotor Quadcopter with Learned Residual Control and Mode-Dependent State Estimation",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "模式相关 14 状态 EKF + 滞回分类器避免协方差跳变的取舍讲清了，属经典 EKF 的继承式改造；纯仿真"
+    },
+    {
+     "id": "2610.33356",
+     "column": "slam",
+     "title": "Tight Learned Event-Inertial Odometry (TLEIO): a Transformer-Based Architecture for End-to-End Motion from Event Streams",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "用学习到的相对运动+随机克隆 EKF 替代特征跟踪与重后端，对 TLIO 基线与优化式事件里程计有明确对立面"
+    },
+    {
+     "id": "2610.36454",
+     "column": "slam",
+     "title": "SVIn+: Multi-Modal Framework for Robust Underwater State Estimation using 3D Sonar, Visual-Inertial, Water-Pressure, and DVL",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "在 SVIn 上紧耦合水压/DVL，KISS-ICP 前端作相对位姿因子控制算力，层次划分理由清楚；低能见度只作背景"
+    },
+    {
+     "id": "2610.36633",
+     "column": "slam",
+     "title": "Deep Bayesian Filtering for Nonlinear Structural System Identification: A Tutorial on Structural and Physical Inductive Biases",
+     "total": 65.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "教程式统一 DMM/PgDMM/Neural EKF 与可微 Kalman 的关系，经典滤波继承明确；仅仿真基准，真实性校验自陈缺失"
+    },
+    {
+     "id": "2610.36598",
+     "column": "slam",
+     "title": "OpenJaws: An Open Hardware UMI Framework with Stereo Localization for Generalist Manipulation",
+     "total": 62.5,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 1,
+      "init_scale": 1,
+      "eval_rigor": 1
+     },
+     "note": "硬件+软件一并开放，指出单目 VIO 尺度模糊与漂移是数据质量瓶颈；权宜只到「换双目」这一层面，退化场景未展开"
+    },
+    {
+     "id": "2610.30774",
+     "column": "slam",
+     "title": "Evaluation of Front-End Feature Matching for Lunar Visual SLAM",
+     "total": 62.5,
+     "picked": false,
+     "scores": {
+      "design_rationale": 1,
+      "degradation": 2,
+      "classic_link": 1,
+      "init_scale": 0,
+      "eval_rigor": 2
+     },
+     "note": "低纹理/强曝光/纯旋转退化与「只有 SuperPoint 全程保住跟踪」讲得最实；但为纯评测论文，无尺度与初始化"
+    },
+    {
+     "id": "2610.31799",
+     "column": "slam",
+     "title": "Exposing Noise-Deficiency Signatures of Deep Learning-Based False Data Injection Attacks Through AC State Estimation",
+     "total": 60.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 0,
+      "classic_link": 2,
+      "init_scale": 0,
+      "eval_rigor": 2
+     },
+     "note": "残差空间噪声匮乏特征对经典 BDD/WLS 的明确对立，14/118 母线检测对比扎实；但失败指攻击逃逸，非估计退化"
+    },
+    {
+     "id": "2610.37111",
+     "column": "slam",
+     "title": "RAVEN: A Unified Active SLAM System for Rapid Autonomous Visual Exploration with Aerial Robots under Localization Uncertainty",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 1,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "效用向量把探索与定位精度解耦、Fisher 信息场做感知规划，设计理由充分；初始化未交代"
+    },
+    {
+     "id": "2610.37806",
+     "column": "slam",
+     "title": "TACOS: Terrain-Aware COntact Supervision for Visual Footstep Planning",
+     "total": 55.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 1,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "用因子图残差当接触监督信号，解决了「监督信号凭直觉选」的问题；属下游任务，非估计器本身"
+    },
+    {
+     "id": "2610.32742",
+     "column": "slam",
+     "title": "Adaptive World-Models for Anomaly Recognition (AWARE): A Framework for Robot Dynamics Prediction and Introspection",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 0,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "外部相机替代本体传感器的动机讲清了，仅相机噪声下估计也点到了，但无退化/不可观分析，也无经典滤波继承线索"
+    },
+    {
+     "id": "2610.30988",
+     "column": "slam",
+     "title": "In-Context Learning World Models for Robot Dual-Arm Manipulation of Soft Garment with Partial Observations",
+     "total": 45.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 1,
+      "classic_link": 0,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "部分观测下靠上下文推断潜变量、免权重更新，设计动机清楚；但属操作世界模型，无经典滤波线索"
+    },
+    {
+     "id": "2610.28953",
+     "column": "slam",
+     "title": "GGraph: A GPU-Accelerated Library for Graph-Based Robot Deployment and Learning",
+     "total": 32.5,
+     "picked": false,
+     "scores": {
+      "design_rationale": 2,
+      "degradation": 0,
+      "classic_link": 0,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "GPU 并行图构建的理由(RL 需上千并行环境)很清楚，但属定位/规划基础设施，不是估计器论文"
+    },
+    {
+     "id": "2610.33735",
+     "column": "slam",
+     "title": "Floor Friction Assessment from Robot Tire-Surface Interaction",
+     "total": 32.5,
+     "picked": false,
+     "scores": {
+      "design_rationale": 1,
+      "degradation": 1,
+      "classic_link": 0,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "打滑/死推算误差与路面识别的关系成立，但属地面材质表征，不是状态估计论文"
+    },
+    {
+     "id": "2610.41671",
+     "column": "slam",
+     "title": "OpenVIO: A Versatile Open-Source Visual-Inertial Odometry System",
+     "total": 30.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 1,
+      "degradation": 0,
+      "classic_link": 1,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "自称逐部分交代设计考量，但摘要只给功能清单；退化与初始化均无"
+    },
+    {
+     "id": "2610.28094",
+     "column": "slam",
+     "title": "Observer-Based Control for Multi-Agent Systems under Communication-Task Graph Mismatch and Directed Switching Topologies",
+     "total": 20.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 1,
+      "degradation": 0,
+      "classic_link": 0,
+      "init_scale": 0,
+      "eval_rigor": 1
+     },
+     "note": "通信图与任务图错配下 k-hop 观测器的动机清楚，但是多智能体控制，与估计器设计判断无关"
+    },
+    {
+     "id": "2610.30101",
+     "column": "slam",
+     "title": "Machine Learning-Enabled Wireless Power Transfer: A Task-Oriented Review of Structural Optimization, State and Parameter Estimation, and Adaptive Control",
+     "total": 0.0,
+     "picked": false,
+     "scores": {
+      "design_rationale": 0,
+      "degradation": 0,
+      "classic_link": 0,
+      "init_scale": 0,
+      "eval_rigor": 0
+     },
+     "note": "综述，无线输能领域，与栏目选文偏好无关"
+    }
+   ]
   }
  }
 }

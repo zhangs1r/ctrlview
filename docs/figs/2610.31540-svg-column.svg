@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="900" height="600" fill="#ffffff"/>
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a6b86"/>
+    </marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b7791f"/>
+    </marker>
+  </defs>
+
+  <!-- 列的高亮带 -->
+  <rect x="448" y="76" width="46" height="452" fill="#fdf1dd" stroke="#b7791f" stroke-width="1.2" stroke-dasharray="6 4"/>
+
+  <!-- 网格三列 -->
+  <path d="M380,76 V528 M518,76 V528" stroke="#d5dde4" stroke-width="1"/>
+  <text x="380" y="66" font-size="12.5" fill="#7b8b99" text-anchor="middle">列 (1, c′)</text>
+  <text x="471" y="66" font-size="12.5" fill="#b7791f" text-anchor="middle" font-weight="700">列 (i, c)</text>
+  <text x="562" y="66" font-size="12.5" fill="#7b8b99" text-anchor="middle">列 (N, c″)</text>
+
+  <!-- 行块 J -->
+  <rect x="40" y="86" width="270" height="80" rx="6" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.5"/>
+  <text x="56" y="112" font-size="15" font-weight="700" fill="#16212b">J 行，共 L 条</text>
+  <text x="56" y="134" font-size="12.5" fill="#33475a">ϑ ≥ Σᵢ α_(ℓi) Σ_c J_i(c) λ_(i,c)</text>
+  <text x="56" y="154" font-size="12.5" fill="#67788a">ℓ = 1 … L，代价聚合器的每条腿</text>
+  <rect x="320" y="86" width="300" height="80" fill="#f7fafc" stroke="#c3d0da" stroke-width="1"/>
+  <circle cx="471" cy="126" r="6" fill="#b7791f"/>
+  <text x="484" y="131" font-size="12" fill="#5a4715">α_(ℓi) J_i(c)</text>
+
+  <!-- 行块 E -->
+  <rect x="40" y="186" width="270" height="66" rx="6" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.5"/>
+  <text x="56" y="212" font-size="15" font-weight="700" fill="#16212b">E 行，共 N 条</text>
+  <text x="56" y="234" font-size="12.5" fill="#33475a">Σ_c λ_(i,c) = 1，每台机选一个序列</text>
+  <rect x="320" y="186" width="300" height="66" fill="#f7fafc" stroke="#c3d0da" stroke-width="1"/>
+  <circle cx="471" cy="219" r="6" fill="#4a6b86"/>
+  <text x="484" y="224" font-size="12" fill="#33475a">1（只在第 i 行）</text>
+
+  <!-- 行块 G -->
+  <rect x="40" y="272" width="270" height="76" rx="6" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.5"/>
+  <text x="56" y="298" font-size="15" font-weight="700" fill="#16212b">G 行，每个 (i′, c′) 一条</text>
+  <text x="56" y="320" font-size="12.5" fill="#33475a">g(roll_i(c)) · λ_(i,c) ≥ 0</text>
+  <text x="56" y="340" font-size="12.5" fill="#67788a">把违反单机谓词的列钉在零</text>
+  <rect x="320" y="272" width="300" height="76" fill="#f7fafc" stroke="#c3d0da" stroke-width="1"/>
+  <circle cx="471" cy="310" r="6" fill="#4a6b86"/>
+  <text x="484" y="315" font-size="12" fill="#33475a">g(roll_i(c))</text>
+
+  <!-- 行块 O -->
+  <rect x="40" y="368" width="270" height="160" rx="6" fill="#eef2f6" stroke="#4a6b86" stroke-width="1.5"/>
+  <text x="56" y="394" font-size="15" font-weight="700" fill="#16212b">O 行，每个禁元组一条</text>
+  <text x="56" y="416" font-size="12.5" fill="#33475a">Σ_(j∈e) Σ_c 1[κ_j∈occ_j] λ_(j,c) ≤ |e|−1</text>
+  <text x="56" y="436" font-size="12.5" fill="#67788a">禁元组上不许整组同时占格</text>
+  <text x="56" y="462" font-size="12.5" fill="#67788a">行数随组大小按 |K|^|e| 长</text>
+  <text x="56" y="482" font-size="12.5" fill="#67788a">这是全表唯一随机器数爆炸的块</text>
+  <rect x="320" y="368" width="300" height="160" fill="#f7fafc" stroke="#c3d0da" stroke-width="1"/>
+  <circle cx="471" cy="398" r="6" fill="#b7791f"/>
+  <circle cx="471" cy="438" r="6" fill="#b7791f"/>
+  <circle cx="471" cy="478" r="6" fill="#b7791f"/>
+  <text x="484" y="403" font-size="12" fill="#5a4715">1（第 i 台占了这一格）</text>
+  <text x="484" y="443" font-size="12" fill="#5a4715">1</text>
+  <text x="484" y="483" font-size="12" fill="#5a4715">1</text>
+
+  <!-- 右侧对偶 -->
+  <path d="M626,126 H654" stroke="#4a6b86" stroke-width="1.6" marker-end="url(#a1)"/>
+  <text x="662" y="118" font-size="13.5" font-weight="700" fill="#16212b">β ∈ ℝ^L</text>
+  <text x="662" y="140" font-size="12.5" fill="#33475a">价格 wᵢ = Σ_ℓ β_ℓ α_(ℓi)</text>
+
+  <path d="M626,219 H654" stroke="#4a6b86" stroke-width="1.6" marker-end="url(#a1)"/>
+  <text x="662" y="211" font-size="13.5" font-weight="700" fill="#16212b">π ∈ ℝ^N</text>
+  <text x="662" y="233" font-size="12.5" fill="#33475a">常数项，进 reduced cost 时减 πᵢ</text>
+
+  <path d="M626,310 H654" stroke="#4a6b86" stroke-width="1.6" marker-end="url(#a1)"/>
+  <text x="662" y="302" font-size="13.5" font-weight="700" fill="#16212b">ν</text>
+  <text x="662" y="324" font-size="12.5" fill="#33475a">池内序列都满足单机谓词，取 0</text>
+
+  <path d="M626,448 H654" stroke="#b7791f" stroke-width="1.8" marker-end="url(#a2)"/>
+  <text x="662" y="418" font-size="13.5" font-weight="700" fill="#4a3a12">μ ∈ ℝ^R，0 ≤ μ ≤ P·1</text>
+  <text x="662" y="440" font-size="12.5" fill="#5a4715">按格与子步汇总成租金 μ_(i,κ,m)</text>
+  <text x="662" y="460" font-size="12.5" fill="#5a4715">再按窗口累加成 r_(i,k)</text>
+  <text x="662" y="480" font-size="12.5" fill="#8a7133">上界 P 是松弛里一片空格的价</text>
+
+  <!-- 底部结论 -->
+  <rect x="40" y="546" width="820" height="40" rx="6" fill="#fdf6e8" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="58" y="572" font-size="14" fill="#4a3a12">一个列的总价　J̄_i(c) = wᵢ·J_i(c) + Σ_k r_(i,k)(roll_i(c)) − πᵢ　　三项分别来自 J 行、O 行、E 行</text>
+</svg>

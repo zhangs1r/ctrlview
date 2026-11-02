@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261019192040"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.03434.html?force=20261019192040" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.03434.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">隐私与安全 · 论文精读</div>
@@ -57,13 +57,13 @@ arXiv:2610.03434 · 2026-10-19 · 精读约 36 分钟</div>
 <p><strong>能改什么。</strong> 只有自己送进去的输入。工具、检索到的文档、记忆、执行环境都在射程之外，论文据此把间接提示注入、工具投毒、记忆投毒三类明确划到评测范围之外。</p>
 <p><strong>图什么。</strong> 三件事。一是套出系统提示或内部策略，也就是指令操纵与提示提取。二是诱导 agent 输出违反政策的内容或执行动作，带来声誉、财务或法律损失。三是把 agent 推出它该管的事，比如逼一个订票助手给医疗建议或者抖出内部运营信息。<mark>第三条目标跟前面两条不同，论文把它定义成「让 agent 干出超出自己职责范围的事」，这个目标的成立要先有一个职责范围。</mark></p>
 <p>这三条合起来限定了结论的适用范围。论文的守卫看的是送进来的这一轮和处理完的这一轮，不看中间动作。所以一次被间接注入操纵的 agent，只要最终的回复越了界，输出守卫仍可能拦下它；可要是 agent 在中间悄悄调了一次不该调的接口，这道防线看不见。</p>
-<figure><img src="figs/2610.03434-svg-threat.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）左侧是外部恶意用户，他能做的是无限次提问并读回回复。灰色虚线框是论文假定他碰不到的企业内部，里面装着系统提示、记忆、编排逻辑、内部工具与检索库。请求跨进虚线时先过输入守卫，回复跨出虚线前再过一个输出守卫，这两处是仅有的检查点。中间执行阶段的多步推理与工具调用对守卫不可见，这也是论文把间接注入、工具投毒、记忆投毒排除在评测之外的原因。</figcaption></figure>
+<figure><img src="figs/2610.03434-svg-threat.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）左侧是外部恶意用户，他能做的是无限次提问并读回回复。灰色虚线框是论文假定他碰不到的企业内部，里面装着系统提示、记忆、编排逻辑、内部工具与检索库。请求跨进虚线时先过输入守卫，回复跨出虚线前再过一个输出守卫，这两处是仅有的检查点。中间执行阶段的多步推理与工具调用对守卫不可见，这也是论文把间接注入、工具投毒、记忆投毒排除在评测之外的原因。</figcaption></figure>
 <h3>2.2 一次请求的完整路径</h3>
 <p>一次交互要过几个环节。用户请求从公开接口进来，前端的应用层可以附加用户状态、会话信息这类上下文元数据。请求先到输入守卫，它拿这份规格判这一轮该不该接，判完要么拦，要么放给 agent。agent 内部可能走多步推理，调内部工具和外部接口，查企业知识库，最后产出回复。回复在交给用户之前过输出守卫，核的是同一份规格。</p>
 <p>两道守卫都做阻塞式判断，都站在关键路径上，不能跟 agent 异步跑。论文第 2.3 节把这条写成设计前提，请求必须在 agent 执行前核完，回复必须在返回给用户前核完。这条前提后面所有工程取舍都从它推出来。</p>
 <h3>2.3 阶段与章节对照</h3>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>边界定义</td><td>§3.1</td><td>agent 实现与产品规格</td><td>允许意图清单与禁止意图清单</td></tr><tr><td>边界来源</td><td>§3.1.2</td><td>实现分析、影子流量、安全知识</td><td>三处攒出的语义规格</td></tr><tr><td>架构选型</td><td>§3.2、§3.3 与表 1</td><td>四种候选架构</td><td>共享的 LLM 分类器</td></tr><tr><td>模型选型</td><td>§3.4 与表 2</td><td>五个本地可部署模型</td><td>Qwen3-30B-A3B</td></tr><tr><td>基准构造</td><td>§4.1 与表 4</td><td>四类语料来源</td><td>PAGE，2180 条带标签消息</td></tr><tr><td>配置消融</td><td>§4.2 与表 6</td><td>五档规格配置</td><td>准确率、误放率、误拦率</td></tr><tr><td>混淆轮消融</td><td>§4.5 与表 8</td><td>三种标注口径</td><td>混淆轮的两种打分结果</td></tr><tr><td>生产服务</td><td>§5.1、§5.2 与图 1</td><td>vLLM 与 NVIDIA Dynamo</td><td>单卡模型调用时延</td></tr><tr><td>持续演化</td><td>§5.4 至 §5.7</td><td>候选快照与人工评审</td><td>逐 agent 的策略版本</td></tr></tbody></table></div>
-<figure><img src="figs/2610.03434-fig3.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　调用方先过入口限流，到前端做前缀缓存感知的路由，再派给解码工作池，工作池在专用加速卡上跑推理，产出一个放行或拦截的决定。右侧虚线框是服务发现，前端与解码池各自按区域注册与发现，两侧的实例池独立扩缩。</figcaption></figure>
+<figure><img src="figs/2610.03434-fig3.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　调用方先过入口限流，到前端做前缀缓存感知的路由，再派给解码工作池，工作池在专用加速卡上跑推理，产出一个放行或拦截的决定。右侧虚线框是服务发现，前端与解码池各自按区域注册与发现，两侧的实例池独立扩缩。</figcaption></figure>
 <p>这节要你记住的是，两道守卫一前一后，中间那段进程里的动作没人看。</p>
 <hr>
 <h2>三、方法拆解</h2>
@@ -73,7 +73,7 @@ arXiv:2610.03434 · 2026-10-19 · 精读约 36 分钟</div>
 <p>只有黑名单，就是逐条列出该拒的请求。这些条目分两来源，安全驱动的对应已知的攻击手法，功能驱动的对应越界请求。越界请求要不要进黑名单是可配的，有的应用就想当个专才，越界一律拒；有的愿意答一句或者把用户引回正题，Persona Guardrail 两种部署模型都支持。<mark>越界请求是不是该拒，论文把它交给每个 agent 自己定，框架不替它决定。</mark></p>
 <p>两种都写的时候，论文给了一条工程要求，两份清单要尽量不重叠。重叠处的条目给分类器的是互相矛盾的证据，判断的不确定性会升上去。所以框架会把两份清单里重叠的条目找出来，在构建和迭代阶段判给其中一条规则，让每种能力都落在唯一一条规则下面。</p>
 <p>各自会出哪种错，图里画得很清楚。</p>
-<figure><img src="figs/2610.03434-svg-boundary.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）两个面板画同一个功能边界，绿块是该接的请求，红块是该拒的请求。左面板把边界定义成白名单枚举到的那些类别，没枚举到的正当请求虽然还在边界内，也会被误拒。右面板把边界定义成减去黑名单枚举到的那些类别，名单外的越界请求会被当成正常请求放进去。底部两个数字来自 PAGE 的越界检测率，白名单迭代后到 93.5%，只写黑名单时是 14.5%。</figcaption></figure>
+<figure><img src="figs/2610.03434-svg-boundary.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）两个面板画同一个功能边界，绿块是该接的请求，红块是该拒的请求。左面板把边界定义成白名单枚举到的那些类别，没枚举到的正当请求虽然还在边界内，也会被误拒。右面板把边界定义成减去黑名单枚举到的那些类别，名单外的越界请求会被当成正常请求放进去。底部两个数字来自 PAGE 的越界检测率，白名单迭代后到 93.5%，只写黑名单时是 14.5%。</figcaption></figure>
 <h3>3.2 边界从哪攒出来</h3>
 <p>三处来源，论文第 3.1.2 节分开写。</p>
 <p><strong>实现与产品规格。</strong> 上线初期，用一个面向代码的 LLM 去读 agent 的实现，看它有哪些工具、哪些接口、哪些检索组件、系统提示怎么写、外部资源是什么，推出它打算支持哪几类请求，产出一份初始的语义规格。<u>这条路径把边界锚在实现与产品文档上，不靠人的印象。</u></p>
@@ -157,7 +157,7 @@ arXiv:2610.03434 · 2026-10-19 · 精读约 36 分钟</div>
 <p>工作负载的形态定好之后，模型侧靠混合专家结构省算力，800 亿参数级的容量、30 亿参数级的开销，权重压到 FP8。服务侧把推理拆成 CPU 前端和 GPU 工作池，前端做前缀缓存感知的路由。</p>
 <div class="scroll"><table><thead><tr><th>负载区间</th><th>中位数</th><th>P90</th><th>P99</th></tr></thead><tbody><tr><td>全区间 5 至 50 QPS</td><td>19.43 至 25.34 ms</td><td>57.30 至 61.08 ms</td><td>76.77 至 104.15 ms</td></tr><tr><td>5 QPS</td><td>约 19 ms</td><td>约 57 ms</td><td>76.77 ms</td></tr><tr><td>30 QPS</td><td>约 22 ms</td><td>约 59 ms</td><td>越过 100 ms</td></tr><tr><td>50 QPS</td><td>25.34 ms</td><td>61.08 ms</td><td>104.15 ms</td></tr></tbody></table></div>
 <p>这些数是单张加速卡上的模型调用时延，上下文上限 4096 token，不含应用层与网络开销，测试区间里加速卡利用率始终低于 65%。P90 整区间停在 100 毫秒目标以内，P99 在 30 QPS 处越过目标。相对原来那套通用服务栈，这套分离式设计把护栏调用的时延压低了约 30%。</p>
-<figure><img src="figs/2610.03434-fig1.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　横轴是施加的负载，单位 QPS，纵轴是时延，单位毫秒，三条曲线分别是 P50、P90 与 P99，虚线是 100 毫秒的预算线。P50 整段贴在 20 到 26 毫秒之间，P90 从 57 毫秒缓升到 61 毫秒，始终在预算线下方。P99 在 20 到 30 QPS 之间抬升最快，30 QPS 处碰到预算线，50 QPS 处到 104 毫秒。数据取自论文第 5.2 节，单卡、4096 token 上限、不含网络开销。</figcaption></figure>
+<figure><img src="figs/2610.03434-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　横轴是施加的负载，单位 QPS，纵轴是时延，单位毫秒，三条曲线分别是 P50、P90 与 P99，虚线是 100 毫秒的预算线。P50 整段贴在 20 到 26 毫秒之间，P90 从 57 毫秒缓升到 61 毫秒，始终在预算线下方。P99 在 20 到 30 QPS 之间抬升最快，30 QPS 处碰到预算线，50 QPS 处到 104 毫秒。数据取自论文第 5.2 节，单卡、4096 token 上限、不含网络开销。</figcaption></figure>
 <h3>4.8 换个角度攻</h3>
 <p>论文附录 A.2 还试了一组知道内情的攻击者。攻击模型换了好几个，知识水平分三档，只知道架构、知道确切的模型与提示结构、拿到逐字的允许意图清单。第一轮没绕过去的话，允许它们接着多轮尝试。</p>
 <p>结论有两条。拿到逐字意图清单给攻击者的帮助最大，而这种情况在现实中风险最低。<mark>知道底层模型是哪个，在已经知道有这道护栏之后没有额外好处。</mark>就算是最坏那一档，也就是攻击者拿到了完整意图清单，能力最强的那个模型生成的攻击也有 85% 以上被挡下，其余情形下的检测率都在 90% 以上。</p>
@@ -205,5 +205,5 @@ arXiv:2610.03434 · 2026-10-19 · 精读约 36 分钟</div>
 
 <a class="paperlink" href="https://arxiv.org/abs/2610.03434" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2610.03434） →</a>
-<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-10-19 19:20</footer>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
 </div></body></html>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" width="780" height="400" font-family="'Noto Sans SC','Source Han Sans SC','Microsoft YaHei',sans-serif">
+  <rect width="780" height="400" fill="#ffffff"/>
+
+  <!-- positive region under curve (s in [0,1]) -->
+  <path d="M110,220 L169,185 L228,160 L287,145 L346,140 L346,220 Z" fill="#e6f4ea" stroke="none"/>
+  <!-- negative region (s in [2,2.5]) -->
+  <path d="M582,220 L641,265 L700,320 L700,220 Z" fill="#fdecea" stroke="none"/>
+
+  <!-- axes -->
+  <line x1="110" y1="220" x2="735" y2="220" stroke="#2b2b2b" stroke-width="1.6"/>
+  <line x1="110" y1="55" x2="110" y2="340" stroke="#2b2b2b" stroke-width="1.6"/>
+
+  <!-- y ticks -->
+  <line x1="104" y1="140" x2="110" y2="140" stroke="#2b2b2b" stroke-width="1.4"/>
+  <text x="98" y="145" font-size="13" fill="#2b2b2b" text-anchor="end">1</text>
+  <line x1="104" y1="220" x2="110" y2="220" stroke="#2b2b2b" stroke-width="1.4"/>
+  <text x="98" y="225" font-size="13" fill="#2b2b2b" text-anchor="end">0</text>
+  <line x1="104" y1="300" x2="110" y2="300" stroke="#2b2b2b" stroke-width="1.4"/>
+  <text x="98" y="305" font-size="13" fill="#2b2b2b" text-anchor="end">-1</text>
+
+  <!-- x ticks -->
+  <g font-size="13" fill="#2b2b2b" text-anchor="middle">
+    <line x1="110" y1="220" x2="110" y2="226" stroke="#2b2b2b" stroke-width="1.4"/>
+    <text x="110" y="243">0</text>
+    <line x1="228" y1="220" x2="228" y2="226" stroke="#2b2b2b" stroke-width="1.4"/>
+    <text x="228" y="243">0.5</text>
+    <line x1="346" y1="220" x2="346" y2="226" stroke="#2b2b2b" stroke-width="1.4"/>
+    <text x="346" y="243">1.0</text>
+    <line x1="464" y1="220" x2="464" y2="226" stroke="#2b2b2b" stroke-width="1.4"/>
+    <text x="464" y="243">1.5</text>
+    <line x1="582" y1="220" x2="582" y2="226" stroke="#2b2b2b" stroke-width="1.4"/>
+    <text x="582" y="243">2.0</text>
+  </g>
+
+  <!-- optimal vertical -->
+  <line x1="346" y1="55" x2="346" y2="336" stroke="#1e8e3e" stroke-width="1.2" stroke-dasharray="5 5"/>
+
+  <!-- curve -->
+  <polyline points="110,220 169,185 228,160 287,145 346,140 405,145 464,160 523,185 582,220 641,265 700,320"
+            fill="none" stroke="#1a4f8b" stroke-width="2.6" stroke-linejoin="round"/>
+
+  <!-- key points -->
+  <circle cx="110" cy="220" r="5" fill="#2b2b2b"/>
+  <circle cx="346" cy="140" r="6.5" fill="#1e8e3e"/>
+  <circle cx="582" cy="220" r="5" fill="#c5221f"/>
+  <circle cx="700" cy="320" r="5" fill="#c5221f"/>
+
+  <!-- annotations -->
+  <text x="120" y="205" font-size="13.5" fill="#2b2b2b">Δa 为零，等于没给未来</text>
+  <text x="356" y="132" font-size="14" font-weight="700" fill="#1e8e3e">Δa = r*，u_act 取最大</text>
+  <text x="572" y="208" font-size="13.5" fill="#c5221f" text-anchor="end">收益回到零</text>
+  <text x="700" y="345" font-size="13.5" fill="#c5221f" text-anchor="middle">推过头</text>
+
+  <text x="128" y="300" font-size="13.5" fill="#1e8e3e">u_act &gt; 0</text>
+  <text x="128" y="319" font-size="12.5" fill="#55705c">修正把动作往专家残差方向推</text>
+
+  <text x="300" y="374" font-size="13" fill="#c5221f">u_act &lt; 0，未来把动作推坏，也就是负迁移</text>
+
+  <!-- axis titles -->
+  <text x="423" y="265" font-size="13.5" fill="#2b2b2b" text-anchor="middle">Δa 沿 r* 方向的投影，以 r* 的模归一化</text>
+  <text x="110" y="42" font-size="13.5" fill="#2b2b2b">u_act，每维动作误差的改善</text>
+  <text x="423" y="30" font-size="15" font-weight="700" fill="#2b2b2b" text-anchor="middle">式 5 的形状　Δa 沿专家残差方向的一维切面</text>
+</svg>

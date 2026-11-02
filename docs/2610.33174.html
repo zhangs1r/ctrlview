@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>隧道口那一秒，让多曝光包围直接进因子图 · CtrlView</title>
+<meta name="description" content="隧道口那一秒，让多曝光包围直接进因子图">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.33174.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">SLAM 与状态估计 · 论文精读</div>
+<h1>隧道口那一秒，让多曝光包围直接进因子图</h1>
+<div class="meta"><b>Olivier Gamache, Anthony Lavertu, David-Alexandre Duclos, Jean-Michel Fortin, François Pomerleau, Philippe Giguère</b><br>
+arXiv:2610.33174 · 2026-11-02 · 精读约 32 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-视觉SLAM">视觉SLAM</a><a class="tag" href="topics.html#t-自动曝光">自动曝光</a><a class="tag" href="topics.html#t-多曝光包围">多曝光包围</a><a class="tag" href="topics.html#t-因子图">因子图</a><a class="tag" href="topics.html#t-光照鲁棒性">光照鲁棒性</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>小车从隧道里钻出来的那一秒，光照从 30 lx 跳到 80 000 lx。摄像机的自动曝光来不及改，画面白成一片。白掉的帧里没有能匹配上的特征点，视觉 SLAM 靠的就是这些特征点来算自己在哪儿。特征没了，轨迹就断在出口。</p>
+<p>这篇论文处理的就是这一秒。</p>
+<p>它做了两件事，一件在拍之前，一件在算之后。拍之前那件叫 B-Adapt，一台普通相机连续拍三张不同曝光的图，并且让这三档曝光动态地跟着场景走。算之后那件叫 BVSLAM，把这三张不同曝光的图直接当作因子图里的约束求解位姿，中间不做高动态范围合并。</p>
+<p>结果是组合出来的。同一个隧道出口，用自动曝光的图去算，5 米窗口上的相对位姿误差是 <strong>4.97 m</strong>；换成 B-Adapt 的三档图喂给 BVSLAM，误差降到 <strong>1.10 m</strong>，降了 78%。</p>
+<p>这些数字来自一辆 1/5 缩比遥控车，相机降帧到 4 Hz，等效于一辆 30 Hz 相机、以 32 m/s 跑过隧道出口的车。所以它测的是光照跳变的鲁棒性，不是量产车上的实测里程。</p>
+<h2>一、问题背景</h2>
+<h3>1.1 传感器量程装不下这个场景</h3>
+<p>隧道出口这个场景的动态范围能到 120 dB。8 位图像的理论动态范围是 48 dB，两个数差 72 dB。这 72 dB 里的东西，任何单张 8 位图都装不下，<mark>装不下的部分被截成纯白或纯黑</mark>，信息在那一次曝光里就没了。</p>
+<p>自动曝光（AE，按当前画面的亮度自动调曝光时间和增益的那套策略）能缓解，方法是等画面变白之后把曝光调短。这个环节有一拍延迟。车以 32 m/s 跑，4 Hz 的相机每帧之间走 8 米，延迟一拍就是 8 米的空白。论文把这种短促但足以打坏性能的扰动叫 disturbance，隧道出口是它的典型现场。</p>
+<p>于是问题落成一个很朴素的事实。像素饱和不改变估计问题里有几个未知数，它只是让原本提供方程的像素不再提供方程。方程一少，位姿就解不出来。</p>
+<figure><img src="figs/2610.33174-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1　隧道出口那一秒</b>　左边是现场，隧道内 30 lx，出口外 80 000 lx，地上那道红色箭头是车的行进方向。右边两组竖条是同一个位置连续三帧的裁剪图，彩色点是检出的特征点。下面那一组用自动曝光，三条基本全白，特征点几乎全挤在边框上。<b>上面那一组用 B-Adapt，最左那条还看得见隧道里的细节，特征点成片分布。</b>两组是同一段时间、同一个位置的采集结果。</figcaption></figure>
+<h3>1.2 前人走了两条路，各有各的堵点</h3>
+<p>一条路在采集侧。改 AE 的启发式，让它优化梯度、直方图均匀度，或者梯度加熵加信噪比的组合。也有学习式的，用自监督或强化学习直接学曝光参数。这些方法的共同边界是单次曝光，传感器装不下的动态范围，策略再聪明也变不出来。</p>
+<p>另一条路在估计侧。换更抗光照的特征和匹配器，比如 AirSLAM 用学习到的点和线特征来扛短时和长时的光照变化，它靠更好的特征描述子维持关联，但输入仍是一张曝光正常的图，饱和区里丢掉的细节补不回来。也有用辐射不变量的路线，把观测攒进一张环境的高动态范围地图里。</p>
+<p>多曝光的做法通常走向融合。把几张不同曝光的图合成一张高动态范围（HDR）图，再交给现成的 VSLAM。这条路在相机运动时出问题，错位会产生重影和配准伪影，越是在参考帧饱和的地方越糟。硬件上也有解法，空间变化曝光的传感器、片上双曝光的传感器，它们能消除帧间运动，代价是机器人平台上不常见。</p>
+<p>剩下的空隙很清楚。<strong>多曝光序列本身带着信息，但现有 VSLAM 没有为它设计过入口。</strong> 拍了三张，系统只取一张，另外两张白拍。</p>
+<h3>1.3 这篇的选择</h3>
+<p>采集侧和估计侧都动，而且两侧的设计是配套的。</p>
+<p>采集侧放弃&quot;把每张图拍好看&quot;这个目标，改成为估计器保留可匹配的内容。B-Adapt 用两个独立的控制环各盯直方图的一端，一档保亮部不过曝，一档保暗部不压死，中间再插一档做桥。<mark>三档之间保持足够的光度重叠</mark>，前后帧才能匹配上。</p>
+<p>估计侧放弃&quot;先融合再估计&quot;这条路，把三档图当作三类观测直接写进因子图。匹配只在曝光相差一步以内、且落在最近 5 帧窗口里的图像之间建立，这样每次匹配的两张图光度足够接近。</p>
+<p>一句话概括这套机制，<strong>低曝光那一档始终留着可匹配的内容，多曝光帧直接进因子图。</strong> 二十六个字。</p>
+<p>这个机制有一个可检验的推论。如果它成立，那么在隧道出口，饱和率冲到接近 100% 的那一秒里，B-Adapt 的高置信匹配数不该塌到 1；而只靠 AE 的系统，匹配数会塌下去。论文图 5 给的就是这条曲线，前者最低点仍在几十的量级，后者掉到 1 附近，同时相对位姿误差从 4.97 m 变成 1.10 m。</p>
+<p>它的失效情形论文自己也说了。极端亮的那块区域如果一开始只占画面很小一角，它推不动控制环；控制器只能看已经拍到的图，未来会怎样它不知道；窗口外的历史帧不参与关联；整套实现是离线的。</p>
+<p><strong>这节要你记住的是</strong> 饱和不减少未知数，它只是让方程失效。</p>
+<h2>二、总体结构</h2>
+<figure><img src="figs/2610.33174-fig2.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2　方法总览</b>　左边一半是采集，右边一半是估计。采集侧上下两路各有一条独立的误差回路，都从"拍一张、看直方图、算误差"这个循环里出来，中间那条支路把两档的曝光值取平均当中间档，n 取 3 时这就是式 (3) 给出的中点。<b>注意右下角那条折线，图里把它画成一条回路，采集顺序是来回走的，不是从暗到亮扫过去。</b>右侧上方是轨迹与隧道位置，下方那张图才是估计器的结构，灰色方框是 W=5 的回看窗口，空心圆是跨曝光共享的路标。</figcaption></figure>
+<p>把图上的框对到公式和小节，列成下面这张表。</p>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>对应位置</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>双环尾部控制</td><td>三.A，式 (1)(2)</td><td>上一帧实拍的图像、当前曝光值</td><td>两档边界曝光值 ê_L、ê_H</td></tr><tr><td>平滑与间隔约束</td><td>三.A，式 (4)</td><td>上一拍的曝光值、两档之差</td><td>本拍生效的 e_L、e_H</td></tr><tr><td>插中档</td><td>三.A，式 (3)</td><td>e_L、e_H、档数 n</td><td>中间档曝光值</td></tr><tr><td>采集时序</td><td>三.A 末</td><td>三档曝光值</td><td>循环序列 L、M、H、M</td></tr><tr><td>跨曝光关联</td><td>三.B</td><td>序列图像</td><td>帧内双目匹配、跨帧匹配</td></tr><tr><td>因子图求解</td><td>三.B</td><td>位姿初值、路标、匹配</td><td>滑动窗口增量解，再全局 BA</td></tr></tbody></table></div>
+<p><strong>这节要你记住的是</strong> 两路控制决定拍什么，一套关联决定谁能和谁匹配。</p>
+<h2>三、方法拆解</h2>
+<h3>3.1 一个标量管两个旋钮</h3>
+<p>相机能调的是曝光时间 t 和增益 g。两者对采集到的信号都是乘性的，乘在一个对数域里就变成加。论文因此用一个标量 e 表示这两种调节的合成效果，e 是曝光值（EV）的对数表达。</p>
+<p>这一步不只是记号上的方便。控制环要算的是&quot;下一拍该往哪个方向调多少&quot;，把两个旋钮压成一个标量之后，控制问题从二维降到一维，两个环可以各自独立地跑。</p>
+<p>下面所有&quot;优化 e&quot;的地方都守同一套账。被优化的量是 e_L 和 e_H。初值来自上一拍的值，靠指数移动平均往前推。残差是分位数目标和它的目标位置之差，式 (1)(2) 给出。兜底的是式 (4) 的最小间隔约束。原文没有交代第一帧的 e 从哪里起步，这是读不到的地方。</p>
+<h3>3.2 两个单侧尾部目标</h3>
+<p>常规 AE 优化的量是图像平均亮度。这篇换掉了这个量，改成直方图某一端的<strong>分位数</strong>。<u>分位数就是把像素亮度排序后，从一端数到某个比例时落在那里的那个亮度</u>。1% 分位数就是&quot;只有 1% 的像素比它更暗&quot;的那个亮度。</p>
+<p>低曝光那一档（论文叫 Low，指曝光值低、画面偏暗的那一路）的目标是</p>
+<div class="eq"><span class="eqn">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover accent="true"><mrow><mi>e</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>L</mi></mrow></msub><mo>&#x0003D;</mo><munder><mrow><mo>argmin</mo></mrow><mrow><msub><mi>e</mi><mrow><mi>L</mi></mrow></msub></mrow></munder><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>P</mi><mrow><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B1;</mi></mrow></msub><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mi>I</mi><mo stretchy="false">&#x00028;</mo><msub><mi>e</mi><mrow><mi>L</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x02212;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>I</mi><mrow><mo>max</mo></mrow></msub><mo>&#x02212;</mo><mi>&#x003B2;</mi><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math></math></div>
+<p>逐个符号看。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>P</mi><mrow><mi>q</mi></mrow></msub><mo stretchy="false">&#x00028;</mo><mo>&#x000B7;</mo><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是 q 分位数算子。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>I</mi><mo stretchy="false">&#x00028;</mo><mi>e</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math> 是曝光值为 e 时实际拍到的那张图。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>I</mi><mrow><mo>max</mo></mrow></msub></mrow></math></math> 是传感器能表示的最大强度，8 位相机取 255。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B1;</mi></mrow></math></math> 是允许贴在量程边上、被当成离群点扔掉的像素比例，实验取 1.0%。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B2;</mi></mrow></math></math> 是一道强度余量，让被控制的那条尾巴离量程端点还有一点距离，实验取 5。</p>
+<p>式 (1) 的意思是，调 e_L 直到&quot;倒数 α 那一点&quot;正好落在 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>I</mi><mrow><mo>max</mo></mrow></msub><mo>&#x02212;</mo><mi>&#x003B2;</mi></mrow></math></math>。换个说法，<mark>亮部里只有 α 那部分像素被允许贴到白端</mark>。</p>
+<p>高曝光那一档（叫 High，曝光值高、画面偏亮的那一路）反过来盯暗端，</p>
+<div class="eq"><span class="eqn">(2)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mover accent="true"><mrow><mi>e</mi></mrow><mo>&#x0005E;</mo></mover><mrow><mi>H</mi></mrow></msub><mo>&#x0003D;</mo><munder><mrow><mo>argmin</mo></mrow><mrow><msub><mi>e</mi><mrow><mi>H</mi></mrow></msub></mrow></munder><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>P</mi><mrow><mi>&#x003B1;</mi></mrow></msub><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mi>I</mi><mo stretchy="false">&#x00028;</mo><msub><mi>e</mi><mrow><mi>H</mi></mrow></msub><mo stretchy="false">&#x00029;</mo><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x02212;</mo><mi>&#x003B2;</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math></math></div>
+<p>它把 α 分位数那一点摁在 β 上，于是暗部里只有 α 的像素被压到黑端附近。</p>
+<figure><img src="figs/2610.33174-svg-hist.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A　两档各盯一端</b>　（编者绘制）横轴是像素强度，纵轴是落在该强度的像素个数，两条曲线分别是在 Low 档和 High 档实拍的图像直方图。上面那条右端有一个被传感器截出来的尖峰，下面那条左端有一个同样的尖峰。虚线是控制目标的位置，阴影是留给越界的 α 预算。这里把阴影放大了，实验里 α 只有 1%。<b>容易画错的地方是两档的分工。</b>High 档曝光更长，它保的是暗部；Low 档画面更暗，它保的是亮部。</figcaption></figure>
+<p>两个环各看各的图，互不干涉。一档失控不会把另一档带跑，这在光照剧烈变化的几十帧里很重要。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　为什么用分位数而不用均值，从控制角度看是抗扰动的取舍。均值是一个积分量，画面里只要出现一小块极亮的天空，均值立刻被拽走，控制器就对着这一块去调，把整幅画面的其余部分压暗。分位数只盯排序后的一个位置，一小块亮区不到 α 的比例就进不了这个位置。代价是分位数在强烈多峰的直方图上信息量少，它说不出&quot;亮的是哪一块&quot;。</p></blockquote>
+<h3>3.3 平滑、最小间隔、以及为什么没有上限</h3>
+<p>每一拍算出的目标值不会直接用，而是过一道指数移动平均（EMA，把新值和旧值按权重混合的平滑），系数 λ 控制跟得多快。实验取 0.8，偏保守。</p>
+<p>低动态范围场景有个麻烦。两端都能用相近的曝光满足，两个环会往中间挤。挤到一起之后，那套&quot;预留多档覆盖&quot;的冗余就没了，下一次光照跳变又回到 AE 的老毛病。论文因此加了一条下限</p>
+<div class="eq"><span class="eqn">(4)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>&#x00394;</mi><mrow><mo>min</mo></mrow></msub><mo>&#x0003C;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>e</mi><mrow><mi>H</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>e</mi><mrow><mi>L</mi></mrow></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x00394;</mi><mrow><mo>min</mo></mrow></msub></mrow></math></math> 是最小间隔，实验取 1 档（一个 stop，也就是曝光量差一倍）。注意这条约束<mark>只有下限</mark>。论文明确说没有上限，场景需要拉多开就拉多开，因为上限会重新引入&quot;覆盖不了动态范围&quot;的毛病。</p>
+<p>一套策略两个方向都设防，下限防两档塌成一样，不设上限防止覆盖不够。</p>
+<h3>3.4 中档是插出来的</h3>
+<p>档数 n 可以大于 2。多出来的 n−2 档不单独控制，直接从两个边界之间等分出来</p>
+<div class="eq"><span class="eqn">(3)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mi>e</mi><mrow><msub><mi>M</mi><mrow><mi>k</mi></mrow></msub></mrow></msub><mo>&#x0003D;</mo><msub><mi>e</mi><mrow><mi>L</mi></mrow></msub><mo>&#x0002B;</mo><mfrac><mrow><mi>k</mi></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></mfrac><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>e</mi><mrow><mi>H</mi></mrow></msub><mo>&#x02212;</mo><msub><mi>e</mi><mrow><mi>L</mi></mrow></msub><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0002C;</mo><mspace width="1em" /><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mo>&#x02026;</mo><mo>&#x0002C;</mo><mi>n</mi><mo>&#x02212;</mo><mn>2</mn></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math></math> 是中间档的序号，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>e</mi><mrow><msub><mi>M</mi><mi>k</mi></msub></mrow></msub></mrow></math></math> 是第 k 个中间档的曝光值。实验取 n=3，于是只有一档中间档，它正好落在 e_L 与 e_H 的中点。两端一变，中间档下一拍自动跟着变，不需要额外的控制回路。</p>
+<p>采集顺序还有一层设计。如果按 Low、Mid、High 顺着拍，Low 和 High 就会在周期回绕时挨在一起。这两档恰好是光度最不相似的一对，相邻两帧相差太大，匹配就废了。论文沿用 Zhang 等人在视觉里程计上用过的那套采集顺序，与他们那套的差别在档位来源，本文的档位由两个尾部控制环各自给出。顺序定成 Low、Mid₁、…、Mid_k、High、Mid_k、…、Mid₁，<mark>一个周期 2n−2 帧</mark>。n=3 时是 L、M、H、M，四帧一循环。</p>
+<figure><img src="figs/2610.33174-svg-cycle.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B　采集顺序是来回走的</b>　（编者绘制）横轴是帧序号，也就是采集先后；纵轴是曝光档，向上曝光时间更长。折线是实际采集路径，L、M、H、M 之后回到 L。虚线是周期边界，n 取 3 时一个周期 2n−2 帧，即 4 帧。<b>这张图想说明的关系只有一个，Low 与 High 从不相邻采集。</b>两者之间总隔着一个 Mid，所以任意相邻两帧最多只差一档曝光，跨帧匹配才有光度基础。</figcaption></figure>
+<p>相邻帧只差一档这件事，是整个跨曝光关联能成立的前提。下一节把这条前提写成准入规则。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　这里对应控制里的持续激励问题。两档挤在一起，等于激励幅度不够，系统对光照变化的辨识能力退化；两档拉得太开，相邻样本之间的相关性断了，匹配无从建立。式 (4) 给下限，采集顺序给相邻性，两条一起把激励幅度夹在一个可用区间里。只是这个区间是设计出来的，不是在线辨识出来的。</p></blockquote>
+<h3>3.5 关联的准入规则</h3>
+<p>BVSLAM 不处理任意两张图之间的匹配。每张图只和两类图建立关联，一类是曝光档相差不超过一步的，一类是落在最近 W 帧窗口内、包含当前帧的。</p>
+<p>W 取 5，论文要求它取采集周期的整数倍，这样时间窗口正好盖住一个完整的采集循环。</p>
+<p>这条规则展开成级联检查，长这样。</p>
+<pre class="flow"><code>对当前帧 t 的每个候选历史帧 j：
+  若 |曝光档(t) - 曝光档(j)| &gt; 1        → 拒绝
+  否则若 t - j &gt; W                     → 拒绝
+  否则                                  → 采纳，做 SuperPoint + LightGlue 匹配
+对双目同一时刻的左右图：
+  直接采纳（硬件同步，基线固定）</code></pre>
+<p>前两条检查是<mark>两道串联的门</mark>。任一道不放行，这一对就不产生约束。这样做的理由写在论文里，曝光差太大的两张图光度重叠有限，匹配出来的对应关系不可靠。</p>
+<p>匹配器是 SuperPoint 加 LightGlue，两个都是学习出来的。SuperPoint 出关键点和描述子，LightGlue 做匹配并给出置信度。论文在图 5 的诊断里只保留置信度 0.9 以上的匹配，用来衡量这一帧还剩多少可用信息。</p>
+<h3>3.6 状态量与零运动先验</h3>
+<p>因子图的变量有两类。相机位姿 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D417;</mi><mi>i</mi></msub><mo>&#x02208;</mo><mi>S</mi><mi>E</mi><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo stretchy="false">&#x00029;</mo></mrow></math></math>，每帧一个，六个自由度；路标位置 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D429;</mi><mi>&#x02113;</mi></msub></mrow></math></math>，每个三分量，由图像匹配得到。求解用 GTSAM。</p>
+<p>这里有一个刻意的选择。常规 VSLAM 会在视觉约束变弱的时候，用运动学模型把位姿往前推，靠惯性或者匀速假设撑过没有观测的几帧。这篇不这么做，它对相邻两帧之间施加一个零运动先验，<u>也就是直接假设这两帧的位姿相同</u>，等于把运动模型这条退路关掉。</p>
+<p>论文给的理由是要隔离采集策略的影响。如果估计器能靠运动模型外推，那么隧道出口丢掉的视觉约束会被别的信息补上，你就看不出采集策略到底贡献了多少。加了零运动先验，<mark>没有视觉约束时估计器就停在原地</mark>，轨迹上直接断一截，误差把这个断口照实反映出来。</p>
+<p>代价同样明显。图 5 右侧那条鸟瞰轨迹里，AE 的估计在出口处画了一个红叉，那就是停住的位置，后面再没接上。</p>
+<p>被优化的量还是那两套账。位姿和路标的初值，原文只说了&quot;先在滑动窗口上增量求解、再在整张图上做全局 BA&quot;，没有写具体怎么起头，也没有写残差的具体形式，只写这些保留的匹配构成视觉约束。兜底的是零运动先验和最后的全局 BA。三件套里中间那件，原文交代得不够。</p>
+<p>求解分两步。先在滑动窗口上增量求解，得到一条能用的轨迹；再在完整的图上做一次全局光束法平差（BA，把所有位姿和路标放在一起，反复调整到所有观测互相吻合）。第二步是离线的，论文也直说了当前实现不实时，做这套东西的目的是评估采集策略对视觉约束的影响，不是刷运行速度。</p>
+<h3>3.7 自由度账本</h3>
+<p>把上面的设定清点一遍。</p>
+<div class="scroll"><table><thead><tr><th>项目</th><th>数量</th></tr></thead><tbody><tr><td>每帧位姿未知数</td><td>6（SE(3) 切空间）</td></tr><tr><td>每个路标未知数</td><td>3</td></tr><tr><td>每次双目匹配给出的方程</td><td>4（左右各 2 个像素坐标）</td></tr><tr><td>每次跨帧单目匹配给出的方程</td><td>2</td></tr><tr><td>整体规范自由度</td><td>6（固定第一帧位姿）</td></tr><tr><td>尺度</td><td>由双目基线给定，不额外引入未知数</td></tr></tbody></table></div>
+<p>窗口内有 N 帧、M 个路标时，未知数是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mi>N</mi><mo>&#x0002B;</mo><mn>3</mn><mi>M</mi></mrow></math></math>。方程数由匹配数决定，每次双目匹配 4 个，每次跨帧匹配 2 个。</p>
+<p>两个最小例子。单帧、M 个被双目同时看到的路标，方程 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mi>M</mi></mrow></math></math> 要压过未知数 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>3</mn><mi>M</mi></mrow></math></math>，得 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>M</mi><mo>&#x02265;</mo><mn>6</mn></mrow></math></math>，一帧六个路标就能定住这一帧的位姿。两帧共享 M 个双目路标，扣掉 6 个规范自由度后未知数是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>6</mn><mo>&#x0002B;</mo><mn>3</mn><mi>M</mi></mrow></math></math>，方程 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>8</mn><mi>M</mi></mrow></math></math>，得 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>M</mi><mo>&#x02265;</mo><mn>2</mn></mrow></math></math>。</p>
+<p>单目那套账在这里不适用。单目要额外把尺度当未知数，规范自由度是 7 而不是 6，尺度得靠运动过程中的视差挣出来。双目基线把这一项直接钉死，所以论文报的误差可以直接用米来读。</p>
+<p>论文没有做可观性分析。它对&quot;哪个量在什么条件下解不出来&quot;的处理方式是拒绝，两道门把不可靠的匹配挡在外面；再加零运动先验，让没有约束的地方不外推。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　过曝这一类扰动和几何退化不是一回事。几何退化是雅可比矩阵的秩不够，某些方向本来就没有信息，加传感器也未必补得上。过曝是<mark>秩的名义值没变</mark>，那些方程还在，只是右端变成了噪声。所以治法也不同，几何退化要靠换构型或换传感器，过曝要靠换采集方式，或者在估计时把失效的方程剔出去。这篇选的是换采集方式那条，估计器那一侧只做最朴素的事。</p></blockquote>
+<p><strong>这节要你记住的是</strong> 两档守两端，一步之内才许匹配，没有约束就不许动。</p>
+<h2>四、结果</h2>
+<p>数字全部取自论文图 4 的色块矩阵，单位是米，指标是 5 米窗口上的相对位姿误差（RPE）的均方根。列是采集策略，行是估计器。表的前三行是常规场景，后三行是隧道出口的扰动场景。常规场景的 Indoor 与 Forest 两条轨迹，每种策略各只录一次；扰动场景五次重复，窗口合并后取均方根。参考轨迹由激光雷达加惯导的里程计算得，不经过视觉，所以不受光照影响。ORB-SLAM3 在隧道里每一次都丢跟踪，论文把它整行移出了图。</p>
+<p>参与比较的估计器有四个，要先分清。ORB-SLAM3 是特征点法的视觉与视觉惯性 SLAM，吃连续的单曝光图像，视觉变弱时靠运动模型把位姿撑过去，为实时设计，它在隧道里每次都丢跟踪。CuVSLAM 是 CUDA 加速的视觉里程计与建图，同样按连续单曝光序列设计，实时性靠简化换来。AirSLAM 用学习到的点和线特征扛光照变化，输入仍是单曝光图，也做了实时取舍。BVSLAM 是本文的，离线，不接运动模型。四个采集策略里，AE 是单曝光基线，HDRFlow 把 B-Adapt 的 bracket 融成一张图再交给估计器，B-Fixed 不做自适应、只把两档固定成覆盖隧道全动态范围的值。</p>
+<div class="scroll"><table><thead><tr><th>场景</th><th>估计器</th><th>AE</th><th>HDRFlow</th><th>B-Fixed</th><th>B-Adapt</th></tr></thead><tbody><tr><td>常规</td><td>CuVSLAM</td><td><strong>0.14</strong></td><td>0.16</td><td>20.42</td><td>0.34</td></tr><tr><td>常规</td><td>AirSLAM</td><td>0.47</td><td>0.45</td><td>2.50</td><td>0.46</td></tr><tr><td>常规</td><td>BVSLAM</td><td>0.44</td><td>0.45</td><td>0.56</td><td>0.50</td></tr><tr><td>扰动</td><td>CuVSLAM</td><td>9.80</td><td>9.79</td><td>18.57</td><td>21.96</td></tr><tr><td>扰动</td><td>AirSLAM</td><td>11.04</td><td>10.34</td><td>9.77</td><td>6.21</td></tr><tr><td>扰动</td><td>BVSLAM</td><td>4.97</td><td>2.91</td><td>3.73</td><td><strong>1.10</strong></td></tr></tbody></table></div>
+<p>先看哪一行。看最后一行，也只有最后一行能读出&quot;这套东西成立&quot;。B-Adapt 配 BVSLAM 是 1.10 m，同一行里 AE 是 4.97 m，降幅 78%。常规场景下同一组合是 0.50 m，扰动场景只比常规差了 2.2 倍，而 CuVSLAM 和 AirSLAM 用 AE 时差了 70 倍和 23 倍。论文另给了一个口径，常规场景下三个估计器的平均误差约是 5 米窗口的 7%，也就是 0.35 m 上下。</p>
+<p>反过来那一面也在同一张表里。常规场景下 CuVSLAM 配 AE 是 0.14 m，比 BVSLAM 的 0.50 m 好 3.6 倍，而且它是能在车上实时跑的里程计，BVSLAM 只能离线。扰动场景的胜负是在这个前提下取得的。</p>
+<p>再看三个反直觉的地方。</p>
+<p><strong>B-Fixed 在常规场景里把 CuVSLAM 打到 20.42 m。</strong> 这个数比它在扰动场景的 9.80 m 还差一倍多。B-Fixed 是消融项，曝光时间和增益固定成能覆盖隧道全动态范围的值，不随场景变。论文对这一格的解释是它的两档间距太宽，相邻帧的光度重叠不足，为连续单曝光序列设计的估计器匹配不上。</p>
+<p><strong>同一个采集策略，换个估计器结论就翻转。</strong> B-Adapt 让 AirSLAM 从 11.04 m 降到 6.21 m，让 BVSLAM 从 4.97 m 降到 1.10 m，却让 CuVSLAM 从 9.80 m 升到 21.96 m。采集侧和估计侧不是可以分开评价的两件事。</p>
+<p><strong>HDRFlow 对 CuVSLAM 几乎没用。</strong> <mark>9.79 m 对 9.80 m</mark>，两者在误差条上分不开。它确实消掉了饱和区，但融合过程引入的伪影在大位移下把收益吃掉了。对 BVSLAM 它就有效，2.91 m，优于 AE 的 4.97 m，仍不及直接吃原图的 1.10 m。这个次序和 Ye 等人的结论一致，直接使用多曝光原图比先融合更好。</p>
+<figure><img src="figs/2610.33174-fig5-sat.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5（诊断栏节选）</b>　横轴是相对隧道出口的时间，负值是隧道内。上面一栏是饱和像素比例，下面一栏是高置信匹配数，纵轴取对数。橙色是自动曝光，蓝色是 B-Adapt，实线是五次重复的中位数，浅色带是四分位区间。<b>橙色那条匹配数曲线在出口处掉到 1，蓝色那条的最低点还在几十的量级。</b>灰底是隧道段。</figcaption></figure>
+<p>这张图是整套说法的证据链。AE 的饱和率在出口处冲到接近 100%，高置信匹配数同时掉到 1 附近，持续约一秒。B-Adapt 也有延迟，饱和率同样上升，但它的低曝光档在那一段仍然有可用内容，匹配数没有跟着塌。零运动先验把运动模型这条退路堵死之后，匹配数塌下去就等于没有约束，估计器只能停住。</p>
+<figure><img src="figs/2610.33174-fig5-trajs.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 5（轨迹栏）</b>　横纵轴是平面位置，单位米，取自同一条隧道轨迹的两次处理结果。虚线是激光雷达加惯导给出的参考轨迹，绿点是起点，红方块是终点，灰色块是隧道段。<b>上面那条在出口处画了红叉，标注写着跟踪失败，轨迹在叉之后拐向下方再没回来。</b>下面那条在同一个位置只有一个小偏差。</figcaption></figure>
+<p>速度扫描给出的是另一条信息。把帧率逐档降下去，等效车速升上来，AE 的误差在高速端陡升，B-Adapt 基本平的。图 6 上，低速端两条线几乎重合在 0.2 m 附近；最高那一档 <mark>AE 升到 4 m 以上</mark>，B-Adapt 停在 0.6 m 以内。这是图 6 的读数，不是表格数字，条件与图 4 的 32 m/s 那一点不同，不能直接对比。</p>
+<figure><img src="figs/2610.33174-fig6.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 6　速度扫描</b>　横轴是等效车速，按 30 Hz 相机折算，靠降帧率抬高；纵轴是 5 米窗口上的误差均方根，单位米。每个采集策略在每个帧率下都是五次重复池化。<b>两条线在低速端重合，高速端分开。</b>注意横轴是折算出来的速度，不是实车速度，车实际只跑到 4.3 m/s。</figcaption></figure>
+<p>误差差距随速度拉开，机制上说是因为 AE 在光照跳变期间的更新次数变少。车走得快，一次延迟跨过的距离就长，能用来收敛的帧数也少。B-Adapt 不靠某一帧收敛，它每一帧都在三档上采，跳变发生时手上已经有可用的那一档。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　把这两条线读成控制里的响应时间问题更清楚。AE 是一个闭环，被控量是画面亮度，扰动量是场景照度，扰动一来，闭环要等误差出现才动作。B-Adapt 相当于在扰动量级上加了前馈，它不预测扰动，但它把工作点铺开成三个，扰动的幅度落在任何一段都有对应的观测可用。前馈不提高精度上限，它缩短的是&quot;扰动出现到系统重新有可用观测&quot;这段空窗。</p></blockquote>
+<p><strong>这节要你记住的是</strong> 只有 B-Adapt 配 BVSLAM 那一格同时保住了常规与扰动。</p>
+<h2>五、局限</h2>
+<p>论文在讨论一节末尾自己列了四条。</p>
+<p><strong>控制环仍要靠已经拍到的图。</strong> 原文的说法是控制器依赖观测到的图像，无法对场景变化立即响应。这是延迟的来源，改不掉，只能缩短。</p>
+<p><strong>极端亮度区域一开始占的画面太小。</strong> 原文说一个极亮或极暗的区域初始占比可能太小，推不动边界控制器，这也会拖长延迟。这一条和上一条是两个误差源，原文并列写的，不能只留一个。</p>
+<p><strong>最小间隔是缓解手段。</strong> 论文说最小间隔维持了曝光档之间的区分度，靠提前留好档位去对冲跳变带来的延迟。它没有说这条约束消除了延迟。</p>
+<p><strong>调参能换灵敏度，但要拿稳定性换。</strong> 原文说调 α、β、λ 可以改善某个环境下的响应速度，而更快的响应需要在策略稳定性上做平衡。注意这里用的是&quot;可以&quot;和&quot;需要平衡&quot;，不是&quot;能够做到&quot;。</p>
+<p><strong>BVSLAM 只能离线。</strong> 原文说它受计算速度限制，整体运行时间和全局 BA 让它只能离线跑；同时说这套相对简单的因子图结构有望做成实时，并引了两篇前作作为依据。这是展望，不是已实现的结果。</p>
+<p>下面是编者补充的，<strong>论文未将其列为局限</strong>。</p>
+<p><u>评测的重复次数不对称</u>。扰动场景每条策略跑五次，常规场景每条策略只跑一次。于是常规场景那三行数字没有跨重复的统计量，0.14 与 0.50 之间的差距有多少来自轨迹差异、多少来自算法，从论文给的材料里分不开。</p>
+<p>把惯导排除在估计器之外，隔离了效应，也切断了结论向 VIO 的迁移。论文自己在结果一节写明了这个选择，为了隔离视觉扰动的影响而排除了运动学模型和非视觉传感器。这个做法对归因是对的，代价是这套数字不能直接搬到带 IMU 的系统上，那些系统丢跟踪时会由惯性撑着，误差曲线形状完全不同。</p>
+<p>W 与&quot;采集周期整数倍&quot;的说法对不上。n=3 时一个采集周期是 2n−2=4 帧，而实验取 W=5。5 帧确实盖得住一个完整周期，但它不是 4 的整数倍，原文那句&quot;取周期整数倍&quot;和表 I 的取值自相矛盾。这不影响 5 帧能覆盖一个周期这个功能结论，只是说明这句话没有被核对过。</p>
+<p>没有回环检测。全文没有提回访约束，漂移的处理只有滑动窗口增量加离线全局 BA。这在一个 55 米的序列上看不出问题，放到公里级场景就未必。</p>
+<p>没有一致性评估。整套结果只报误差均值，没有报协方差，也没有做归一化估计误差之类的检验。过曝那一段估计器是不是过于自信，从现有材料判断不了。</p>
+<p><strong>这节要你记住的是</strong> 作者承认的是延迟与离线，其余空白都出在评测口径上。</p>
+<h2>六、我的评价</h2>
+<p>先说做得对的。</p>
+<p><strong>把问题切成采集和估计两侧，并且两侧都做了消融，这是这篇最扎实的地方。</strong> B-Fixed 那一列是干净的对照，它把&quot;多曝光本身有益&quot;这句话压住了，档位间距和场景匹配才带来收益。如果没有这一列，读者很容易把功劳记在&quot;多曝光&quot;这三个字上。</p>
+<p><strong>用零运动先验替掉运动模型，是全文最聪明的一步。</strong> 它把一个工程上通常要藏起来的缺陷变成了测量手段。常规系统在视觉断掉时会用惯性撑过去，误差曲线因此被抹平，你就看不出采集策略值多少钱。作者<mark>把这条退路拆了</mark>，代价是轨迹上出现断口，收益是归因清楚。这个取舍在评估类论文里是对的，在产品里当然不能这么干。</p>
+<p><strong>不做 HDR 融合，直接吃原始帧。</strong> 融合在运动下必然面对重影，这是个死结，绕开它比优化它更省事。数字也支持这个选择，2.91 m 对 1.10 m。</p>
+<p>再说存疑的。</p>
+<p><strong>采集侧和估计侧的耦合比论文承认的更紧。</strong> B-Adapt 让 CuVSLAM 从 9.80 m 变成 21.96 m，接近翻倍还多。论文对这一格的解释是估计器不是为多曝光序列设计的，这个解释成立，但它同时说明&quot;B-Adapt 更好&quot;这个结论的适用范围只有配套后端。一个采集策略如果在最强的现成估计器上是负收益，它在工程上的可迁移性就要打折。</p>
+<p><strong>证据面偏窄。</strong> 一条 55 米的隧道，五次重复，一个平台，一种扰动类型。图 6 的速度扫描是在同一条隧道上降帧率得到的，扫的是速度，不是场景。隧道入口那个由亮到暗的跳变论文明确说不算扰动，理由是它更缓慢，这个判断没有数据支撑，只是观察。</p>
+<p><strong>运行时数据一个都没有。</strong> 论文说离线，没说慢多少。这直接决定第七节那些想法能不能落地。</p>
+<p><strong>没有协方差。</strong> 一个状态估计论文只报误差不报不确定度，读者没法判断滤波器是不是在过曝段过于自信。我不认为这是疏漏，因为这套实现本来就不是滤波器，但它是这套结果的一个空白。</p>
+<p>它想走去哪，作者写得很直白，让 B-Adapt 响应更快同时保住稳定性，把 BVSLAM 的算力降下来做到实时。这两个方向都对，第二个更难，全局 BA 是算力大头，而它恰恰是 BVSLAM 在扰动场景里赢过别人的原因之一。</p>
+<p><strong>这节要你记住的是</strong> 归因做得干净，可迁移性被耦合和离线拖住。</p>
+<h2>七、可以接着做什么</h2>
+<p><strong>一、把零运动先验换成一个可开关的门控先验。</strong> 现在的做法是把运动模型硬关掉。做一个中间版本，视觉约束数低于阈值时才启动匀速外推，就能量出&quot;运动模型兜底掩盖了多少采集侧的收益&quot;。这个实验不需要新数据，用现成的序列重跑一遍就行。</p>
+<p><strong>二、用统计门限替掉几何门限。</strong> 现在的准入是两道硬门，曝光差一步、窗口 W 帧。换成按新息的协方差来定门限，新息就是观测值与预测值之差，让&quot;这一对能不能用&quot;随光度条件自适应。卡方检验那套东西在这里是现成的工具。</p>
+<p><strong>三、在 VIO 上重做一遍。</strong> 加 IMU 之后，隧道出口的断口会被惯性填上，误差曲线变好看，采集策略的贡献被稀释。把这个稀释量量出来，才知道在真实系统里做多曝光值不值。</p>
+<p><strong>四、让档位间距变成闭环。</strong> 现在 Δmin 是个常数，1 档。如果拿匹配数和饱和率去反馈控制这一档间距，策略就能自己找到当前场景下&quot;够覆盖、又够重叠&quot;的那个位置。这是把式 (4) 从约束变成被控量。</p>
+<p><strong>五、补一致性检验。</strong> 输出协方差，在过曝段看归一化估计误差是否超界。如果估计器在那一秒仍然自信，那么任何靠它做决策的上层模块都会跟着错。</p>
+<p><strong>六、持续激励的主动设计。</strong> 隧道里是直线匀速，构型几乎不变。如果能在采集策略里主动引入曝光档的抖动，让观测在辐射维度上保持激励，或许能改善退化段的可辨识性。这条最玄，也最可能是空的。</p>
+<p><strong>这节要你记住的是</strong> 前两条用现成序列就能验，后几条都要新数据。</p>
+<div class="fine">以上是读完原文的即时联想，没有实验、没有查证，也没有和作者确认过，只当选题线索看。</div>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>词</th><th>一句话解释</th></tr></thead><tbody><tr><td><strong>视觉 SLAM</strong></td><td>用相机图像同时估计自己在哪儿、并把环境建成图</td></tr><tr><td><strong>自动曝光（AE）</strong></td><td>按当前画面亮度自动调曝光时间和增益的策略，改了才知道效果，所以有延迟</td></tr><tr><td><strong>曝光值（EV）</strong></td><td>曝光时间与增益合成后的一个对数标量，加一档等于进光量翻倍</td></tr><tr><td><strong>曝光包围（bracketing）</strong></td><td>同一场景连拍几张不同曝光的图，每张负责一段亮度范围</td></tr><tr><td><strong>动态范围</strong></td><td>一个场景里最亮与最暗能相差多少倍，用 dB 表示；8 位图像约 48 dB</td></tr><tr><td><strong>双目</strong></td><td>两个刚性固定、硬件同步的相机，它们之间的固定距离直接给出尺度</td></tr><tr><td><strong>饱和</strong></td><td>像素亮度超出传感器量程被截断，白的全白、黑的全黑，信息不可恢复</td></tr><tr><td><strong>HDR 融合</strong></td><td>把多张不同曝光的图合成一张，恢复超出单帧量程的亮度；运动下会出重影</td></tr><tr><td><strong>光度重叠</strong></td><td>两张图里同一块区域都处在有效亮度区间，才可能匹配上</td></tr><tr><td><strong>分位数</strong></td><td>把像素亮度排序后，从一端数到某个比例时落在那里的亮度</td></tr><tr><td><strong>单侧尾部目标</strong></td><td>只约束直方图某一端的控制目标，另一端不管</td></tr><tr><td><strong>EMA</strong></td><td>指数移动平均，把新测量和旧值按系数混合，用来平滑控制量</td></tr><tr><td><strong>stop（档）</strong></td><td>曝光量的单位，差一档就是进光量差一倍</td></tr><tr><td><strong>SuperPoint</strong></td><td>学习出来的特征点检测与描述网络，对光照变化比手工描述子稳</td></tr><tr><td><strong>LightGlue</strong></td><td>学习出来的特征匹配网络，同时输出匹配置信度</td></tr><tr><td><strong>因子图</strong></td><td>把待估变量和约束画成图、再整体求解最小二乘的建模方式</td></tr><tr><td><strong>路标</strong></td><td>环境中被反复观测到的三维点，位姿靠它定位</td></tr><tr><td><strong>SE(3)</strong></td><td>三维刚体变换的集合，一个位姿有六个自由度</td></tr><tr><td><strong>规范自由度</strong></td><td>整体平移旋转不改变观测，所以有 6 个方向永远定不住，要固定一帧</td></tr><tr><td><strong>零运动先验</strong></td><td>直接假设相邻两帧位姿相同，等于关掉运动模型</td></tr><tr><td><strong>全局 BA（光束法平差）</strong></td><td>把所有位姿和路标放一起反复调整，让全部观测互相吻合的离线优化</td></tr><tr><td><strong>RPE</strong></td><td>相对位姿误差，在固定长度窗口内比较两帧之间的相对运动，不需要全局对齐</td></tr><tr><td><strong>RMSE</strong></td><td>均方根误差，对大误差比对中位数更敏感</td></tr><tr><td><strong>ATE</strong></td><td>绝对轨迹误差，要把整条轨迹先对齐再比；这篇没有报，只报了 RPE</td></tr><tr><td><strong>跟踪丢失</strong></td><td>匹配数掉到无法维持位姿估计，轨迹断掉，误差随即发散</td></tr><tr><td><strong>新息 / 卡方检验</strong></td><td>新观测与预测之差叫新息，用它的大小做统计门限来决定这条约束收不收</td></tr><tr><td><strong>归一化估计误差</strong></td><td>把估计误差按估计器自己给出的不确定度归一，用来查它是否过于自信</td></tr><tr><td><strong>一致性</strong></td><td>估计器给出的不确定度与实际误差是否匹配，过于自信就是不一致</td></tr><tr><td><strong>持续激励</strong></td><td>运动或激励足够丰富，参数才可辨识；一直走直线就辨识不出来</td></tr></tbody></table></div>
+<h2>相关</h2><p style="color:var(--ink2);font-size:14px">站上已有的精读</p><ul><li><a href="2609.40244.html">StreamRig</a><span style="color:var(--ink3);font-size:13px">　站内近邻，非本文参考文献。同样在多相机前端上做鲁棒性，它冻结前馈几何前端、用标定相机组的组内几何做因果流式估计；本文动的是曝光采集策略与因子图里的多曝光约束</span></li></ul><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li><a href="https://arxiv.org/abs/2506.04359" target="_blank" rel="noopener">cuVSLAM</a><span style="color:var(--ink3);font-size:13px">　arXiv:2506.04359　参考文献 [26]，本文的实时基线。它吃连续单曝光序列、为实时做简化；本文不接运动模型，直接把多曝光序列当因子图约束，也不做 HDR 合成</span></li><li><a href="https://arxiv.org/abs/2608.27628" target="_blank" rel="noopener">One year in a forest</a><span style="color:var(--ink3);font-size:13px">　arXiv:2608.27628　参考文献 [1]，同实验室的野外长时数据实证分析，本文借它给误差量级口径；那篇不含采集策略，本文是采集侧加估计侧的方法论文</span></li></ul>
+<a class="paperlink" href="https://arxiv.org/abs/2610.33174" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2610.33174） →</a>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
+</div></body></html>

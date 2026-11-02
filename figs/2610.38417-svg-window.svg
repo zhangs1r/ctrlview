@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .sm{fill:#5c5c68;font-size:12.5px}
+    .xs{fill:#6b6b78;font-size:11.5px}
+    .lb{fill:#1b1b1f;font-size:12.5px;font-weight:600}
+    .wait{fill:#f1f1f4;stroke:#b9b9c2;stroke-width:1.4}
+    .act{fill:#fbeee0;stroke:#d29a5b;stroke-width:1.4}
+    .ax{stroke:#40404a;stroke-width:1.4;fill:none}
+    .arr{stroke:#c0763a;stroke-width:1.6;fill:none;marker-end:url(#ab)}
+    .dash{stroke:#9a9aa6;stroke-width:1.2;stroke-dasharray:5 4;fill:none}
+  </style>
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0763a"/>
+    </marker>
+    <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#40404a"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="28" y="30">一个周期里的三段，以及动作区间回头看的那一段历史</text>
+  <text class="sm" x="28" y="52">横轴是时间，周期 3h，h = T/3。上面一条带子是开关函数 g(t)，灰色段 u 恒为零，橙色段打开反馈。</text>
+
+  <rect class="wait" x="80" y="96" width="260" height="44" rx="4"/>
+  <rect class="act" x="340" y="96" width="130" height="44" rx="4"/>
+  <rect class="wait" x="470" y="96" width="260" height="44" rx="4"/>
+  <rect class="act" x="730" y="96" width="130" height="44" rx="4"/>
+  <text class="lb" x="210" y="123" text-anchor="middle">g = 0，u ≡ 0</text>
+  <text class="lb" x="405" y="123" text-anchor="middle">g = 1</text>
+  <text class="lb" x="600" y="123" text-anchor="middle">g = 0，u ≡ 0</text>
+  <text class="lb" x="795" y="123" text-anchor="middle">g = 1</text>
+
+  <line class="ax" x1="80" y1="168" x2="872" y2="168" marker-end="url(#ak)"/>
+  <g class="xs" text-anchor="middle">
+    <line class="ax" x1="80" y1="162" x2="80" y2="174"/><text x="80" y="190">0</text>
+    <line class="ax" x1="210" y1="162" x2="210" y2="174"/><text x="210" y="190">h</text>
+    <line class="ax" x1="340" y1="162" x2="340" y2="174"/><text x="340" y="190">2h</text>
+    <line class="ax" x1="470" y1="162" x2="470" y2="174"/><text x="470" y="190">3h</text>
+    <line class="ax" x1="600" y1="162" x2="600" y2="174"/><text x="600" y="190">4h</text>
+    <line class="ax" x1="730" y1="162" x2="730" y2="174"/><text x="730" y="190">5h</text>
+    <line class="ax" x1="860" y1="162" x2="860" y2="174"/><text x="860" y="190">6h</text>
+  </g>
+
+  <path class="dash" d="M340 140 L340 214"/>
+  <text class="lb" x="346" y="212">x(2h)</text>
+  <path class="dash" d="M470 140 L470 214"/>
+  <text class="lb" x="480" y="212">x(3h) = 0</text>
+
+  <path class="dash" d="M418 196 L418 344"/>
+  <text class="lb" x="410" y="192">t</text>
+
+  <text class="lb" x="96" y="238">等待区间，反馈完全断开，状态按 e^(At) 自由演化</text>
+
+  <line class="arr" x1="412" y1="266" x2="290" y2="266"/>
+  <line class="arr" x1="412" y1="294" x2="238" y2="294"/>
+  <line class="arr" x1="412" y1="322" x2="173" y2="322"/>
+  <text class="lb" x="424" y="264">y(t − h₁)，h₁ = h</text>
+  <text class="lb" x="424" y="292">y(t − h₂)，h₂ = 1.4h</text>
+  <text class="lb" x="424" y="320">y(t − h₃)，h₃ = 1.9h</text>
+
+  <text class="sm" x="96" y="352">回溯距离落在 [h, 2h]，无论 t 在动作区间哪一点，落点都被夹在 [0, 2h] 之内。</text>
+  <text class="sm" x="96" y="372">所以每路延迟输出都只是同一个未知向量 x(2h) 的一个线性泛函，动作区间内闭环对它是线性的。</text>
+
+  <text class="xs" x="614" y="252">第二个周期同理。</text>
+  <text class="xs" x="614" y="272">动作区间 [5h, 6h] 的回溯窗口是 [3h, 5h]，</text>
+  <text class="xs" x="614" y="292">那里状态已经为零，于是 y ≡ 0，u ≡ 0。</text>
+  <text class="xs" x="614" y="320">每一段后续周期都在重复这件事，</text>
+  <text class="xs" x="614" y="340">所以 3h 之后不需要再做任何控制。</text>
+</svg>

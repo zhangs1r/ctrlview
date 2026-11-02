@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261019192040"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.12730.html?force=20261019192040" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.12730.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">信息物理系统 · 论文精读</div>
@@ -52,9 +52,9 @@ arXiv:2610.12730 · 2026-10-19 · 精读约 32 分钟</div>
 <hr>
 <h2>二、总体结构</h2>
 <p>先看数据怎么走。图 1 画的是三层链路。最上面是采集层，几台相量测量单元各自带一个物理编号，往集中器发帧，报文里是数据加编号。中间那层是集中器，框里分成左右两半，左边是编号洗牌，把输入的编号 1、2、3 映射成输出的一串新编号，右边那张表就是这一步的对照关系。集中器吐出来的是洗过编号的同步相量流，虚线箭头标出这条流可以被中途截获。右边是控制中心，它做逆映射，把编号还原，还原后送给控制决策与执行模块。图注明确标了潜在的注入点。</p>
-<figure><img src="figs/2610.12730-fig1.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 1　ROAM 框架下的传感器编号洗牌与逆洗牌结构。采集层、聚合层、控制层三层，集中器负责洗牌，控制中心负责还原，虚线标出可被截获的环节。</figcaption></figure>
+<figure><img src="figs/2610.12730-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 1　ROAM 框架下的传感器编号洗牌与逆洗牌结构。采集层、聚合层、控制层三层，集中器负责洗牌，控制中心负责还原，虚线标出可被截获的环节。</figcaption></figure>
 <p>图 2 把闭环摊开。左上是深度 Q 网络，它吃状态和奖励，吐出洗牌比例、洗牌量、洗牌映射三个动作。右上那块画的是电网本体，发电机和 118 母线网络，往下接真正的相量测量单元机架。右下角是攻击者，虚线标出受攻击的通信链路，注入形式写成 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mi>&</mi><mi>#</mi><mi>x</mi><mn>27</mn><mi>;</mi><mo>&#x0003D;</mo><mi>z</mi><mo>&#x0002B;</mo><mi>&#x003B4;</mi><mi>z</mi></mrow></math></math>。中间偏下是集中器，它收实时数据并且按深度 Q 网络的建议洗编号，框里那行 &quot;Time Synced RSA Token&quot; 对应硬件同步的种子令牌。往左是两条恢复通道，上面那条是机器学习支路，先由离线训好的模型预测状态、算期望量测，再用混合整数规划求解器把编号配回去；下面那条是种子支路，先取当前种子，再逆洗编号。两条路的输出汇到重映射模型，交给坏数据检测，检测结果连同状态、编号表、估计误差一起回到深度 Q 网络。</p>
-<figure><img src="figs/2610.12730-fig2.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 2　深度 Q 网络驱动的混合移动目标防御。集中器洗编号，控制中心分种子支路与机器学习支路还原，深度 Q 网络根据检测与估计反馈调整洗牌比例、洗牌量与映射。</figcaption></figure>
+<figure><img src="figs/2610.12730-fig2.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 2　深度 Q 网络驱动的混合移动目标防御。集中器洗编号，控制中心分种子支路与机器学习支路还原，深度 Q 网络根据检测与估计反馈调整洗牌比例、洗牌量与映射。</figcaption></figure>
 <p><mark>两条恢复支路在图上是并列的，在动作空间里是同一个动作向量的两个分量</mark>。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x003C1;</mi><mi>t</mi></msub></mrow></math></math> 定的是走种子支路的比例，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn><mo>&#x02212;</mo><msub><mi>&#x003C1;</mi><mi>t</mi></msub><mo>&#x0002F;</mo><mn>100</mn></mrow></math></math> 走预测支路，逐传感器的标志向量 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D41C;</mi><mi>t</mi></msub></mrow></math></math> 决定谁被选上。</p>
 <p>表 1 把论文的章节和数据流对起来。这篇的结构是论文式的，第 II 节讲背景组件，第 III 节讲框架，第 IV 节讲实验。</p>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>对应章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>层次结构与状态估计</td><td>II-A, II-B</td><td>母线电压相量、线路电流相量</td><td>扩展卡尔曼滤波的状态估计</td></tr><tr><td>威胁模型与约束</td><td>II-C</td><td>拓扑知识、量测访问权</td><td>满足坏数据检测约束的注入向量</td></tr><tr><td>混合恢复通道</td><td>III-1 到 III-3</td><td>洗过编号的量测流、种子、历史状态</td><td>还原后的量测向量 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D433;</mi><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">m</mi></mrow></mrow></msub><mo stretchy="false">&#x00028;</mo><mi>t</mi><mo stretchy="false">&#x00029;</mo></mrow></math></math></td></tr><tr><td>决策过程建模</td><td>III-A</td><td>状态窗口 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D417;</mi><mi>t</mi></msub></mrow></math></math>、检测结果、攻击准确度</td><td>动作 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>d</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x1D41C;</mi><mi>t</mi></msub><mo>&#x0002C;</mo><msub><mi>&#x003C1;</mi><mi>t</mi></msub><mo stretchy="false">&#x00029;</mo></mrow></math></math></td></tr><tr><td>深度 Q 网络训练</td><td>III-B</td><td>经验回放缓冲</td><td>防御策略 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>&#x003C0;</mi><mrow><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">Q</mi><mi mathvariant="normal">N</mi></mrow></mrow><mrow><mo>&#x0002A;</mo></mrow></msubsup></mrow></math></math></td></tr><tr><td>对照与对抗评测</td><td>IV-C 到 IV-E</td><td>留出场景、自适应攻击者</td><td>逐拓扑的指标</td></tr><tr><td>硬件在环</td><td>IV-F</td><td>OPAL-RT 试验台、19 台测量单元</td><td>时延与盲窗占比</td></tr></tbody></table></div>
@@ -171,9 +171,9 @@ arXiv:2610.12730 · 2026-10-19 · 精读约 32 分钟</div>
 <p>混合方案在 60% 种子加 40% 机器学习的固定配比下拿到最好的综合表现。满欺骗时 PSA 是 <strong>1.27%</strong>，低于纯机器学习的 1.96%，与密钥安全的纯种子方案差 0.33 个百分点；还原耗时 <strong>17.99 ms</strong>，比纯机器学习快大约 5 倍。论文给的原因是混合整数规划只在缩小的传感器子集上跑，搜索空间随子集平方级收缩。因为只有走种子的那 60% 依赖密钥，密钥泄露伤害不到走预测的那 40%。论文明确说，混合方案在密钥泄露下的端到端精度量化留给了未来工作。</p>
 <h3>4.2 策略在训练里收敛到哪里</h3>
 <p>图 3(a) 是 IEEE 118 母线系统上的训练行为，深度 Q 网络收敛到把约 <strong>88%</strong> 的被洗传感器走种子还原，其余走预测。图 3(b) 是欺骗覆盖，收缩到约 <strong>75%</strong>。图 3(c) 是累积奖赏，图 3(e) 是检测率，稳定在 <strong>90%</strong> 以上。图 3(d) 的状态偏差稳定在 <strong>10%</strong> 以下，图 3(f) 的攻击准确度落到 <strong>30%</strong> 以下。</p>
-<figure><img src="figs/2610.12730-fig3a.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 3(a)　IEEE 118 母线系统上训练期间的状态估计偏差率，深度 Q 网络收敛到 10% 以下。横轴为训练回合，纵轴为 EDR 百分比。</figcaption></figure>
+<figure><img src="figs/2610.12730-fig3a.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 3(a)　IEEE 118 母线系统上训练期间的状态估计偏差率，深度 Q 网络收敛到 10% 以下。横轴为训练回合，纵轴为 EDR 百分比。</figcaption></figure>
 <p>图 4(a) 给出同一段的隐身穿透率曲线，从约 <strong>3.5%</strong> 降到 <strong>1.8%</strong>。</p>
-<figure><img src="figs/2610.12730-fig4a.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 4(a)　隐身穿透率随训练回合的变化。蓝线为深度 Q 网络的趋势线，红线为 PPO 的趋势线，深度 Q 网络降到 1.8% 附近，PPO 停在 3.5% 附近。</figcaption></figure>
+<figure><img src="figs/2610.12730-fig4a.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 4(a)　隐身穿透率随训练回合的变化。蓝线为深度 Q 网络的趋势线，红线为 PPO 的趋势线，深度 Q 网络降到 1.8% 附近，PPO 停在 3.5% 附近。</figcaption></figure>
 <p>PPO 那一侧在整段训练里停在各动作区间的中点附近，论文把它归到第 IV-C 节讨论。<mark>离线值方法和在线策略方法在同一个任务上学出的姿态差别很大，一边压到区间的端点，一边留在中点</mark>。</p>
 <h3>4.3 训练期与部署期的对照</h3>
 <p>表 5 是训练期的比较，数字取最后 100 个训练回合的均值加减标准差，两套算法在三个系统上跑同样的任务。表 6 是部署期，两边都用固定下来的确定性策略，各跑 50 个留出回合。</p>
@@ -188,7 +188,7 @@ arXiv:2610.12730 · 2026-10-19 · 精读约 32 分钟</div>
 <p>最要紧的一格是 57 母线的 EDR，深度 Q 网络到 <strong>57.79%</strong>，接近标准评测值的两倍，PPO 只升到 38.54%。论文把这条读成一个结构性弱点，深度 Q 网络在这个拓扑上把更多攻击推离了目标，状态恢复却更差。它的判断是，当还原机制面对自适应对手重建不出被污染的估计时，单靠错位不够用。118 母线上两者的 EDR 都回到可比的水平，奖赏都是正的，说明大系统上的防御站得住。</p>
 <h3>4.5 硬件在环</h3>
 <p>实时那一节把训练好的深度 Q 网络直接搬到 OPAL-RT 试验台上，不做重训。它复现 IEEE 118 母线系统，用 18 台虚拟相量测量单元加 1 台硬件测量单元，走 IEEE C37.118 接到一个自研的 Python 集中器。推理引擎跑成独立子进程，每 3 秒产一次决策写进共享 JSON 文件。采集进程读这个文件，在每个洗牌间隔施加种子、机器学习或混合重映射。另有一个反馈守护进程把检测率和被攻击的测量单元编号写回来，形成闭环。</p>
-<figure><img src="figs/2610.12730-fig6.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 6　ROAM 在实时硬件在环试验台上的部署形态。仿真器、相量测量单元、集中器与决策模块的连接关系。</figcaption></figure>
+<figure><img src="figs/2610.12730-fig6.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>图 6　ROAM 在实时硬件在环试验台上的部署形态。仿真器、相量测量单元、集中器与决策模块的连接关系。</figcaption></figure>
 <div class="scroll"><table><thead><tr><th>指标</th><th>数值</th></tr></thead><tbody><tr><td>会话结束时的检测率</td><td>83.2%</td></tr><tr><td>被移动目标防御抵消的攻击帧</td><td>290 / 342（84.8%）</td></tr><tr><td>配置的洗牌间隔</td><td>3,000 ms</td></tr><tr><td>实测平均洗牌间隔</td><td>2,995.3 ms</td></tr><tr><td>平均洗牌执行时间</td><td>17.97 ms</td></tr><tr><td>最大洗牌执行时间</td><td>56.28 ms</td></tr><tr><td>平均 AGC 重洗牌时延</td><td>77.86 ms</td></tr><tr><td>最大 AGC 重洗牌时延</td><td>382.77 ms</td></tr><tr><td>盲窗占比（平均 / 最大）</td><td>2.6% / 12.8%</td></tr></tbody></table></div>
 <p>整个会话里注入了针对多台测量单元的协同虚假数据注入。运行中的检测率从 0% 单调爬到会话结束的 <strong>83.2%</strong>，342 个被攻击帧里有 <strong>290</strong> 个被移动目标防御抵消，占 84.8%。19 台测量单元的平均洗牌执行时间是 <strong>17.97 ms</strong>，最大 <strong>56.28 ms</strong>。AGC 重洗牌时延从映射提交算到新分配下处理完第一帧，平均 <strong>77.86 ms</strong>，对应 3 秒周期里平均 <strong>2.6%</strong> 的盲窗；最坏一次 <strong>382.77 ms</strong>，占 <strong>12.8%</strong>，论文说仍在一个周期以内。</p>
 <p>这里的数字要连条件一起读。盲窗是用时间占比写的，不是用状态偏差写的，两者含义不同。最大执行时间 56.28 ms 已经超过了一个相量帧 33.3 ms 的上限，也就是说单次洗牌最坏情况下会跨过一到两帧；平均 17.97 ms 落在一帧之内。仿真里 118 母线的 PSA 是 1.70%，实机上的检测率是 83.2%，两个数字来自不同的系统配置与不同的会话，不能直接对照。</p>
@@ -245,5 +245,5 @@ arXiv:2610.12730 · 2026-10-19 · 精读约 32 分钟</div>
 
 <a class="paperlink" href="https://arxiv.org/abs/2610.12730" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2610.12730） →</a>
-<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-10-19 19:20</footer>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
 </div></body></html>

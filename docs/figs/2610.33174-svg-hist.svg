@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 470" width="920" height="470" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .hi{fill:#9a6a14;font-size:13px;font-weight:700}
+    .lo{fill:#2d5f8a;font-size:13px;font-weight:700}
+    .lab{fill:#3b3b46;font-size:12px}
+  </style>
+
+  <text class="ttl" x="30" y="30">示意图 A　两档各自盯住直方图的一端</text>
+
+  <!-- 上：High 档 -->
+  <text class="hi" x="130" y="72">High 档（长曝光）盯暗部</text>
+  <line x1="130" y1="200" x2="860" y2="200" stroke="#ddd9d2" stroke-width="1.5"/>
+  <line x1="130" y1="200" x2="130" y2="95" stroke="#ddd9d2" stroke-width="1.5"/>
+  <rect x="130" y="95" width="60" height="105" fill="#c08a2a" fill-opacity="0.13"/>
+  <path d="M130,200 L150,194 L200,178 L260,156 L330,138 L400,130 L470,136 L540,132 L610,116 L700,108 L790,102 L836,100 L836,200 Z"
+        fill="#f6e7c8" fill-opacity="0.85" stroke="#c08a2a" stroke-width="2"/>
+  <rect x="836" y="100" width="24" height="100" fill="#e7bd6a" fill-opacity="0.7"/>
+  <line x1="190" y1="100" x2="190" y2="200" stroke="#c08a2a" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text class="hi" x="196" y="90">β = 5</text>
+  <text class="lab" x="150" y="120">α</text>
+  <text class="lab" x="836" y="118">255</text>
+  <text class="m" x="60" y="150" transform="rotate(-90 60 150)">像素数</text>
+
+  <!-- 下：Low 档 -->
+  <text class="lo" x="130" y="272">Low 档（短曝光）盯亮部</text>
+  <line x1="130" y1="400" x2="860" y2="400" stroke="#ddd9d2" stroke-width="1.5"/>
+  <line x1="130" y1="400" x2="130" y2="295" stroke="#ddd9d2" stroke-width="1.5"/>
+  <rect x="130" y="295" width="22" height="105" fill="#9dbbd6" fill-opacity="0.85"/>
+  <rect x="800" y="295" width="60" height="105" fill="#3f6fa8" fill-opacity="0.13"/>
+  <path d="M130,400 L152,398 L230,394 L330,386 L430,368 L510,342 L600,310 L690,300 L760,318 L800,344 L840,360 L860,364 L860,400 Z"
+        fill="#d9e5f0" fill-opacity="0.9" stroke="#3f6fa8" stroke-width="2"/>
+  <line x1="800" y1="300" x2="800" y2="400" stroke="#3f6fa8" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text class="lo" x="794" y="290" text-anchor="end">255 − β</text>
+  <text class="lab" x="806" y="320">α</text>
+  <text class="lab" x="150" y="318">0</text>
+  <text class="m" x="60" y="350" transform="rotate(-90 60 350)">像素数</text>
+
+  <text class="m" x="495" y="436" text-anchor="middle">横轴为像素强度，纵轴为落在该强度的像素个数；上图右端与下图左端都是被传感器截掉的尖峰</text>
+  <text class="m" x="495" y="456" text-anchor="middle">虚线是控制目标位置，阴影是留给越界的 α 预算（示意中放大，实验取 1%）</text>
+</svg>

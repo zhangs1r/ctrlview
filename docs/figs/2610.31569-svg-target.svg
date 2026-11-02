@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .rn{fill:#1b1b1f;font-size:13px;font-weight:700}
+    .bn{fill:#5c5c68;font-size:11.5px}
+    .v{fill:#2b2b33;font-size:11px;font-weight:700}
+    .note{fill:#6b6b78;font-size:11.5px}
+  </style>
+  <defs>
+    <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="7" height="7" fill="#f3f1ec"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#c6bfb4" stroke-width="2.2"/>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="520" fill="#ffffff"/>
+  <text class="ttl" x="24" y="28">一个 chunk 上的目标怎么摆，段类型决定哪个信号在边界处翻到 1</text>
+  <text class="note" x="24" y="52"><tspan fill="#2d5f8a" font-weight="700">蓝色</tspan> 动作监督　<tspan fill="#c9741f" font-weight="700">橙色</tspan> 停止信号 SS 为 1　<tspan fill="#7a5ea8" font-weight="700">紫色</tspan> 失败信号 FS 为 1　<tspan fill="#8c8579" font-weight="700">灰斜线</tspan> 该位置不监督</text>
+
+  <!-- 边界竖线 -->
+  <line x1="378" y1="70" x2="378" y2="432" stroke="#b9b2a8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <line x1="462" y1="70" x2="462" y2="432" stroke="#b9b2a8" stroke-width="1.5" stroke-dasharray="6 5"/>
+
+  <!-- 第一行 成功 -->
+  <text class="rn" x="24" y="90">成功</text>
+  <text class="bn" x="204" y="90" text-anchor="end">动作</text>
+  <rect x="210" y="78" width="630" height="14" fill="#2d5f8a"/>
+  <text class="bn" x="204" y="112" text-anchor="end">停止 SS</text>
+  <rect x="210" y="100" width="252" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <rect x="462" y="100" width="378" height="14" fill="#c9741f"/>
+  <text class="v" x="336" y="111" text-anchor="middle">0</text>
+  <text class="v" x="651" y="111" text-anchor="middle" fill="#ffffff">1</text>
+  <text class="bn" x="204" y="134" text-anchor="end">失败 FS</text>
+  <rect x="210" y="122" width="630" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <text class="v" x="525" y="133" text-anchor="middle">0</text>
+
+  <!-- 第二行 recovery -->
+  <text class="rn" x="24" y="180">recovery</text>
+  <text class="bn" x="204" y="180" text-anchor="end">动作</text>
+  <rect x="210" y="168" width="252" height="14" fill="#2d5f8a"/>
+  <rect x="462" y="168" width="378" height="14" fill="url(#hatch)" stroke="#d6d0c6"/>
+  <text class="bn" x="204" y="202" text-anchor="end">停止 SS</text>
+  <rect x="210" y="190" width="252" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <rect x="462" y="190" width="378" height="14" fill="url(#hatch)" stroke="#d6d0c6"/>
+  <text class="v" x="336" y="201" text-anchor="middle">0</text>
+  <text class="bn" x="204" y="224" text-anchor="end">失败 FS</text>
+  <rect x="210" y="212" width="168" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <rect x="378" y="212" width="462" height="14" fill="#7a5ea8"/>
+  <text class="v" x="294" y="223" text-anchor="middle">0</text>
+  <text class="v" x="609" y="223" text-anchor="middle" fill="#ffffff">1</text>
+
+  <!-- 第三行 终局失败 -->
+  <text class="rn" x="24" y="270">终局失败</text>
+  <text class="bn" x="204" y="270" text-anchor="end">动作</text>
+  <rect x="210" y="258" width="630" height="14" fill="url(#hatch)" stroke="#d6d0c6"/>
+  <text class="bn" x="204" y="292" text-anchor="end">停止 SS</text>
+  <rect x="210" y="280" width="252" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <rect x="462" y="280" width="378" height="14" fill="#c9741f"/>
+  <text class="v" x="336" y="291" text-anchor="middle">0</text>
+  <text class="v" x="651" y="291" text-anchor="middle" fill="#ffffff">1</text>
+  <text class="bn" x="204" y="314" text-anchor="end">失败 FS</text>
+  <rect x="210" y="302" width="252" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <rect x="462" y="302" width="378" height="14" fill="#7a5ea8"/>
+  <text class="v" x="336" y="313" text-anchor="middle">0</text>
+  <text class="v" x="651" y="313" text-anchor="middle" fill="#ffffff">1</text>
+
+  <!-- 第四行 人接手前 -->
+  <text class="rn" x="24" y="360">接手前失败</text>
+  <text class="bn" x="204" y="360" text-anchor="end">动作</text>
+  <rect x="210" y="348" width="630" height="14" fill="url(#hatch)" stroke="#d6d0c6"/>
+  <text class="bn" x="204" y="382" text-anchor="end">停止 SS</text>
+  <rect x="210" y="370" width="630" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <text class="v" x="525" y="381" text-anchor="middle">0</text>
+  <text class="bn" x="204" y="404" text-anchor="end">失败 FS</text>
+  <rect x="210" y="392" width="252" height="14" fill="#eef1f5" stroke="#c8d2de"/>
+  <rect x="462" y="392" width="378" height="14" fill="#7a5ea8"/>
+  <text class="v" x="336" y="403" text-anchor="middle">0</text>
+  <text class="v" x="651" y="403" text-anchor="middle" fill="#ffffff">1</text>
+
+  <!-- 底部坐标轴 -->
+  <line x1="210" y1="436" x2="840" y2="436" stroke="#ddd9d2" stroke-width="1.5"/>
+  <line x1="210" y1="432" x2="210" y2="440" stroke="#b9b2a8" stroke-width="1.5"/>
+  <line x1="840" y1="432" x2="840" y2="440" stroke="#b9b2a8" stroke-width="1.5"/>
+  <text class="m" x="210" y="456" text-anchor="middle">i = 0</text>
+  <text class="m" x="840" y="456" text-anchor="middle">i = H − 1</text>
+  <text class="m" x="378" y="456" text-anchor="middle">nₜ</text>
+  <text class="m" x="462" y="456" text-anchor="middle">n</text>
+  <text class="m" x="525" y="478" text-anchor="middle">横轴是 chunk 内的位置索引 i，同一行的三个条共用同一组位置</text>
+  <text class="note" x="24" y="498">四行都是带 padding 的块。n 是 padding 边界，从第 n 个位置起动作越过了本段末尾。</text>
+  <text class="note" x="24" y="514">nₜ 是 recovery 段自己的进度边界，由这一帧在段内的位置算出，与 padding 无关。</text>
+</svg>

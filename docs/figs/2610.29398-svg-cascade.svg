@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 600" width="920" height="600" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .blk{font-size:13px;font-weight:650;fill:#1b1b1f}
+    .sm{fill:#5f6068;font-size:12px}
+    .arr{stroke:#8a8a96;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .in{fill:#eef1f5;stroke:#a9b2bf;stroke-width:1.6}
+    .gate{fill:#f6f1f8;stroke:#c2a8cf;stroke-width:1.6}
+    .pool{fill:#f7f7fa;stroke:#b8b8c4;stroke-width:1.6}
+    .ret{fill:#b23b3b;font-size:12px;font-weight:650}
+    .drop{fill:#3f7a4f;font-size:12px;font-weight:650}
+    .wait{fill:#6b4a86;font-size:12px;font-weight:650}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a96"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="30" y="34">十条规则是一条级联，误剔被挡在哪一步</text>
+  <text class="sm" x="30" y="56">同一批帧级预测、同一套权重与阈值，只有判据层在换；逐帧评估，帧与帧之间互不参考</text>
+
+  <rect class="in" x="330" y="74" width="260" height="50" rx="8"/>
+  <text class="blk" x="346" y="98">一帧的模型检出</text>
+  <text class="sm" x="346" y="116">框位置、类别、框宽高（像素）</text>
+
+  <path class="arr" d="M460,126 L460,138"/>
+
+  <rect class="gate" x="330" y="140" width="260" height="44" rx="8"/>
+  <text class="blk" x="346" y="160">R1 尺寸门</text>
+  <text class="drop" x="346" y="177">框宽与高都 ≤ 8 像素，剔除</text>
+
+  <path class="arr" d="M460,186 L460,198"/>
+
+  <rect class="gate" x="330" y="200" width="260" height="44" rx="8"/>
+  <text class="blk" x="346" y="220">R4 边界门</text>
+  <text class="drop" x="346" y="237">框落在针阀成像边界之外，剔除</text>
+
+  <path class="arr" d="M460,246 L460,258 M172,258 L748,258 M172,258 L172,268 M460,258 L460,268 M748,258 L748,268"/>
+
+  <rect class="in" x="44" y="270" width="256" height="126" rx="8"/>
+  <text class="blk" x="60" y="294">上 1/3 尖端区</text>
+  <text class="ret" x="60" y="318">类别为 Tip Damage，一律保留（R3）</text>
+  <text class="drop" x="60" y="340">其余类别剔除，不进拒收（R2）</text>
+  <text class="sm" x="60" y="362">这一区只看类别，没有尺寸豁免</text>
+  <text class="sm" x="60" y="382">尺寸门只剩 R1 的 8 像素</text>
+
+  <rect class="in" x="332" y="270" width="256" height="126" rx="8"/>
+  <text class="blk" x="348" y="294">下 2/3 区，密封线以外</text>
+  <text class="wait" x="348" y="318">Grinding Marks ≤ 40×30 进池（R6）</text>
+  <text class="wait" x="348" y="340">其它类别 ≤ 28×28 进池（R5）</text>
+  <text class="ret" x="348" y="362">超过尺寸的检测直接保留</text>
+  <text class="sm" x="348" y="382">磨痕单独给一套更宽的尺寸</text>
+
+  <rect class="in" x="620" y="270" width="256" height="126" rx="8"/>
+  <text class="blk" x="636" y="294">密封线区</text>
+  <text class="wait" x="636" y="318">框 &lt; 18×18 且只 1 个，进池（R7）</text>
+  <text class="ret" x="636" y="340">出现第 2 个，两个都保留（R10）</text>
+  <text class="sm" x="636" y="362">R10 优先于 R8 的计数结论</text>
+  <text class="sm" x="636" y="382">池再宽也挡不住这一条</text>
+
+  <path class="arr" d="M172,398 L172,412 L300,412 L300,424"/>
+  <path class="arr" d="M460,398 L460,424"/>
+  <path class="arr" d="M748,398 L748,412 L620,412 L620,424"/>
+
+  <rect class="pool" x="240" y="426" width="440" height="86" rx="8"/>
+  <text class="blk" x="256" y="450">容许池计数，逐帧独立</text>
+  <text class="drop" x="256" y="472">池内不超过 5 个，全部剔除，不参与整件判定（R8）</text>
+  <text class="ret" x="256" y="494">池内到 6 个，全部转为保留（R9）</text>
+  <text class="sm" x="256" y="510">每帧数完就结束，不跨帧累加</text>
+
+  <text class="sm" x="30" y="540">单独加一组时，误剔件数从 159 降到 G-I 120、G-II 40、G-III 114，三组全开 30。</text>
+  <text class="sm" x="30" y="562">同一批检出被多组同时命中，所以 39 加 119 加 45 不等于 129，组间效果不可相加。</text>
+  <text class="sm" x="30" y="584">红字 走向拒收　绿字 被剔除　紫字 进容许池待计数</text>
+</svg>

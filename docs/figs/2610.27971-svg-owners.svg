@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 520" width="1040" height="520" font-family="Microsoft YaHei, Helvetica, Arial, sans-serif">
+  <rect width="1040" height="520" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arw2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/>
+    </marker>
+  </defs>
+
+  <text x="20" y="34" font-size="16" font-weight="bold" fill="#222222">一条命令的读集按状态拥有者切开之后</text>
+  <text x="20" y="58" font-size="12.5" fill="#555555">横向是时间，起点 t_v 是验证，终点 t_a 是控制器扫描里产生生效的那一刻</text>
+
+  <!-- lane 1 -->
+  <text x="20" y="118" font-size="14" font-weight="bold" fill="#1d5c39">line.state 与 gripper.state</text>
+  <text x="20" y="142" font-size="12" fill="#2f7d4f">单元控制器拥有，版本由它推进</text>
+  <rect x="380" y="96" width="380" height="72" fill="#eeeeee" stroke="#9a9a9a" stroke-width="1.4"/>
+  <text x="570" y="138" font-size="13" fill="#555555" text-anchor="middle">检查之前的变化，版本已经挡住</text>
+  <rect x="760" y="96" width="240" height="72" fill="#e8f7ee" stroke="#2f7d4f" stroke-width="1.6"/>
+  <text x="880" y="128" font-size="13" font-weight="bold" fill="#1d5c39" text-anchor="middle">扫描内比较版本</text>
+  <text x="880" y="150" font-size="12.5" fill="#1d5c39" text-anchor="middle">区间关掉</text>
+
+  <!-- lane 2 -->
+  <text x="20" y="222" font-size="14" font-weight="bold" fill="#a03d3a">recipe</text>
+  <text x="20" y="246" font-size="12" fill="#a03d3a">MES 拥有，store 里只是一份副本</text>
+  <rect x="380" y="200" width="380" height="72" fill="#eeeeee" stroke="#9a9a9a" stroke-width="1.4"/>
+  <text x="570" y="242" font-size="13" fill="#555555" text-anchor="middle">网关读到的已经是副本</text>
+  <rect x="760" y="200" width="240" height="72" fill="#fdeceb" stroke="#c0504d" stroke-width="1.6"/>
+  <text x="880" y="232" font-size="13" font-weight="bold" fill="#a03d3a" text-anchor="middle">控制器管不到这段</text>
+  <text x="880" y="254" font-size="12.5" fill="#a03d3a" text-anchor="middle">区间还在</text>
+
+  <!-- time axis -->
+  <line x1="380" y1="318" x2="1010" y2="318" stroke="#555555" stroke-width="1.6" marker-end="url(#arw2)"/>
+  <line x1="380" y1="74" x2="380" y2="330" stroke="#bbbbbb" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="760" y1="74" x2="760" y2="330" stroke="#bbbbbb" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="1000" y1="74" x2="1000" y2="330" stroke="#bbbbbb" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <circle cx="380" cy="318" r="4" fill="#555555"/>
+  <circle cx="760" cy="318" r="4" fill="#555555"/>
+  <circle cx="1000" cy="318" r="4" fill="#2f7d4f"/>
+  <text x="380" y="346" font-size="12.5" fill="#333333" text-anchor="middle">t_v　验证</text>
+  <text x="760" y="346" font-size="12.5" fill="#333333" text-anchor="middle">t_ℓ　最后一次检查</text>
+  <text x="1000" y="346" font-size="12.5" fill="#333333" text-anchor="middle">t_a　生效</text>
+
+  <text x="380" y="86" font-size="12.5" fill="#666666">k = 2，读集跨了两个拥有者</text>
+
+  <!-- notes -->
+  <text x="20" y="404" font-size="13.5" fill="#222222">一次扫描只能关掉它自己拥有的那一段，另一段仍停在副本上。</text>
+  <text x="20" y="432" font-size="13.5" fill="#222222">把检查放进控制器，保住的那条命令只在读集里属于控制器的部分上成立。</text>
+  <text x="20" y="476" font-size="12" fill="#666666">区间宽度不按比例，只标位置关系。A1 到 A5 五条假设仍然要成立。</text>
+</svg>

@@ -1,547 +1,731 @@
 {
-  "note": "人工记录每篇最接近的几项工作。带 arxiv 的条目，如果站上恰好有那篇的精读就自动变成站内链接，否则链到 arXiv；不带 arxiv 的只显示名字。正文里自动互相提及的精读也会被链上，那是脚本算的，不用写在这里。",
-  "2609.27702": [
-    {
-      "name": "ScaRF-SLAM",
-      "arxiv": "2606.00307",
-      "note": "最接近的工作：同样用 DA3 做条件化，但位姿固定、不让子图去改位姿"
-    },
-    {
-      "name": "Depth Anything 3",
-      "arxiv": "2511.10647",
-      "note": "本文兼做初始化与建图的那个前馈几何模型"
-    },
-    {
-      "name": "OpenVINS",
-      "note": "被直接复用的滤波器，它自带的初始化器一直挂在后台备用"
-    },
-    {
-      "name": "ORB-SLAM3",
-      "note": "端到端对比基线，覆盖率只有 74–82%"
-    },
-    {
-      "name": "MASt3R-Fusion",
-      "note": "端到端对比基线之一"
-    },
-    {
-      "name": "VGGT-SLAM 2.0",
-      "note": "端到端对比基线之一，额外做了全局 Sim(3) 拟合，对它有利"
-    },
-    {
-      "name": "StreamRig",
-      "arxiv": "2609.40244",
-      "note": "本轮新精读，同源思路：同样靠冻结的前馈几何前端供结构，差别在本文用 IMU 与预积分补尺度，StreamRig 用标定相机组的组内几何做因果流式估计"
-    }
-  ],
-  "2609.40244": [
-    {
-      "name": "DAVIO",
-      "arxiv": "2609.27702",
-      "note": "站上已有精读，同源思路：都冻结前馈几何前端，差别在 DAVIO 用 IMU 预积分给尺度与重力，本文把标定相机组的组内几何当已知量、跨调用维护因果状态"
-    },
-    {
-      "name": "G2G",
-      "arxiv": "2606.08284",
-      "note": "同样冻骨干、只训轻量模块估计两组之间的刚体变换，但它处理固定的一对图组，跨调用不留时序状态"
-    },
-    {
-      "name": "Rig3R",
-      "note": "显式把相机组元数据（相机编号、时间戳、组内射线）当条件，但一次吃一组固定图像，没有因果流式的持久状态"
-    },
-    {
-      "name": "CUT3R",
-      "note": "维护大小固定的递归状态所以可流式，但每步只吃一张单目图，且在线估相机参数，不把标定当已知量"
-    },
-    {
-      "name": "MapAnything",
-      "note": "接受已知相机几何输出米制尺度重建，本文冻结的前端就是它这一类，但它处理固定图像集合，跨调用没有持久状态"
-    },
-    {
-      "name": "LingBot-Map",
-      "arxiv": "2604.14141",
-      "note": "同属流式单目一路，机制差异同 CUT3R 那条"
-    },
-    {
-      "name": "HorizonStream",
-      "arxiv": "2605.23889",
-      "note": "同属流式单目一路，机制差异同 CUT3R 那条"
-    }
-  ],
-  "2609.39125": [
-    {
-      "name": "OpenVINS",
-      "note": "被对比的经典滤波器路线，本文要替换的正是它那条随机游走零偏加固定噪声的假设"
-    },
-    {
-      "name": "VINS-Mono",
-      "note": "同为经典优化的视觉惯性基线，零偏按随机游走建模"
-    },
-    {
-      "name": "MSCKF",
-      "note": "多状态约束卡尔曼滤波，本文的直接继承与对立面"
-    }
-  ],
-  "2609.39403": [
-    {
-      "name": "EgoScale",
-      "note": "显式重定向那一路，先把人体手腕相对运动重定向进机器人关节空间再训练，转换发生在训练之前"
-    }
-  ],
-  "2609.39971": [
-    {
-      "name": "π0.5",
-      "note": "本文对比的 VLA 基线之一"
-    },
-    {
-      "name": "GR00T-N1.7",
-      "note": "本文对比的 VLA 基线之一"
-    },
-    {
-      "name": "OpenVLA",
-      "note": "本文对比的 VLA 基线之一"
-    },
-    {
-      "name": "RT-2",
-      "note": "本文对比的 VLA 基线之一"
-    },
-    {
-      "name": "Diffusion Policy",
-      "note": "本文对比的动作生成基线之一"
-    }
-  ],
-  "2609.39822": [
-    {
-      "name": "π0",
-      "note": "本文对比的流匹配 VLA 基线，重复去噪是它推理成本的主要来源"
-    },
-    {
-      "name": "Flow Matching",
-      "note": "本文动作生成所基于的框架，被砍掉的正是它的多步去噪"
-    }
-  ],
-  "2609.39981": [
-    {
-      "name": "Mannor & Tsitsiklis 2011",
-      "arxiv": "1104.5601",
-      "note": "在有限时域 MDP 上做均值-方差优化并证明 NP 难，属规划侧；本文在 LQR 上给方差精确闭式并保住可解性"
-    },
-    {
-      "name": "Bijl et al. 2016",
-      "note": "连续时间 LQG，用二阶矩展开配 Lyapunov 与 Sylvester 算子给代价的精确均值和方差，同样做梯度下降优化方差但无收敛保证"
-    },
-    {
-      "name": "Wang et al. 2025",
-      "note": "同一分布 LQR 框架，用随机变量 Bellman 方程刻画整个回报分布，方差只给范数型上界，停在策略评估"
-    },
-    {
-      "name": "Tsiamis et al. 2020",
-      "note": "风险度量取逐阶段状态代价的预测方差累积，形成风险约束 LQR，不是折扣无穷时域累积回报本身的方差"
-    },
-    {
-      "name": "Kishida & Cetinkaya 2022",
-      "note": "用 CVaR 罚尾部，一般没有闭式，只能求上界做次优设计"
-    }
-  ],
-  "2609.39854": [
-    {
-      "name": "PAC-NMPC",
-      "note": "本文直接前身，同样采样、同样对违反概率给 PAC 界，缺 RL 暖启动与学习传感器预测，短时程且难上高维感知"
-    },
-    {
-      "name": "POLO",
-      "note": "学概率值函数并当终端代价，机制与本文一半重合，但没有 PAC 硬约束、不给安全保证"
-    },
-    {
-      "name": "Safe RL-MPC",
-      "note": "学鲁棒线性 MPC 的参数换保证，非线性只能当扰动，保守且不处理感知"
-    },
-    {
-      "name": "predictive safety filter",
-      "note": "用约束收紧的鲁棒 NMPC 过滤学习策略输出，同样保守、无感知输入"
-    },
-    {
-      "name": "DiffStack",
-      "note": "可微 MPC 嵌进策略且吃感知输入，但不建模随机动力学、无安全保证"
-    }
-  ],
-  "2609.39837": [
-    {
-      "name": "PMD with TD evaluation",
-      "arxiv": "2509.18822",
-      "note": "无正则一步 TD 的策略镜像下降，靠单边 Bellman 初值的单调性拿 last-iterate 次线性收敛；本文带正则、任意有限初值，拿到值函数线性收敛"
-    },
-    {
-      "name": "Value Mirror Descent",
-      "arxiv": "2604.06039",
-      "note": "换成 epoch 式值迭代、递增步长、要单边初值；其随机版用生成模型估转移核做方差缩减，本文只用一条 off-policy 轨迹、不估核"
-    },
-    {
-      "name": "PMD with TD Learning (online Markov data)",
-      "arxiv": "2512.24056",
-      "note": "把无正则一步 TD-PMD 推到在线 Markov 数据；本文处理正则化 MDP，且不要轨迹重置"
-    },
-    {
-      "name": "PMD for regularized RL (generalized framework)",
-      "note": "给评估预言机一个误差预算再证线性收敛；本文不设预算，critic 误差由一步 TD 递推自定而可以一直不小"
-    }
-  ],
-  "2609.40178": [
-    {
-      "name": "Bathy-Drone",
-      "note": "飞行器吊声呐入水，厘米级精度，代价是空域审批、吊挂跟随偏差与续航"
-    },
-    {
-      "name": "Rufell et al. 的 Dronar",
-      "note": "无人机吊声呐做搜索，同样卡在空域与续航"
-    },
-    {
-      "name": "Powers et al. 侧扫声呐",
-      "note": "浑水河流中探测淡水贻贝床，只做特征识别不做深度剖面"
-    },
-    {
-      "name": "Johnson & Helferty",
-      "note": "建立侧扫图像的地质解译原理，靠后向散射强度不靠测深"
-    }
-  ],
-  "2609.40297": [
-    {
-      "name": "ERRT",
-      "note": "沿轨迹算边际增益，但只在间隔 d_info 的稀疏状态上算，中间状态的增益被丢掉"
-    },
-    {
-      "name": "RH-NBVP",
-      "note": "建 RRT 按绝对增益给候选视点打分，只执行最优分支的第一段"
-    },
-    {
-      "name": "AEP",
-      "note": "在 RH-NBVP 外加一层全局前沿规划器并执行到路点，本文同样只替换它的增益求值"
-    },
-    {
-      "name": "UFOMap",
-      "note": "把未知也当成一种状态的八叉树地图，ERRT 用它做体素集合查询；本文改用祖先深度缓冲做图像空间查询"
-    },
-    {
-      "name": "FUEL",
-      "note": "前沿目标加非对称旅行商定序的分层法，不采候选视点，重叠由区域划分绕开"
-    }
-  ],
-  "2609.39969": [
-    {
-      "name": "LLM-Attacker",
-      "arxiv": "2501.15850",
-      "note": "用大模型改仿真驾驶场景造对抗场景，动作发生在执行之前，不在回路里配物理攻击参数"
-    },
-    {
-      "name": "SoK: How Sensor Attacks Disrupt Autonomous Vehicles",
-      "arxiv": "2509.11120",
-      "note": "梳理传感器扰动在自动驾驶管线里的传播，把场景相关的混合攻击链列为开放问题，自己不做在线规划"
-    },
-    {
-      "name": "MVS (Moving Vehicle Spoofing System)",
-      "note": "真车高速远距离 LiDAR 欺骗，参数与路形由人事先设定，不随周围车流在线重选"
-    },
-    {
-      "name": "PLA-LiDAR",
-      "note": "激光注入假障碍物，验证单个原语在预定义场景下能否奏效，不论交通关系"
-    }
-  ],
-  "2609.39968": [
-    {
-      "name": "Raghavan et al. 动态梯度标定",
-      "note": "同为滚动时域动态标定，但它只给实测经验，本文补的是串稳定性放大机制与代价偏差界的解析解释"
-    },
-    {
-      "name": "Yi et al. 波前展开稳定性分析",
-      "note": "同为二阶动量模型的稳定性分析，但它假定参数已知固定、以内部空间梯度定义稳定；本文扰动外生边界输入、以标定参数集下的段间增益定义放大"
-    },
-    {
-      "name": "Thonhofer et al. 在线参数估计",
-      "note": "同为在线估计参数，但对象是一阶密度型模型，速度不是独立状态，τ 与基本图的耦合不存在"
-    },
-    {
-      "name": "Zhao et al. Bounded-METANET",
-      "note": "同样处理 METANET 稳定性，但它改速度方程结构让速度有界，标定仍是一次性估计，不动参数的时间维"
-    },
-    {
-      "name": "Huang et al. I-METANET",
-      "note": "同样面向实时事故影响估计改进宏观模型，但走的是增强静态标定这条路"
-    }
-  ],
-  "2609.39888": [
-    {
-      "name": "DC3 (Donti et al., ICLR 2021)",
-      "note": "同样是补全加修正框架，但等式流形是解析代数方程组、修正步投影到流形切空间；本文的等式流形是学出来的受控向量场、靠显式积分，并多出逆动力学反推控制量这一步"
-    },
-    {
-      "name": "APHYNITY (Yin et al., ICLR 2021)",
-      "note": "同样把动力学拆成已知物理项加最小范数残差，但两项嵌在端到端自主动力学模型里，不反推未观测控制量，也不降不等式违反"
-    },
-    {
-      "name": "FAB (Chzhen & Donti, 2026)",
-      "arxiv": "2604.03489",
-      "note": "同样做事后可行投影，但走转移对编码器加隐球裁剪加解码器，没有显式物理、没有控制量，也不经过动力学流形"
-    },
-    {
-      "name": "Deep Kinematic Models (Cui et al., ICRA 2020)",
-      "note": "同样拿运动学车辆模型当先验，但它长在预测器最后一层，属于要重训的生产模型，不是套在成品提案上的冻结算子"
-    },
-    {
-      "name": "EKF / RTS 平滑 (Rauch et al., 1965)",
-      "note": "同样做事后运动学可行性，但它吃整条预测、控制量在估计状态内部推出，不等式约束一条都不进平滑器"
-    }
-  ],
-  "2609.39902": [
-    {
-      "name": "CodeChameleon",
-      "arxiv": "2402.16717",
-      "note": "把请求加密后塞进代码，靠加解密函数改写形式；结构固定、单轮，抗正则清洗反而更好"
-    },
-    {
-      "name": "EquaCode",
-      "arxiv": "2512.23173",
-      "note": "同一作者，把请求包装成方程求解加代码补全的多策略组合；策略由人选定，不随目标模型自适应"
-    },
-    {
-      "name": "PAIR",
-      "arxiv": "2310.08419",
-      "note": "让攻击者模型按目标回复反复改写提示；全程在自然语言空间搜索，不利用代码域结构"
-    },
-    {
-      "name": "CodeAttack",
-      "note": "同样借代码补全绕过安全，但模板手工设计、单轮，不做反馈精修"
-    },
-    {
-      "name": "AutoDAN-Turbo",
-      "note": "用一个长期运行的智能体自己探索越狱策略；策略库建在自然语言上，缺域知识"
-    }
-  ],
-  "2609.40034": [
-    {
-      "name": "DIAMAUDIT (Yan & Zhang)",
-      "note": "在线性版本空间里找统计平价一高一低的两个假设、挑它们分歧的点去问，只支持二值保护属性，审计退化成版本空间搜索"
-    },
-    {
-      "name": "Active classification with comparison queries (Kane et al., FOCS 2017)",
-      "note": "同样成对比较查询，但问的是哪个点更靠近决策边界，本质仍是学分类器；本文问的是跨组相对响应"
-    },
-    {
-      "name": "Stealing Machine Learning Models via Prediction APIs (Tramèr et al., USENIX Sec 16)",
-      "note": "用接口查询训替身模型复制功能，正是本文要防的提取攻击；本文靠只回关系差把可用信息与模型识别切开"
-    },
-    {
-      "name": "Auditing fairness by betting (Chugg et al., NeurIPS 2023)",
-      "note": "把偏差审计化归成二元检验，只给有没有的判决；本文是属性估计，还要给出偏差落在哪些特征区域"
-    },
-    {
-      "name": "Understanding intermediate layers using linear classifier probes (Alain & Bengio)",
-      "arxiv": "1610.01644",
-      "note": "探针是从内部表示里抽属性的简单函数，作用于单条输入；本文的偏置探针定义在跨组元组上且带统计保证"
-    }
-  ],
-  "2609.39787": [
-    {
-      "name": "Scalable Cross-Facility Federated Learning for Scientific Foundation Models",
-      "arxiv": "2603.19544",
-      "note": "跨超算的联邦学习系统实现，只保证原始数据不出本地并给出通信时序，不回答机构是否参与能否被看出"
-    },
-    {
-      "name": "LLM Dataset Inference: Did you train on my dataset?",
-      "arxiv": "2406.06443",
-      "note": "判断某批数据是否被用于训练，观察通道只有模型输出，没扩到轮次时序、账务和智能体消息"
-    },
-    {
-      "name": "AgentLeak",
-      "arxiv": "2602.11510",
-      "note": "把泄漏量到多智能体消息通道上，是测试分布上的经验基准，不定义机构级相邻世界也给不出最坏情况界"
-    },
-    {
-      "name": "Privacy attacks in decentralized learning",
-      "note": "在去中心化学习里让好奇同行做隐私攻击，观测单位是样本或用户，观察集不含调度时序与编排元数据"
-    },
-    {
-      "name": "Pufferfish",
-      "note": "把秘密放宽成任意性质并显式给出数据生成模型，本文借它写参与隐私，但它本身不涉及机构级视图与跨机构组合"
-    }
-  ],
-  "2609.39738": [
-    {
-      "name": "CNC-Net",
-      "note": "学刀具半径与参数化路径并逐步更新毛坯，工序类型却由写死的先铣后钻日程决定"
-    },
-    {
-      "name": "DeepMS",
-      "note": "从体素几何学工序序列与去除体积，不生成实现这些体积的连续刀路"
-    },
-    {
-      "name": "Correct-by-Construction G-Code Generation (Lee)",
-      "arxiv": "2605.10568",
-      "note": "用 LLM 生成 G-code 加分离逻辑验证，几何反馈在推理期作用于程序文本"
-    },
-    {
-      "name": "Autodesk Fusion 残留加工",
-      "note": "拿更新后的毛坯几何剪裁刀路范围，只管刀路不管工序决策"
-    },
-    {
-      "name": "Hierarchical CADNet",
-      "note": "从 B-rep 识别加工特征，特征不跨加工步作为持久引用"
-    }
-  ],
-  "2609.38811": [
-    {
-      "name": "XCT-SAM",
-      "note": "在合成监督上做 SAM 参数高效域适应，多一个合金显微组织的中间适应阶段，每类一个 ViT-H 模型，不问部署代价"
-    },
-    {
-      "name": "Conv-LoRA",
-      "note": "低秩瓶颈里插多尺度卷积专家并稀疏路由，但所有类别共用一套专家；本文按类别各给一套专家库与解码器"
-    },
-    {
-      "name": "SAM + CycleGAN 适配 (Tabassum & Ziabari)",
-      "arxiv": "2412.11381",
-      "note": "用 GAN 合成监督把 SAM 微调到实验数据，单模型；本文沿用合成监督但拆成互不共享参数的类别专家头"
-    },
-    {
-      "name": "LoRA",
-      "note": "冻结原权重只训两个低秩矩阵的乘积，更新对 token 线性；本文换成带卷积专家的瓶颈以覆盖几个像素的局部结构"
-    },
-    {
-      "name": "SAM",
-      "note": "图像编码器加提示编码器加掩码解码器，靠点或框提示指定目标；本文保留结构但去掉提示"
-    }
-  ],
-  "2609.37212": [
-    {
-      "name": "Awad & Guizani, MSDLO (CIRP CMS 2025)",
-      "note": "把工序往来与财务项换算成弹簧阻尼系统取力平衡，只做局部微调且依赖初始摆放"
-    },
-    {
-      "name": "Sánchez-Sosa & Chavero-Navarrete, Robotic Cell Layout Optimization Using a GA",
-      "note": "只用遗传算法做离散搜索，不接连续几何松弛"
-    },
-    {
-      "name": "Kohara et al., B&B for multi-floor facility layout",
-      "note": "分支定界给精确解，部门数一多就得换启发式"
-    },
-    {
-      "name": "Salimpour et al., hybridized heuristic dynamic programming",
-      "note": "动态规划混启发式，用全局最优换状态空间可控"
-    },
-    {
-      "name": "Adrian et al., GA/PSO/ACO for construction site layout",
-      "note": "三种元启发式横评，纯离散布置、无连续微调"
-    }
-  ],
-  "2609.38048": [
-    {
-      "name": "Barfoot, Holmes & Dümbgen, Certifiably optimal rotation and pose estimation based on the Cayley map (IJRR 2025)",
-      "note": "最接近的前作，同样为了绕开对数映射与三角函数才换 Cayley，也推了对应的冗余约束；区别在它处理的是几个位姿之间的相对测量，没有预积分这一步，也就没有姿态与零偏之间的乘积提升"
-    },
-    {
-      "name": "SE-Sync",
-      "note": "位姿图同步的可验证算法，把相对位姿测量写成 QCQP，松弛天生就紧，重点在从 SDP 解恢复秩一解；它的紧度由姿态图结构给，里面没有惯性积分与零偏耦合"
-    },
-    {
-      "name": "Shonan 旋转平均",
-      "note": "不补约束，而是把问题提升到 SO(p)^n 再逐级升 p 换取紧松弛；只估旋转，没有速度、位置和零偏"
-    },
-    {
-      "name": "Xu et al., Certifiable Factor Graph Optimization",
-      "arxiv": "2603.01267",
-      "note": "把可验证估计做成因子图优化框架，本文指出 IMU 测量此前尚未被纳入这类框架"
-    }
-  ],
-  "2609.39611": [
-    {
-      "name": "Zhang, Ning & Zhao, Observability-enhanced target motion estimation via bearing-box (T-RO 2026)",
-      "note": "本文 Z-KF 的更新律与它代数等价；差异在于它去掉了目标尺寸已知这个假设，并给出了一套可观测性分析"
-    },
-    {
-      "name": "Jin et al., Drone Detection and Pose Estimation Using Relational Graph Networks (Sensors 2019)",
-      "note": "用自制卷积网络抽关键点配常规 PnP，后端是 CA-KF，并假设目标的垂直加速度为零"
-    },
-    {
-      "name": "Zheng et al., Keypoint-Guided Efficient Pose Estimation and Domain Adaptation for MAVs (T-RO 2024)",
-      "note": "思路与上一条相近，后端换成伪线性卡尔曼滤波；同一批作者放出带动捕真值的机载位姿数据集，本文直接拿它当真机基线"
-    },
-    {
-      "name": "CV-KF / CA-KF / Pose-KF",
-      "note": "论文内部的只看位置或只看姿态的过程模型基线，本文用同一套自动调参把它们与 Z-KF 放在同一条流水线上比"
-    }
-  ],
-  "2610.10453": [
-    {
-      "name": "π₀",
-      "arxiv": "2410.24164",
-      "note": "同属流匹配动作头这一路线；π₀ 靠大规模示教数据训练、不接奖励优化，本文走奖励驱动的在策略优化，并把目标定在粗积分（少步执行）的数值可靠性上"
-    },
-    {
-      "name": "FPO++",
-      "arxiv": "2602.02481",
-      "note": "最直接的前身：同样从条件流匹配损失构造在策略目标；FPO++ 另加逐样本流比与非对称信赖域更新，本文在它之上加在线回流与多预算动作蒸馏，不改主目标"
-    }
-  ],
-  "2610.19913": [
-    {
-      "name": "LaST₀",
-      "arxiv": "2601.05248",
-      "note": "最接近的工作：用隐式时空思维链在模型内做推理；本文不在模型内推理，而是把长程任务切成带可观测核验判据的单元、查表派发执行器。表 2(a) 的基线值转自它"
-    },
-    {
-      "name": "DeepVision-VLA",
-      "arxiv": "2603.15618",
-      "note": "主张先看后动、改进视觉基础表示；同样在单模型内提升，本文改的是执行组织，不碰视觉表示。表 2(a) 另一处基线来源"
-    },
-    {
-      "name": "RoboTwin 2.0",
-      "arxiv": "2506.18088",
-      "note": "双臂操作仿真数据生成器与基准；本文只借它的环境与官方检查点做单元组合与异构派发评测，不借它的数据生成流程"
-    },
-    {
-      "name": "π₀.₅",
-      "arxiv": "2504.16054",
-      "note": "VLM 加流匹配动作专家；本文的方法与它正交，它可作为一个执行器被登记后参与排序"
-    },
-    {
-      "name": "OpenVLA",
-      "arxiv": "2406.09246",
-      "note": "把开源 VLM 微调成自回归策略、动作写成离散 token；本文不训练新策略，只登记现成检查点"
-    }
-  ],
-  "2610.12411": [
-    {
-      "name": "A micro Lie theory for state estimation in robotics",
-      "arxiv": "1812.01537",
-      "note": "本文的伴随矩阵与扰动约定取自它；本文参考文献里唯一带 arXiv 编号的一条"
-    },
-    {
-      "name": "GLIO",
-      "note": "最接近的工作：它的一致性只能离线拿到，后端才做 S2MS 与原始伪距/多普勒的全局批量优化，且要重配准点云；本文把联合优化搬进在线滑窗，后端复用在线缓存的相对位姿因子、不再碰点云"
-    },
-    {
-      "name": "GLIM",
-      "note": "本文沿用它的 GPU 扫描匹配因子与解析块 Hessian；它只有 LiDAR 加 IMU，没有原始 GNSS 因子，也不把局部世界系到 ECEF 的外参当待估状态"
-    }
-  ],
-  "2610.09988": [
-    {
-      "name": "A framework for online, stabilizing reinforcement learning",
-      "arxiv": "2207.08730",
-      "note": "同组前作：走不依赖李雅普诺夫函数的镇定强化学习；本文把评判函数本身当李雅普诺夫候选，要求它的全导数沿轨迹满足指定衰减不等式"
-    },
-    {
-      "name": "Clarabel",
-      "arxiv": "2405.12762",
-      "note": "本文二次规划求解用的内点法锥规划求解器"
-    }
-  ],
-  "2610.17709": [
-    {
-      "name": "Policy Decorator",
-      "note": "它训的是修正残差、把策略往好里推，靠稀疏奖励从零学修正方向；本文复用同一个残差形式但把目标反过来，训残差去破坏基座，理由是能破坏任务的动作比修正动作多"
-    },
-    {
-      "name": "Establishing appropriate trust via critical states",
-      "note": "它用最优动作价值减平均价值这个全动作空间的期望差当关键性，需要处处准确的 Q；本文只在对抗者搜出的局部邻域取最坏值，判据是最坏价值增量。原文只给 DOI"
-    }
-  ]
+ "note": "人工记录每篇最接近的几项工作。带 arxiv 的条目，如果站上恰好有那篇的精读就自动变成站内链接，否则链到 arXiv；不带 arxiv 的只显示名字。正文里自动互相提及的精读也会被链上，那是脚本算的，不用写在这里。",
+ "2609.27702": [
+  {
+   "name": "ScaRF-SLAM",
+   "arxiv": "2606.00307",
+   "note": "最接近的工作：同样用 DA3 做条件化，但位姿固定、不让子图去改位姿"
+  },
+  {
+   "name": "Depth Anything 3",
+   "arxiv": "2511.10647",
+   "note": "本文兼做初始化与建图的那个前馈几何模型"
+  },
+  {
+   "name": "OpenVINS",
+   "note": "被直接复用的滤波器，它自带的初始化器一直挂在后台备用"
+  },
+  {
+   "name": "ORB-SLAM3",
+   "note": "端到端对比基线，覆盖率只有 74–82%"
+  },
+  {
+   "name": "MASt3R-Fusion",
+   "note": "端到端对比基线之一"
+  },
+  {
+   "name": "VGGT-SLAM 2.0",
+   "note": "端到端对比基线之一，额外做了全局 Sim(3) 拟合，对它有利"
+  },
+  {
+   "name": "StreamRig",
+   "arxiv": "2609.40244",
+   "note": "本轮新精读，同源思路：同样靠冻结的前馈几何前端供结构，差别在本文用 IMU 与预积分补尺度，StreamRig 用标定相机组的组内几何做因果流式估计"
+  }
+ ],
+ "2609.40244": [
+  {
+   "name": "DAVIO",
+   "arxiv": "2609.27702",
+   "note": "站上已有精读，同源思路：都冻结前馈几何前端，差别在 DAVIO 用 IMU 预积分给尺度与重力，本文把标定相机组的组内几何当已知量、跨调用维护因果状态"
+  },
+  {
+   "name": "G2G",
+   "arxiv": "2606.08284",
+   "note": "同样冻骨干、只训轻量模块估计两组之间的刚体变换，但它处理固定的一对图组，跨调用不留时序状态"
+  },
+  {
+   "name": "Rig3R",
+   "note": "显式把相机组元数据（相机编号、时间戳、组内射线）当条件，但一次吃一组固定图像，没有因果流式的持久状态"
+  },
+  {
+   "name": "CUT3R",
+   "note": "维护大小固定的递归状态所以可流式，但每步只吃一张单目图，且在线估相机参数，不把标定当已知量"
+  },
+  {
+   "name": "MapAnything",
+   "note": "接受已知相机几何输出米制尺度重建，本文冻结的前端就是它这一类，但它处理固定图像集合，跨调用没有持久状态"
+  },
+  {
+   "name": "LingBot-Map",
+   "arxiv": "2604.14141",
+   "note": "同属流式单目一路，机制差异同 CUT3R 那条"
+  },
+  {
+   "name": "HorizonStream",
+   "arxiv": "2605.23889",
+   "note": "同属流式单目一路，机制差异同 CUT3R 那条"
+  }
+ ],
+ "2609.39125": [
+  {
+   "name": "OpenVINS",
+   "note": "被对比的经典滤波器路线，本文要替换的正是它那条随机游走零偏加固定噪声的假设"
+  },
+  {
+   "name": "VINS-Mono",
+   "note": "同为经典优化的视觉惯性基线，零偏按随机游走建模"
+  },
+  {
+   "name": "MSCKF",
+   "note": "多状态约束卡尔曼滤波，本文的直接继承与对立面"
+  }
+ ],
+ "2609.39403": [
+  {
+   "name": "EgoScale",
+   "note": "显式重定向那一路，先把人体手腕相对运动重定向进机器人关节空间再训练，转换发生在训练之前"
+  }
+ ],
+ "2609.39971": [
+  {
+   "name": "π0.5",
+   "note": "本文对比的 VLA 基线之一"
+  },
+  {
+   "name": "GR00T-N1.7",
+   "note": "本文对比的 VLA 基线之一"
+  },
+  {
+   "name": "OpenVLA",
+   "note": "本文对比的 VLA 基线之一"
+  },
+  {
+   "name": "RT-2",
+   "note": "本文对比的 VLA 基线之一"
+  },
+  {
+   "name": "Diffusion Policy",
+   "note": "本文对比的动作生成基线之一"
+  }
+ ],
+ "2609.39822": [
+  {
+   "name": "π0",
+   "note": "本文对比的流匹配 VLA 基线，重复去噪是它推理成本的主要来源"
+  },
+  {
+   "name": "Flow Matching",
+   "note": "本文动作生成所基于的框架，被砍掉的正是它的多步去噪"
+  }
+ ],
+ "2609.39981": [
+  {
+   "name": "Mannor & Tsitsiklis 2011",
+   "arxiv": "1104.5601",
+   "note": "在有限时域 MDP 上做均值-方差优化并证明 NP 难，属规划侧；本文在 LQR 上给方差精确闭式并保住可解性"
+  },
+  {
+   "name": "Bijl et al. 2016",
+   "note": "连续时间 LQG，用二阶矩展开配 Lyapunov 与 Sylvester 算子给代价的精确均值和方差，同样做梯度下降优化方差但无收敛保证"
+  },
+  {
+   "name": "Wang et al. 2025",
+   "note": "同一分布 LQR 框架，用随机变量 Bellman 方程刻画整个回报分布，方差只给范数型上界，停在策略评估"
+  },
+  {
+   "name": "Tsiamis et al. 2020",
+   "note": "风险度量取逐阶段状态代价的预测方差累积，形成风险约束 LQR，不是折扣无穷时域累积回报本身的方差"
+  },
+  {
+   "name": "Kishida & Cetinkaya 2022",
+   "note": "用 CVaR 罚尾部，一般没有闭式，只能求上界做次优设计"
+  }
+ ],
+ "2609.39854": [
+  {
+   "name": "PAC-NMPC",
+   "note": "本文直接前身，同样采样、同样对违反概率给 PAC 界，缺 RL 暖启动与学习传感器预测，短时程且难上高维感知"
+  },
+  {
+   "name": "POLO",
+   "note": "学概率值函数并当终端代价，机制与本文一半重合，但没有 PAC 硬约束、不给安全保证"
+  },
+  {
+   "name": "Safe RL-MPC",
+   "note": "学鲁棒线性 MPC 的参数换保证，非线性只能当扰动，保守且不处理感知"
+  },
+  {
+   "name": "predictive safety filter",
+   "note": "用约束收紧的鲁棒 NMPC 过滤学习策略输出，同样保守、无感知输入"
+  },
+  {
+   "name": "DiffStack",
+   "note": "可微 MPC 嵌进策略且吃感知输入，但不建模随机动力学、无安全保证"
+  }
+ ],
+ "2609.39837": [
+  {
+   "name": "PMD with TD evaluation",
+   "arxiv": "2509.18822",
+   "note": "无正则一步 TD 的策略镜像下降，靠单边 Bellman 初值的单调性拿 last-iterate 次线性收敛；本文带正则、任意有限初值，拿到值函数线性收敛"
+  },
+  {
+   "name": "Value Mirror Descent",
+   "arxiv": "2604.06039",
+   "note": "换成 epoch 式值迭代、递增步长、要单边初值；其随机版用生成模型估转移核做方差缩减，本文只用一条 off-policy 轨迹、不估核"
+  },
+  {
+   "name": "PMD with TD Learning (online Markov data)",
+   "arxiv": "2512.24056",
+   "note": "把无正则一步 TD-PMD 推到在线 Markov 数据；本文处理正则化 MDP，且不要轨迹重置"
+  },
+  {
+   "name": "PMD for regularized RL (generalized framework)",
+   "note": "给评估预言机一个误差预算再证线性收敛；本文不设预算，critic 误差由一步 TD 递推自定而可以一直不小"
+  }
+ ],
+ "2609.40178": [
+  {
+   "name": "Bathy-Drone",
+   "note": "飞行器吊声呐入水，厘米级精度，代价是空域审批、吊挂跟随偏差与续航"
+  },
+  {
+   "name": "Rufell et al. 的 Dronar",
+   "note": "无人机吊声呐做搜索，同样卡在空域与续航"
+  },
+  {
+   "name": "Powers et al. 侧扫声呐",
+   "note": "浑水河流中探测淡水贻贝床，只做特征识别不做深度剖面"
+  },
+  {
+   "name": "Johnson & Helferty",
+   "note": "建立侧扫图像的地质解译原理，靠后向散射强度不靠测深"
+  }
+ ],
+ "2609.40297": [
+  {
+   "name": "ERRT",
+   "note": "沿轨迹算边际增益，但只在间隔 d_info 的稀疏状态上算，中间状态的增益被丢掉"
+  },
+  {
+   "name": "RH-NBVP",
+   "note": "建 RRT 按绝对增益给候选视点打分，只执行最优分支的第一段"
+  },
+  {
+   "name": "AEP",
+   "note": "在 RH-NBVP 外加一层全局前沿规划器并执行到路点，本文同样只替换它的增益求值"
+  },
+  {
+   "name": "UFOMap",
+   "note": "把未知也当成一种状态的八叉树地图，ERRT 用它做体素集合查询；本文改用祖先深度缓冲做图像空间查询"
+  },
+  {
+   "name": "FUEL",
+   "note": "前沿目标加非对称旅行商定序的分层法，不采候选视点，重叠由区域划分绕开"
+  }
+ ],
+ "2609.39969": [
+  {
+   "name": "LLM-Attacker",
+   "arxiv": "2501.15850",
+   "note": "用大模型改仿真驾驶场景造对抗场景，动作发生在执行之前，不在回路里配物理攻击参数"
+  },
+  {
+   "name": "SoK: How Sensor Attacks Disrupt Autonomous Vehicles",
+   "arxiv": "2509.11120",
+   "note": "梳理传感器扰动在自动驾驶管线里的传播，把场景相关的混合攻击链列为开放问题，自己不做在线规划"
+  },
+  {
+   "name": "MVS (Moving Vehicle Spoofing System)",
+   "note": "真车高速远距离 LiDAR 欺骗，参数与路形由人事先设定，不随周围车流在线重选"
+  },
+  {
+   "name": "PLA-LiDAR",
+   "note": "激光注入假障碍物，验证单个原语在预定义场景下能否奏效，不论交通关系"
+  }
+ ],
+ "2609.39968": [
+  {
+   "name": "Raghavan et al. 动态梯度标定",
+   "note": "同为滚动时域动态标定，但它只给实测经验，本文补的是串稳定性放大机制与代价偏差界的解析解释"
+  },
+  {
+   "name": "Yi et al. 波前展开稳定性分析",
+   "note": "同为二阶动量模型的稳定性分析，但它假定参数已知固定、以内部空间梯度定义稳定；本文扰动外生边界输入、以标定参数集下的段间增益定义放大"
+  },
+  {
+   "name": "Thonhofer et al. 在线参数估计",
+   "note": "同为在线估计参数，但对象是一阶密度型模型，速度不是独立状态，τ 与基本图的耦合不存在"
+  },
+  {
+   "name": "Zhao et al. Bounded-METANET",
+   "note": "同样处理 METANET 稳定性，但它改速度方程结构让速度有界，标定仍是一次性估计，不动参数的时间维"
+  },
+  {
+   "name": "Huang et al. I-METANET",
+   "note": "同样面向实时事故影响估计改进宏观模型，但走的是增强静态标定这条路"
+  }
+ ],
+ "2609.39888": [
+  {
+   "name": "DC3 (Donti et al., ICLR 2021)",
+   "note": "同样是补全加修正框架，但等式流形是解析代数方程组、修正步投影到流形切空间；本文的等式流形是学出来的受控向量场、靠显式积分，并多出逆动力学反推控制量这一步"
+  },
+  {
+   "name": "APHYNITY (Yin et al., ICLR 2021)",
+   "note": "同样把动力学拆成已知物理项加最小范数残差，但两项嵌在端到端自主动力学模型里，不反推未观测控制量，也不降不等式违反"
+  },
+  {
+   "name": "FAB (Chzhen & Donti, 2026)",
+   "arxiv": "2604.03489",
+   "note": "同样做事后可行投影，但走转移对编码器加隐球裁剪加解码器，没有显式物理、没有控制量，也不经过动力学流形"
+  },
+  {
+   "name": "Deep Kinematic Models (Cui et al., ICRA 2020)",
+   "note": "同样拿运动学车辆模型当先验，但它长在预测器最后一层，属于要重训的生产模型，不是套在成品提案上的冻结算子"
+  },
+  {
+   "name": "EKF / RTS 平滑 (Rauch et al., 1965)",
+   "note": "同样做事后运动学可行性，但它吃整条预测、控制量在估计状态内部推出，不等式约束一条都不进平滑器"
+  }
+ ],
+ "2609.39902": [
+  {
+   "name": "CodeChameleon",
+   "arxiv": "2402.16717",
+   "note": "把请求加密后塞进代码，靠加解密函数改写形式；结构固定、单轮，抗正则清洗反而更好"
+  },
+  {
+   "name": "EquaCode",
+   "arxiv": "2512.23173",
+   "note": "同一作者，把请求包装成方程求解加代码补全的多策略组合；策略由人选定，不随目标模型自适应"
+  },
+  {
+   "name": "PAIR",
+   "arxiv": "2310.08419",
+   "note": "让攻击者模型按目标回复反复改写提示；全程在自然语言空间搜索，不利用代码域结构"
+  },
+  {
+   "name": "CodeAttack",
+   "note": "同样借代码补全绕过安全，但模板手工设计、单轮，不做反馈精修"
+  },
+  {
+   "name": "AutoDAN-Turbo",
+   "note": "用一个长期运行的智能体自己探索越狱策略；策略库建在自然语言上，缺域知识"
+  }
+ ],
+ "2609.40034": [
+  {
+   "name": "DIAMAUDIT (Yan & Zhang)",
+   "note": "在线性版本空间里找统计平价一高一低的两个假设、挑它们分歧的点去问，只支持二值保护属性，审计退化成版本空间搜索"
+  },
+  {
+   "name": "Active classification with comparison queries (Kane et al., FOCS 2017)",
+   "note": "同样成对比较查询，但问的是哪个点更靠近决策边界，本质仍是学分类器；本文问的是跨组相对响应"
+  },
+  {
+   "name": "Stealing Machine Learning Models via Prediction APIs (Tramèr et al., USENIX Sec 16)",
+   "note": "用接口查询训替身模型复制功能，正是本文要防的提取攻击；本文靠只回关系差把可用信息与模型识别切开"
+  },
+  {
+   "name": "Auditing fairness by betting (Chugg et al., NeurIPS 2023)",
+   "note": "把偏差审计化归成二元检验，只给有没有的判决；本文是属性估计，还要给出偏差落在哪些特征区域"
+  },
+  {
+   "name": "Understanding intermediate layers using linear classifier probes (Alain & Bengio)",
+   "arxiv": "1610.01644",
+   "note": "探针是从内部表示里抽属性的简单函数，作用于单条输入；本文的偏置探针定义在跨组元组上且带统计保证"
+  }
+ ],
+ "2609.39787": [
+  {
+   "name": "Scalable Cross-Facility Federated Learning for Scientific Foundation Models",
+   "arxiv": "2603.19544",
+   "note": "跨超算的联邦学习系统实现，只保证原始数据不出本地并给出通信时序，不回答机构是否参与能否被看出"
+  },
+  {
+   "name": "LLM Dataset Inference: Did you train on my dataset?",
+   "arxiv": "2406.06443",
+   "note": "判断某批数据是否被用于训练，观察通道只有模型输出，没扩到轮次时序、账务和智能体消息"
+  },
+  {
+   "name": "AgentLeak",
+   "arxiv": "2602.11510",
+   "note": "把泄漏量到多智能体消息通道上，是测试分布上的经验基准，不定义机构级相邻世界也给不出最坏情况界"
+  },
+  {
+   "name": "Privacy attacks in decentralized learning",
+   "note": "在去中心化学习里让好奇同行做隐私攻击，观测单位是样本或用户，观察集不含调度时序与编排元数据"
+  },
+  {
+   "name": "Pufferfish",
+   "note": "把秘密放宽成任意性质并显式给出数据生成模型，本文借它写参与隐私，但它本身不涉及机构级视图与跨机构组合"
+  }
+ ],
+ "2609.39738": [
+  {
+   "name": "CNC-Net",
+   "note": "学刀具半径与参数化路径并逐步更新毛坯，工序类型却由写死的先铣后钻日程决定"
+  },
+  {
+   "name": "DeepMS",
+   "note": "从体素几何学工序序列与去除体积，不生成实现这些体积的连续刀路"
+  },
+  {
+   "name": "Correct-by-Construction G-Code Generation (Lee)",
+   "arxiv": "2605.10568",
+   "note": "用 LLM 生成 G-code 加分离逻辑验证，几何反馈在推理期作用于程序文本"
+  },
+  {
+   "name": "Autodesk Fusion 残留加工",
+   "note": "拿更新后的毛坯几何剪裁刀路范围，只管刀路不管工序决策"
+  },
+  {
+   "name": "Hierarchical CADNet",
+   "note": "从 B-rep 识别加工特征，特征不跨加工步作为持久引用"
+  }
+ ],
+ "2609.38811": [
+  {
+   "name": "XCT-SAM",
+   "note": "在合成监督上做 SAM 参数高效域适应，多一个合金显微组织的中间适应阶段，每类一个 ViT-H 模型，不问部署代价"
+  },
+  {
+   "name": "Conv-LoRA",
+   "note": "低秩瓶颈里插多尺度卷积专家并稀疏路由，但所有类别共用一套专家；本文按类别各给一套专家库与解码器"
+  },
+  {
+   "name": "SAM + CycleGAN 适配 (Tabassum & Ziabari)",
+   "arxiv": "2412.11381",
+   "note": "用 GAN 合成监督把 SAM 微调到实验数据，单模型；本文沿用合成监督但拆成互不共享参数的类别专家头"
+  },
+  {
+   "name": "LoRA",
+   "note": "冻结原权重只训两个低秩矩阵的乘积，更新对 token 线性；本文换成带卷积专家的瓶颈以覆盖几个像素的局部结构"
+  },
+  {
+   "name": "SAM",
+   "note": "图像编码器加提示编码器加掩码解码器，靠点或框提示指定目标；本文保留结构但去掉提示"
+  }
+ ],
+ "2609.37212": [
+  {
+   "name": "Awad & Guizani, MSDLO (CIRP CMS 2025)",
+   "note": "把工序往来与财务项换算成弹簧阻尼系统取力平衡，只做局部微调且依赖初始摆放"
+  },
+  {
+   "name": "Sánchez-Sosa & Chavero-Navarrete, Robotic Cell Layout Optimization Using a GA",
+   "note": "只用遗传算法做离散搜索，不接连续几何松弛"
+  },
+  {
+   "name": "Kohara et al., B&B for multi-floor facility layout",
+   "note": "分支定界给精确解，部门数一多就得换启发式"
+  },
+  {
+   "name": "Salimpour et al., hybridized heuristic dynamic programming",
+   "note": "动态规划混启发式，用全局最优换状态空间可控"
+  },
+  {
+   "name": "Adrian et al., GA/PSO/ACO for construction site layout",
+   "note": "三种元启发式横评，纯离散布置、无连续微调"
+  }
+ ],
+ "2609.38048": [
+  {
+   "name": "Barfoot, Holmes & Dümbgen, Certifiably optimal rotation and pose estimation based on the Cayley map (IJRR 2025)",
+   "note": "最接近的前作，同样为了绕开对数映射与三角函数才换 Cayley，也推了对应的冗余约束；区别在它处理的是几个位姿之间的相对测量，没有预积分这一步，也就没有姿态与零偏之间的乘积提升"
+  },
+  {
+   "name": "SE-Sync",
+   "note": "位姿图同步的可验证算法，把相对位姿测量写成 QCQP，松弛天生就紧，重点在从 SDP 解恢复秩一解；它的紧度由姿态图结构给，里面没有惯性积分与零偏耦合"
+  },
+  {
+   "name": "Shonan 旋转平均",
+   "note": "不补约束，而是把问题提升到 SO(p)^n 再逐级升 p 换取紧松弛；只估旋转，没有速度、位置和零偏"
+  },
+  {
+   "name": "Xu et al., Certifiable Factor Graph Optimization",
+   "arxiv": "2603.01267",
+   "note": "把可验证估计做成因子图优化框架，本文指出 IMU 测量此前尚未被纳入这类框架"
+  }
+ ],
+ "2609.39611": [
+  {
+   "name": "Zhang, Ning & Zhao, Observability-enhanced target motion estimation via bearing-box (T-RO 2026)",
+   "note": "本文 Z-KF 的更新律与它代数等价；差异在于它去掉了目标尺寸已知这个假设，并给出了一套可观测性分析"
+  },
+  {
+   "name": "Jin et al., Drone Detection and Pose Estimation Using Relational Graph Networks (Sensors 2019)",
+   "note": "用自制卷积网络抽关键点配常规 PnP，后端是 CA-KF，并假设目标的垂直加速度为零"
+  },
+  {
+   "name": "Zheng et al., Keypoint-Guided Efficient Pose Estimation and Domain Adaptation for MAVs (T-RO 2024)",
+   "note": "思路与上一条相近，后端换成伪线性卡尔曼滤波；同一批作者放出带动捕真值的机载位姿数据集，本文直接拿它当真机基线"
+  },
+  {
+   "name": "CV-KF / CA-KF / Pose-KF",
+   "note": "论文内部的只看位置或只看姿态的过程模型基线，本文用同一套自动调参把它们与 Z-KF 放在同一条流水线上比"
+  }
+ ],
+ "2610.10453": [
+  {
+   "name": "π₀",
+   "arxiv": "2410.24164",
+   "note": "同属流匹配动作头这一路线；π₀ 靠大规模示教数据训练、不接奖励优化，本文走奖励驱动的在策略优化，并把目标定在粗积分（少步执行）的数值可靠性上"
+  },
+  {
+   "name": "FPO++",
+   "arxiv": "2602.02481",
+   "note": "最直接的前身：同样从条件流匹配损失构造在策略目标；FPO++ 另加逐样本流比与非对称信赖域更新，本文在它之上加在线回流与多预算动作蒸馏，不改主目标"
+  }
+ ],
+ "2610.19913": [
+  {
+   "name": "LaST₀",
+   "arxiv": "2601.05248",
+   "note": "最接近的工作：用隐式时空思维链在模型内做推理；本文不在模型内推理，而是把长程任务切成带可观测核验判据的单元、查表派发执行器。表 2(a) 的基线值转自它"
+  },
+  {
+   "name": "DeepVision-VLA",
+   "arxiv": "2603.15618",
+   "note": "主张先看后动、改进视觉基础表示；同样在单模型内提升，本文改的是执行组织，不碰视觉表示。表 2(a) 另一处基线来源"
+  },
+  {
+   "name": "RoboTwin 2.0",
+   "arxiv": "2506.18088",
+   "note": "双臂操作仿真数据生成器与基准；本文只借它的环境与官方检查点做单元组合与异构派发评测，不借它的数据生成流程"
+  },
+  {
+   "name": "π₀.₅",
+   "arxiv": "2504.16054",
+   "note": "VLM 加流匹配动作专家；本文的方法与它正交，它可作为一个执行器被登记后参与排序"
+  },
+  {
+   "name": "OpenVLA",
+   "arxiv": "2406.09246",
+   "note": "把开源 VLM 微调成自回归策略、动作写成离散 token；本文不训练新策略，只登记现成检查点"
+  }
+ ],
+ "2610.12411": [
+  {
+   "name": "A micro Lie theory for state estimation in robotics",
+   "arxiv": "1812.01537",
+   "note": "本文的伴随矩阵与扰动约定取自它；本文参考文献里唯一带 arXiv 编号的一条"
+  },
+  {
+   "name": "GLIO",
+   "note": "最接近的工作：它的一致性只能离线拿到，后端才做 S2MS 与原始伪距/多普勒的全局批量优化，且要重配准点云；本文把联合优化搬进在线滑窗，后端复用在线缓存的相对位姿因子、不再碰点云"
+  },
+  {
+   "name": "GLIM",
+   "note": "本文沿用它的 GPU 扫描匹配因子与解析块 Hessian；它只有 LiDAR 加 IMU，没有原始 GNSS 因子，也不把局部世界系到 ECEF 的外参当待估状态"
+  }
+ ],
+ "2610.09988": [
+  {
+   "name": "A framework for online, stabilizing reinforcement learning",
+   "arxiv": "2207.08730",
+   "note": "同组前作：走不依赖李雅普诺夫函数的镇定强化学习；本文把评判函数本身当李雅普诺夫候选，要求它的全导数沿轨迹满足指定衰减不等式"
+  },
+  {
+   "name": "Clarabel",
+   "arxiv": "2405.12762",
+   "note": "本文二次规划求解用的内点法锥规划求解器"
+  }
+ ],
+ "2610.17709": [
+  {
+   "name": "Policy Decorator",
+   "note": "它训的是修正残差、把策略往好里推，靠稀疏奖励从零学修正方向；本文复用同一个残差形式但把目标反过来，训残差去破坏基座，理由是能破坏任务的动作比修正动作多"
+  },
+  {
+   "name": "Establishing appropriate trust via critical states",
+   "note": "它用最优动作价值减平均价值这个全动作空间的期望差当关键性，需要处处准确的 Q；本文只在对抗者搜出的局部邻域取最坏值，判据是最坏价值增量。原文只给 DOI"
+  }
+ ],
+ "2610.33174": [
+  {
+   "name": "cuVSLAM",
+   "arxiv": "2506.04359",
+   "note": "参考文献 [26]，本文的实时基线。它吃连续单曝光序列、为实时做简化；本文不接运动模型，直接把多曝光序列当因子图约束，也不做 HDR 合成"
+  },
+  {
+   "name": "One year in a forest",
+   "arxiv": "2608.27628",
+   "note": "参考文献 [1]，同实验室的野外长时数据实证分析，本文借它给误差量级口径；那篇不含采集策略，本文是采集侧加估计侧的方法论文"
+  },
+  {
+   "name": "StreamRig",
+   "arxiv": "2609.40244",
+   "note": "站内近邻，非本文参考文献。同样在多相机前端上做鲁棒性，它冻结前馈几何前端、用标定相机组的组内几何做因果流式估计；本文动的是曝光采集策略与因子图里的多曝光约束"
+  }
+ ],
+ "2610.41768": [
+  {
+   "name": "VINS-Mono",
+   "arxiv": "1708.03852",
+   "note": "参考文献 [13]，单目惯性框架的代表。它靠 IMU 与视觉联合估尺度与重力，本文用 RGB-D 直接给米制、不估尺度，把轮速预积分成纯编码器边塞进 BA"
+  },
+  {
+   "name": "DAVIO",
+   "arxiv": "2609.27702",
+   "note": "站内已有精读，非本文参考文献。两边都在填「视觉还没准备好」那一段，DAVIO 用前馈深度模型解尺度再交给 OpenVINS 滤波，本文动的是另一侧的轮速，且不换后端"
+  }
+ ],
+ "2610.31569": [
+  {
+   "name": "VLA-Corrector",
+   "arxiv": "2607.01804",
+   "note": "参考文献里最接近的一条。它在推理端用潜空间监视器比对特征演化，偏差持续就截断动作块并重规划，既不判终局失败也不动策略参数；Echo 把停止与失败两条信号训进同一个流匹配过程"
+  },
+  {
+   "name": "CycleVLA",
+   "arxiv": "2601.02295",
+   "note": "进度感知 VLA 加外部失败预测与子任务回退，停止信号只在最后一帧监督；Echo 用成功、失败、恢复三类轨迹在同一个动作块上做逐位置监督"
+  },
+  {
+   "name": "Robometer",
+   "arxiv": "2603.02115",
+   "note": "4B 外部奖励模型，离线给轨迹打分、不进动作回路；Echo 的设计目标是让这个分进得去，代价是每个任务都要重训并补四类数据"
+  },
+  {
+   "name": "π0.5",
+   "arxiv": "2504.16054",
+   "note": "本文基座，输出带动作块但没有任何任务状态输出，Echo 就是在它上面多挂两列 token"
+  }
+ ],
+ "2610.32271": [
+  {
+   "name": "MolmoAct2",
+   "arxiv": "2605.02881",
+   "note": "参考文献 [2]，也是把动作推理模型往真实部署推的一条路，但它停在固定基座机械臂；本文把臂装到四足上，要同时协调底盘、姿态与末端，动作接口按消费端拆成两个更新率"
+  },
+  {
+   "name": "实时 VLA 的时间缺口",
+   "arxiv": "2609.39822",
+   "note": "站内已有精读，非本文参考文献。那篇把推理链路的延迟当成主要矛盾，逐个量四笔时延再改去噪步数；本文不碰推理链路，只调动作块长度并把延迟当选型约束"
+  }
+ ],
+ "2610.31540": [
+  {
+   "name": "Dispersive forward tree search",
+   "arxiv": "2608.26314",
+   "note": "参考文献 [17]，本文作者自己的单机前作，本文把它当 pricing 子程序用；那篇只有单机前向树与近最优性结论，没有价格、没有列池、也没有机器人之间的协商"
+  },
+  {
+   "name": "Column generation for multi-robot planning",
+   "arxiv": "2006.04856",
+   "note": "参考文献 [34]，同样用列生成。它的 pricing 是资源约束最短路、离线集中求解、在离散时空位置上选路，不带动动力学；本文的列是前向传播出来的指令序列"
+  },
+  {
+   "name": "Line-of-sight constrained mapless navigation",
+   "arxiv": "2603.26314",
+   "note": "参考文献 [30]，用多边形可见区域构造约束，做的是几何可行性，不算联合代价"
+  }
+ ],
+ "2610.38417": [
+  {
+   "name": "Using artificial delays for prescribed/fixed-time static output feedback",
+   "arxiv": "2610.33878",
+   "note": "参考文献 [27]，同作者的姊妹篇。它靠 Taylor 展开或有限差分凑出输出导数，前提是没有内动态；本文用人工时滞直接拿到历史输出，覆盖全部可控可观系统"
+  },
+  {
+   "name": "Fixed-time stabilization of nilpotent systems with unknown delays",
+   "arxiv": "2607.24595",
+   "note": "参考文献 [25]，幂零矩阵加大未知延迟，走 act-and-wait 但用的是状态反馈；本文在同一场景下只有 p 维输出，还要多一条 Np≥n 的可观性条件"
+  },
+  {
+   "name": "Data-driven control of linear systems using quantized data",
+   "arxiv": "2610.05724",
+   "note": "站内已有精读，非本文参考文献。它 A、B 未知，靠 LMI/SDP 松弛求一个常数增益做渐近镇定；本文 A、B、C 已知，靠线性方程求时变增益，换的是规定时间死拍且只要输出"
+  }
+ ],
+ "2610.39367": [
+  {
+   "name": "IronMind",
+   "arxiv": "2609.39403",
+   "note": "站内已有精读，非本文参考文献。它把未来压成潜在预见 token，视频生成器只在训练期当老师；本文推理期真的生成视频未来，再在速度层修动作偏移"
+  }
+ ],
+ "2610.27971": [
+  {
+   "name": "Mind the Gap: TOCTOU in LLM-Enabled Agents",
+   "arxiv": "2508.17155",
+   "note": "参考文献里最接近的一条。它在 agent 侧做状态完整性监控，比对的是 agent 自己的视图，没有版本作用域、也没有拥有者侧检查；本文把最后一道检查放进控制器扫描内"
+  },
+  {
+   "name": "Atomicity for Agents",
+   "arxiv": "2603.00476",
+   "note": "浏览器 agent 的动作前状态校验，仍是单一组件的视图；本文要处理的是读集跨多个拥有者的情形"
+  },
+  {
+   "name": "OpenPort Protocol",
+   "arxiv": "2602.20196",
+   "note": "它的 state witness 在网关比较，按本文的定义属于副本检查，副本与控制器之间那段空窗它没关"
+  },
+  {
+   "name": "Approved Too Late",
+   "arxiv": "2608.26306",
+   "note": "只给带时间界的有效期，不携带版本，因此命令被撤销或暂停又被撤销时它判不出来"
+  },
+  {
+   "name": "Contract-Grounded Behavior Tree Synthesis",
+   "arxiv": "2607.12220",
+   "note": "能力契约是静态的，放行时不重新检查上下文"
+  }
+ ],
+ "2610.31246": [
+  {
+   "name": "Slowdown attacks on adaptive multi-exit inference",
+   "arxiv": "2010.02432",
+   "note": "参考文献 [50]。它操纵动态路由让推理变慢，破坏的是效率；本文操纵的是出口归属，把每查询时延本身当成读出通道"
+  },
+  {
+   "name": "Auditing membership leakages of multi-exit networks",
+   "note": "参考文献 [18]，CCS 2022，参考文献里没有 arXiv 编号。它被动审计出口模式加强成员推断、目标是训练集；本文主动改造模型，目标是单条输入的属性"
+  },
+  {
+   "name": "Prediction privacy in distributed multi-exit networks",
+   "note": "参考文献 [33]，CCS 2023，无 arXiv 编号。它被动读出口位置去预测类别标签、不动模型；本文可以在部署前重排出口分布"
+  },
+  {
+   "name": "Shallow-Deep Networks",
+   "note": "参考文献 [5]，ICML 2019，无 arXiv 编号。它提供早退结构本身，本文把供应方当对手、复用这套结构做投毒"
+  }
+ ],
+ "2610.28364": [
+  {
+   "name": "Persona Guardrail 的功能边界",
+   "arxiv": "2610.03434",
+   "note": "站内已有精读，非本文参考文献。那篇守的是 agent 该不该接某个请求，评测范围明确把间接提示注入划在射程之外；本文正好补这一段，守的是检索进来的内容能不能进生成"
+  }
+ ],
+ "2610.34304": [
+  {
+   "name": "Ultralytics YOLO26",
+   "arxiv": "2606.03748",
+   "note": "参考文献 [17]。它端到端无 NMS，把后处理并进网络；本文把 NMS 留在树莓派的 ARM 核上，报出的 30 到 40 帧是网络在 TPU、NMS 在 CPU 的合成帧率"
+  },
+  {
+   "name": "YOLOv5 + Coral Edge TPU",
+   "note": "参考文献 [6]，River Publishers 2022，无 arXiv 编号。同样把整图编到 Edge TPU、功耗压到 5 W 量级，差在模型代数与证据类型，它报功耗，本文报节拍、热平衡与丢帧"
+  },
+  {
+   "name": "DCM-SAM",
+   "arxiv": "2609.38811",
+   "note": "站内已有精读，非本文参考文献。它用蒸馏把 SAM 拆成两个缺陷专家跑在设备旁的 NPU、输出分割掩膜；本文是单阶段检测框跑在 Edge TPU，落地重点是现场节拍而不是精度上限"
+  }
+ ],
+ "2610.29398": [
+  {
+   "name": "Computer Vision and Normalizing Flow-Based Defect Detection",
+   "arxiv": "2012.06737",
+   "note": "参考文献 [17]。它把多视角信息在特征级融合，输出仍是一个「有没有缺陷」的分数；本文不做跨视角特征融合，逐帧独立过图纸判据，再按帧数阈值汇合成整件结论"
+  },
+  {
+   "name": "视觉与 PLC 集成的产线检测",
+   "note": "参考文献 [3]，Sensors 25(20) 6383，无 arXiv 编号。它靠 PLC 侧对连续三次检测结果投票，误报降 28%，是时间冗余；本文用空间分区加尺寸与数量判据，换零件族要重写尺寸表"
+  }
+ ]
 }

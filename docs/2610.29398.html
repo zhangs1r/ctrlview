@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>把验收规程写成判据层，同一批检出把误剔率从 57.6% 压到 10.9% · CtrlView</title>
+<meta name="description" content="把验收规程写成判据层，同一批检出把误剔率从 57.6% 压到 10.9%">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.29398.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<div class="wrap">
+<header class="top">
+<div class="kicker">自动化 · 论文精读</div>
+<h1>把验收规程写成判据层，同一批检出把误剔率从 57.6% 压到 10.9%</h1>
+<div class="meta"><b>Srivishnu Ethirajulu Krishnaraj, Rishikesh R. Chopade</b><br>
+arXiv:2610.29398 · 2026-11-02 · 精读约 30 分钟</div>
+<div class="tags"><a class="tag" href="topics.html#t-工业视觉检测">工业视觉检测</a><a class="tag" href="topics.html#t-多视角采集">多视角采集</a><a class="tag" href="topics.html#t-决策融合">决策融合</a><a class="tag" href="topics.html#t-误剔率">误剔率</a><a class="tag" href="topics.html#t-PLC 集成">PLC 集成</a></div>
+</header>
+<h2>它想干什么</h2>
+<p>一根喷油嘴针阀是细长钢件，尖端那一小段锥面叫座面，靠它顶住阀体上的锥孔形成密封。抛光之后表面接近镜面，一道磨痕、一滴清洗液残留、一次装夹碰伤都会落在这圈上。产线上的做法是把它夹进伺服分度台，转一圈停 18 次，两个相机在每个停位各拍一张，一件下来 36 帧。</p>
+<p>模型逐帧给结果。座面那一侧是实例分割，输出每个缺陷的框、类别和掩码；轴面那一侧是整图分类，输出一个二分类标签，判断这根针是不是弯了或者转位不对。拿到这些输出，最省事的算法是任何一帧报出任何缺陷就把整件判成不合格。论文照这个做了，得到一个基线叫 Models Only。380 支针阀里，104 支该拒的全部拒掉，召回 100%；同时 276 支合格件里有 159 支被误拒，占合格件的 <mark>57.6%</mark>，这个比例就是误剔率。折算下来每一千支合格件要白扔 576 支，产线上没人能接受这个数。</p>
+<p>论文的判断只有一句，模型检出说的是图上有块异常，不等于这支件不合格。异常在不在密封线上、属于哪个类别、框有多大、同一帧里有几个，这些条件由图纸公差和作业指导书写死，跟模型没关系。作者把这四类条件写成 10 条规则，分三组，做成一个确定性判据层，摆在模型输出和整件判定之间。</p>
+<p>判据层全开之后，同一批帧级预测一个没改。104 支 NOK 仍然全数拒收，误拒从 159 支降到 <strong>30 支</strong>，误剔率 <strong>10.9%</strong>，每千支误剔 109 支，相对降幅 81.1%。模型的权重、阈值、推理设置全程锁死，唯一变的量是检出之后怎么解释。</p>
+<p><u>核心机制是每帧检出先过图纸公差判据，够格的才进整件判定。</u></p>
+<p>这条机制有一个能验的后果，写在第四节；它也有失效的地方，写在第五节。</p>
+<p>这节要你记住的是，检出只说明图上有东西，判据才说明它算不算。</p>
+<hr>
+<h2>一、问题背景</h2>
+<h3>1.1 一件零件上住着两种缺陷</h3>
+<p>座面和轴面的缺陷形态不一样，判法也不一样。</p>
+<p>座面是功能面。密封线是密封面，那一圈上有个浅浅的凹坑，装配后就有渗的风险。这一侧的缺陷必须定位，要知道它离密封线多远、尺寸多大、是不是压在线上。轴面不是功能面，它的问题是整根针弯了或者转位偏了，这种异常是全局的，说不出具体位置，只能说这一帧整体不像 OK。</p>
+<p>成像条件把难度又抬了一截。座面是抛光锥面，光源是 420×20 毫米的条形 LED，打上去之后镜面反射随角度变化。同一处划痕，在某个角度被高光淹没，转到相邻 20 度可能清清楚楚。论文在讨论单帧召回时把这条写成了主要原因，原文的说法是视角相关的镜面反射会影响斜视角度下的缺陷对比度。</p>
+<p>数一下覆盖。18 个角度位置，相邻间隔 20 度，一圈正好 360 度。每个停位座面与轴面各拍一帧，共 36 帧。<mark>单帧视野只覆盖圆周的一小段</mark>，所以&quot;某个视角看见了&quot;和&quot;整件不合格&quot;之间隔着两件事，可见性和判据。</p>
+<h3>1.2 前人四条路各缺一块</h3>
+<p>单模型加全件统一判据是最常见的一条。El Hachem 用 ResNet-50 在汽车分总成的多个区域上查紧固件有无与错装，准确率 99%；Sassi 用 DenseNet 迁移学习做喷油器焊接缺陷检测，准确率 97.22%，召回 100%。两者的判据都是全件一套阈值，区域之间的差别靠模型自己学。同一个零件上不同功能区要求不同阈值时，这套结构没有地方承接这条差别。</p>
+<p>误报靠后处理压是第二条。Haddad 在半导体检测里做三段，先用局部自适应变化检测找候选，再用深度网络拒绝误报，最后按缺陷类型细化，整体检测准确率报到 97.88%；Qiu 用对象级 SVM 给无监督异常检测器的候选补一刀，在 Cflow 上把图像级 F1 从 46.15% 抬到 78.26%。这两个后处理器的判据都从带标注的数据里学出来，换一个零件族要重训，也说不清某个候选为什么被拒。</p>
+<p>多级串行是第三条。Božič 的两阶段网络先分割出候选缺陷区，再由第二个网络做整图的有无判定，两段端到端训练，在表面缺陷上表现很好。它和本文的差别落在两段看的是什么上。它的分割与分类看同一个被检表面，前后串行；本文把分割派给座面、分类派给轴面，两个模型看两个不同的功能区，输出只在整件判定这一层汇合。</p>
+<p>多视角是第四条。Bhavanasi 比较了多视角的早融合与晚融合，晚融合在划痕分割上比单视角好。Zhou 用视角内注意力与跨视角注意力把多个视角的特征加权融合，在 Real-IAD 上比对照的多视角方法好。Kuang 的多相机系统在真实产线上跑无监督缺陷检测，覆盖 360 度。这三条的融合都靠学出来的权重或投票，输出仍是一个&quot;有没有缺陷&quot;的分数。零件图上的功能分区与图纸公差没进到融合里。</p>
+<p>还有一条是视觉与 PLC 的接口。Maslanka 把智能相机通过 Ethernet/IP 接到 PLC 上，在 PLC 侧对连续三次检测结果做三重校验，误报比只用相机降了 28%。Vieira 把传统视觉算法直接跑在 PLCnext 控制器里，结论是简单任务可行，计算量大的算子比在电脑上慢很多。前者的校验是时间上的重复投票，后者贡献的是算力边界的实测。两者都没有把&quot;这块缺陷允不允许&quot;写成判据。</p>
+<h3>1.3 这篇的做法</h3>
+<p>把作业指导书里的验收条件搬进系统。尺寸、区域、类别、数量四类条件来自图纸与 SOP，SOP 就是产线上写明的标准作业程序，用一次光学标定换成像素阈值，做成 10 条确定性规则，逐帧评估，再跨视角汇总。模型只负责&quot;图上有块异常&quot;，判据层负责&quot;这块异常算不算不合格&quot;。</p>
+<p>这节要你记住的是，两种缺陷要两种判法，判据得跟着区域走。</p>
+<hr>
+<h2>二、总体结构</h2>
+<p>图 1 是整条流水线。最上面是 PLC 或产线控制器，输出两样东西，触发信号与件号。触发分两路同步送进座面相机与轴面相机，两路各自有一个帧缓冲。座面帧进 Model I，轴面帧进 Model II，两侧的输出在 Decision Fusion 这一格汇合，出 OK 或 NOK，附缺陷类别与代表帧号。</p>
+<p>Mask R-CNN 是两阶段检测器，先出候选框，再在框内做掩码预测，一次前向同时给框、类别、掩码与置信度，其中置信度是模型对某个检测的把握分数。它在这里只当候选生成器用，判据不来自它。EfficientNetV2-S 是整图分类器，输入缩到 224×224 的方图，输出两个类的分数，不给位置。轴面要的正是后面这种，因为 Rotation Bad 是整段形态，没有可以框出来的边界。</p>
+<figure><img src="figs/2610.29398-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 1</b>　PLC 或产线控制器给出触发与件号，两条支路分别驱动座面相机与轴面相机，各经帧缓冲进入两个模型。座面用 Mask R-CNN 做分割，轴面用 EfficientNetV2-S 做分类，两路只在决策融合汇合，先看轴面再看座面，最后出 OK 或 NOK。</figcaption></figure>
+<p>图 1 值得看的地方是它的对称性。两个相机、两条缓冲、两个模型，一直到融合层之前都没有交叉。这一层是整条线上唯一的汇合点，也是唯一用到图纸公差的地方。它上面全是学出来的东西，它下面全是写死的规则。</p>
+<p>把图上的环节与论文章节对上，排成一张表。</p>
+<div class="scroll"><table><thead><tr><th>阶段</th><th>章节</th><th>输入</th><th>输出</th></tr></thead><tbody><tr><td>多视角采集与同步</td><td>§III-C</td><td>PLC 触发、件号、伺服分度位置</td><td>每件 18 个停位，座面与轴面各 18 帧</td></tr><tr><td>区域划分与光学标定</td><td>§III-B</td><td>标定板、固定工作距离</td><td>像素每毫米比例，三块功能区边界</td></tr><tr><td>座面分割</td><td>§III-D</td><td>座面帧 1280×1024</td><td>每个缺陷的框、类别、掩码、置信度</td></tr><tr><td>轴面分类</td><td>§III-E</td><td>轴面帧缩到 224×224</td><td>每帧一个二类标签</td></tr><tr><td>帧内规则评估</td><td>§III-B §III-F</td><td>检测框、区域边界、像素阈值</td><td>每帧的保留检测清单</td></tr><tr><td>跨视角汇总</td><td>§III-F</td><td>18 帧的保留结果、18 帧的分类票</td><td>座面与轴面各自的合格结论</td></tr><tr><td>整件判定</td><td>§III-F</td><td>两个区域结论</td><td>OK 或 NOK，附类别与代表帧号</td></tr><tr><td>整件评测</td><td>§IV</td><td>380 件、五套配置</td><td>召回、误剔率、每千支误剔</td></tr></tbody></table></div>
+<figure><img src="figs/2610.29398-svg-evidence.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 A</b>　（编者绘制）左边两格是采集侧的 36 帧，角度位置由伺服分度台给出，20 度一步。中间两格是两个门，座面是或门，18 帧里有保留检测就算成立；轴面是计数门，18 帧里要有 3 帧报 Bad 才算成立。右边是整件判定，轴面成立直接 NOK，不成立才看座面。图里没有平均，没有加权投票，也没有把 36 帧拼成一张图。</figcaption></figure>
+<blockquote><p>📌 <strong>控制视角</strong>　把 18 个分度位置看成 18 个采样点更贴切。伺服分度决定采样率，曝光与推理是采样间隔里的计算，判据层是采样之后的判决。判决的耗时只要短于下一个分度到来之前，它就不进节拍。论文说这一层的额外延迟可以忽略，但没有给出毫秒数，所以&quot;能不能塞进分度间隙&quot;这件事只能算定性成立。</p></blockquote>
+<p>这节要你记住的是，融合层是唯一边界，上面学习，下面写死。</p>
+<hr>
+<h2>三、方法拆解</h2>
+<h3>3.1 36 帧怎么采出来</h3>
+<p>伺服分度台每 20 度停一次，18 个停位。停稳后 PLC 触发两台相机同时曝光，一个停位出两帧，一件 36 帧。两台相机同型号，Basler ace U acA1300-200uc，分辨率都是 1280×1024。镜头不一样，座面那一侧配 Computar MLM-3XMP 微距变焦镜头，轴面那一侧配 Fujifilm Fujinon HF35HA-1B。</p>
+<figure><img src="figs/2610.29398-fig3.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 3</b>　检视工位的实拍。两根镜头与两条 420×20 毫米的 LED 灯条对着一根被夹持的针阀，伺服分度台带它转过 18 个停位。</figcaption></figure>
+<p>件号是追溯的锚点。PLC 在触发时把件号一起送进两个帧缓冲，融合层最后输出的代表帧号能回指到某一件的某个角度位置。出了争议要复查时，按件号加角度号就能把那一帧调出来。</p>
+<p>节拍的绝对值没有报，理由写在原文里，企业保密条款限制，产线专属的秒数不能公开。能报的是相对量。相对原有的人工检测基线，单件的自动周期降了 27.3%，落在内部制造限值之内。自动周期里伺服分度与图像采集约占 55%，其余部分是上下料与网络推理。判据层带来的额外延迟可以忽略。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　55% 这个比例说明节拍的大头在机械与曝光。要再压周期，动的是分度与曝光时间，不是换一个更小的网络。论文既没报推理耗时，也没报分度与曝光的绝对值，这个 55% 只能当结构比例看，不能反推出任何一个环节的秒数。</p></blockquote>
+<h3>3.2 区域怎么划，阈值从哪来</h3>
+<p>座面分两块。上三分之一是尖端，图 2 里标成 1/3 seat area；下三分之二含密封线，标成 2/3 seat area。下三分之二又按密封线的位置再切开，线上、线周围、线下三块，线周围那一条就是规则里的密封线区。轴面单独一块，只判全局形态。</p>
+<figure><img src="figs/2610.29398-fig2.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 2</b>　座面按功能切成三级。最上面三分之一是尖端区，规则里只看类别不看尺寸；下面三分之二含密封线，按密封线上方、周围、下方再分；中间那条红框是密封线区，18×18 像素的尺寸豁免与"帧内只许一个"的数量豁免都绑在这一条上。</figcaption></figure>
+<p>阈值有人会问出处，论文在这一步交代得比别处细。用一块精密标定板，把它放在检测基准面上，工作距离、镜头、光源与正式检测时完全一致，量出板上已知物理尺寸对应多少像素，得到像素每毫米的比例。图纸上的毫米公差乘这个比例就变成像素阈值，规则里那些 8、18、28、40×30 就是这么来的。</p>
+<p>这一步的三件套可以点清楚。初值来自标定板的实测比例，残差项没有，因为这是一次直接换算，不做最小二乘拟合，也没有由数据去调；兜底靠三件事锁死，工作距离、镜头与光源都固定死。任何一件变了，比例就得重量。</p>
+<p>论文用一句话点明了这件事的分量，<mark>这些尺寸判据是既有制造标准经标定换算到图像空间的结果</mark>，不是用整件评估数据集事后拟合出来的统计参数。380 件那一套数字因此只用来打分，不用来定阈值。</p>
+<p>代价也写在同一段里。为了保住这个比例，尺度变换类的数据增强被整条砍掉；为了让转动过程中的细微表面特征留下来，光学抖动也没有加。</p>
+<h3>3.3 十条规则</h3>
+<p>规则本身不复杂，复杂的是它们的分工。10 条分成三组，每组管一类判据。</p>
+<div class="scroll"><table><thead><tr><th>组</th><th>编号</th><th>判据</th><th>作用在哪个量</th></tr></thead><tbody><tr><td>I</td><td>R1</td><td>框宽与高都不超过 8 像素的检测剔除</td><td>尺寸</td></tr><tr><td>I</td><td>R4</td><td>框落在针阀成像边界以下的检测剔除</td><td>位置</td></tr><tr><td>II</td><td>R2</td><td>尖端区里类别不是 Tip Damage 的检测剔除</td><td>区域与类别</td></tr><tr><td>II</td><td>R3</td><td>尖端区里类别是 Tip Damage 的检测保留</td><td>区域与类别</td></tr><tr><td>II</td><td>R5</td><td>下三分之二区密封线以外，框不超过 28×28 算尺寸合格</td><td>尺寸</td></tr><tr><td>II</td><td>R6</td><td>下三分之二区里 Grinding Marks，框不超过 40×30 算尺寸合格</td><td>类别与尺寸</td></tr><tr><td>II</td><td>R7</td><td>密封线区，框小于 18×18 且帧内只有一个，算尺寸合格</td><td>尺寸与数量</td></tr><tr><td>III</td><td>R8</td><td>尺寸合格的检测帧内合计不超过 5 个，全部剔除</td><td>数量</td></tr><tr><td>III</td><td>R9</td><td>尺寸合格的检测帧内超过 5 个，全部保留</td><td>数量</td></tr><tr><td>III</td><td>R10</td><td>密封线区检测超过一个，全部保留，不管 R8 的数</td><td>数量与区域</td></tr></tbody></table></div>
+<p>第一组是全局门，只看尺寸与边界，对三个区一视同仁。第二组按区给判据。尖端区用的是类别，凡判成 Tip Damage 的一律保留，其余类别一律剔除，R5 到 R7 那三套尺寸豁免都不适用于这一区。下三分之二区给了一套尺寸豁免，普通缺陷 28×28，磨痕那一条单独放宽到 40×30，原文没有说明这个类别为什么要放宽。密封线区最严，18×18 还要加一条数量约束，帧内只允许一个。</p>
+<p>第三组管数量。尺寸合格但还要看总数的检测先放进一个池子，下文叫容许池。容许池帧内不超过 5 个就全部剔除，到 6 个就全部转为保留。密封线区另有一条优先规则，只要出现第二个，两个都保留，不管容许池的数有没有超。</p>
+<p>规则是逐帧评估的，帧与帧之间互不参考，也不做跨视角的三维对应。原文给了三条理由。抛光面上，视角相关的反射让跨视角特征跟踪很脆弱。逐帧评估执行起来是确定性的，延迟也低。人检时同样逐个光学视野看过去，逐帧评估复现的就是这个节奏。</p>
+<p>证据账本可以算一下。一件 36 帧，每帧座面最多贡献 1 个保留结论，每帧轴面最多贡献 1 个二值票，逐帧观测量上限是 18 加 18 共 36 个。</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mtable><mtr><mtd columnalign="left"><msub><mi>n</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mn>18</mn></mrow></munderover><msub><mi>b</mi><mi>k</mi></msub><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>b</mi><mi>k</mi></msub><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo></mtd></mtr><mtr><mtd columnalign="left"><msub><mi>n</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo>&#x0003D;</mo><munderover><mo>&#x02211;</mo><mrow><mi>k</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mn>18</mn></mrow></munderover><msub><mi>c</mi><mi>k</mi></msub><mo>&#x0002C;</mo><mspace width="1em" /><msub><mi>c</mi><mi>k</mi></msub><mo>&#x02208;</mo><mo stretchy="false">&#x0007B;</mo><mn>0</mn><mo>&#x0002C;</mo><mn>1</mn><mo stretchy="false">&#x0007D;</mo></mtd></mtr></mtable></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>b</mi><mi>k</mi></msub></mrow></math></math> 是第 k 个角度位置的座面帧判定之后还有没有保留检测，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>c</mi><mi>k</mi></msub></mrow></math></math> 是该位置轴面帧有没有被判 Rotation Bad。两个和再经一道门变成整件结论</p>
+<div class="eq"><span class="eqn"></span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>D</mi><mo>&#x0003D;</mo><mrow><mi mathvariant="normal">N</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">K</mi></mrow><mi>&#x027FA;</mi><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>n</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo>&#x02265;</mo><mn>3</mn><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mtext>&#x000A0;</mtext><mo>&#x02228;</mo><mtext>&#x000A0;</mtext><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msub><mi>n</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">f</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo>&#x0003C;</mo><mn>3</mn><mtext>&#x000A0;</mtext><mo>&#x02227;</mo><mtext>&#x000A0;</mtext><msub><mi>n</mi><mrow><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">t</mi></mrow></mrow></msub><mo>&#x02265;</mo><mn>1</mn><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>D</mi></mrow></math></math> 是整件结论，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02228;</mo></mrow></math></math> 是或，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02227;</mo></mrow></math></math> 是与。这套判据里四个阈值都来自规则原文，轴面 3、座面 1、容许池 5、密封线 2。座面这一路是或门，第一帧留下检测就够；轴面这一路是计数门，前两票作废；密封线区第 2 个检测直接绕开容许池的计数。</p>
+<p>所以 <mark>36 个观测量并不带来 36 份判别力</mark>。阈值一过，后面的帧只增加证据冗余，不改变结论。这也解释了第四节那个看起来矛盾的组合，单帧召回 37.19%，整件召回 100%。</p>
+<h3>3.4 融合层怎么下结论</h3>
+<p>规则是级联，一条不过就往下走，第一组、第二组、第三组依次生效。</p>
+<pre class="flow"><code>for k in 1..18:                                  # 座面，逐帧独立
+    pool = []
+    for d in frame[k].detections:
+        if max(d.w, d.h) &lt;= 8 or d 落在针阀边界外:  剔除 d            # R1 R4
+        elif d 在尖端区 and d.cls != TipDamage:     剔除 d            # R2
+        elif d 在尖端区 and d.cls == TipDamage:     保留 d            # R3
+        elif d 在 2/3 区 and d.cls == GrindingMarks and d.w &lt;= 40 and d.h &lt;= 30:  pool.add(d)   # R6
+        elif d 在 2/3 区 and d.w &lt;= 28 and d.h &lt;= 28:  pool.add(d)                              # R5
+        elif d 在密封线区 and d.w &lt; 18 and d.h &lt; 18 and 本帧密封线命中 &lt;= 1:  pool.add(d)        # R7
+        else:                                       保留 d
+    if len(pool) &lt;= 5:  剔除 pool 全部                                # R8
+    else:               保留 pool 全部                                # R9
+    if 本帧密封线命中 &gt; 1:  保留全部密封线检测                          # R10
+    if 本帧有保留检测:  座面 NOK
+
+for k in 1..18:                                  # 轴面
+    if frame[k].cls == RotationBad:  bad += 1
+轴面 NOK iff bad &gt;= 3
+整件 NOK iff 轴面 NOK or 座面 NOK</code></pre>
+<figure><img src="figs/2610.29398-svg-cascade.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>示意图 B</b>　（编者绘制）一个检测从左上进来，先过 R1 的尺寸门与 R4 的边界门，再按所在区走三条判据支路。三条支路里被尺寸或数量豁免接住的检测进容许池，池内计数决定最终去留。下方一行是五个配置在同一批检出上的误剔件数，由表里的数字相减得到。</figcaption></figure>
+<p>轴面这一路的结论落在 3 帧上。18 帧里至少 3 帧被判 Rotation Bad，轴面才算不合格。原文没有说明这个 3 是怎么定下来的，也没有做门槛换成 2 或 4 的对照。</p>
+<p>优先级是轴面在前。<mark>轴面一旦不合格，整件立刻判 NOK</mark>，座面那边还在不在评估不影响结论。原文把这条写成产线上的一种快速失败逻辑，理由是这个缺陷的功能后果更重。</p>
+<p>输出不止一个 OK 或 NOK。融合层同时报出保留的缺陷类别，以及一个代表帧号，后者供可视化、日志与追溯用。</p>
+<h3>3.5 两个模型和数据成本</h3>
+<p>Model I 是 Mask R-CNN，骨干 ResNet-50 加 FPN，FPN 把浅层的高分辨率与深层的语义拼成多尺度特征，小框靠这一层。权重从本地的 COCO 预训练检查点初始化，检测头与掩码头换成 8 类的应用头，端到端微调。损失是 Mask R-CNN 的多任务损失，分类、框回归与掩码三条一起回传。学习率到平台就减半，验证 F1 十轮不涨就停，最后按验证集 F1 取最高的一轮。座面标注集 2621 张，8 个缺陷类别，用 Label Studio 的刷子逐张刷出来，导出成游程编码再转成单通道索引掩码。宽或高小于 4 像素的实例不进训练目标，因为它们落在标注可重复性的下限之下。</p>
+<p>训练侧有两个选择值得看。模型选择用实例级 F1，置信度钉在 0.50，IoU 也钉在 0.50，不用与阈值无关的 COCO mAP。理由写在原文里，产线要的就是固定阈值下的行为。OK 图不进训练集，理由是除标注为缺陷那块之外，其余表面本来就是 OK。区域建议网络与 ROI 对齐在每个前向里都会自己采负样本，正常表面形貌并不缺。</p>
+<p>Model II 是 EfficientNetV2-S，ImageNet 预训练，大部分参数冻结，只训最后一个特征块与分类头，两段学习率分别给 1e-3 与 1e-4。损失是类加权交叉熵，权重按训练子集里的类别频率取平衡倒数。增强只做亮度与对比度抖动，幅度 0.1，几何变换整条不做，理由是要保住固定的机械轴与跳动轮廓。轴面集 7933 张，其中 Rotation OK 7479 张、Rotation Bad 454 张，正类占 5.7%。</p>
+<p>数据成本落在标注上。座面的 2621 张是逐张刷掩码，轴面的 7933 张是逐张贴标签。类不平衡很明显，Delamination 有 1099 张，Grinding at Neck 只有 27 张，差了四十倍。论文没有报标注工时，也没有报采集这些图用了多少支件。</p>
+<p>这节要你记住的是，阈值从图纸来，规则的先后就是判据的先后。</p>
+<hr>
+<h2>四、结果</h2>
+<p>两张表的条件先说明白，它们不能互相换算。表 IX 在单帧留出集上，座面 261 张测试图、轴面 795 张（749 张 OK 加 46 张 Bad），这一层是模型自评。表 X 在 380 件整件集上，276 件合格加 104 件不合格，这一套数据与模型开发用的数据完全不重叠，权重、阈值、推理设置全部锁死在评估之前，五个配置共用同一批帧级预测。</p>
+<p>先把召回与误剔率的定义摆出来，后面所有比较都在这两个数上做。</p>
+<div class="eq"><span class="eqn">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msub><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mrow><mrow><mi mathvariant="normal">N</mi><mi mathvariant="normal">O</mi><mi mathvariant="normal">K</mi></mrow></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></mfrac></mrow></math></math></div>
+<div class="eq"><span class="eqn">(2)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">R</mi><mi mathvariant="normal">R</mi></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></mrow><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow><mo>&#x0002B;</mo><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">N</mi></mrow></mrow></mfrac></mrow></math></math></div>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">P</mi></mrow></mrow></math></math> 是被正确拒收的不合格件，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">N</mi></mrow></mrow></math></math> 是被漏放的不合格件，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">F</mi><mi mathvariant="normal">P</mi></mrow></mrow></math></math> 是被误拒的合格件，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">N</mi></mrow></mrow></math></math> 是被放行的合格件。误剔率的分母是合格件总数，它直接对应产线的吞吐损失，论文还把它乘 1000 折成每千支误剔。</p>
+<div class="scroll"><table><thead><tr><th>模型</th><th>指标</th><th>数值</th></tr></thead><tbody><tr><td>Model I</td><td>实例级精确率</td><td>53.24%</td></tr><tr><td>Model I</td><td>实例级召回</td><td>37.19%</td></tr><tr><td>Model I</td><td>实例级 F1</td><td>43.79%</td></tr><tr><td>Model I</td><td>命中实例的平均框 IoU</td><td>0.7069</td></tr><tr><td>Model II</td><td>图像级准确率</td><td>99.62%</td></tr><tr><td>Model II</td><td>宏平均 F1</td><td>98.32%</td></tr><tr><td>Model II</td><td>Rotation Bad 召回</td><td>100%（46/46）</td></tr></tbody></table></div>
+<p>表 IX 里最该看的是 Model I 那几行里的召回，37.19%。这个数不好看，论文也没有解释成&quot;够用&quot;，它把原因摊开了，镜面反射让某些角度看不清，少数类样本少。同一张表里 Model II 的数字很漂亮，46 个 Bad 全部认出，但样本量只有 46，原文自己也把这一点标了出来。</p>
+<div class="scroll"><table><thead><tr><th>配置</th><th>TP</th><th>FN</th><th>FP</th><th>TN</th><th>NOK 召回</th><th>误剔率</th><th>准确率</th><th>每千支误剔</th></tr></thead><tbody><tr><td>Models Only</td><td>104</td><td>0</td><td>159</td><td>117</td><td>100.0%</td><td>57.6%</td><td>58.2%</td><td>576</td></tr><tr><td>仅 Group I</td><td>104</td><td>0</td><td>120</td><td>156</td><td>100.0%</td><td>43.5%</td><td>68.4%</td><td>435</td></tr><tr><td>仅 Group II</td><td>104</td><td>0</td><td>40</td><td>236</td><td>100.0%</td><td>14.5%</td><td>89.5%</td><td>145</td></tr><tr><td>仅 Group III</td><td>104</td><td>0</td><td>114</td><td>162</td><td>100.0%</td><td>41.3%</td><td>70.0%</td><td>413</td></tr><tr><td>判据层全开</td><td>104</td><td>0</td><td><strong>30</strong></td><td><strong>246</strong></td><td>100.0%</td><td><strong>10.9%</strong></td><td><strong>92.1%</strong></td><td><strong>109</strong></td></tr></tbody></table></div>
+<figure><img src="figs/2610.29398-fig4.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption><b>图 4</b>　一次不合格件的实际输出。左边是座面那一侧，检测框标出 Droplet 与 GrindingNotDone 两类。右侧是轴面被判 Rotation Bad 的那一帧，顶部给出整件的 NOK 结论。</figcaption></figure>
+<p>图 4 是一次不合格件的实际输出。左边座面留下了 Droplet 与 GrindingNotDone 两个类别，右边轴面被判 Rotation Bad，整件结论是 NOK。融合层最后交出来的就是这个样子，一个二值结论，加上支撑它的类别与帧号。</p>
+<p>表 X 后面八列里，NOK 召回那一列没有区分度，五行全是 100.0%。决定这套系统能不能上产线的是 FP 与每千支误剔两列，它们一个数误拒了几支，一个把它折算成产线的吞吐损失。</p>
+<p>第一个反直觉的地方是 37.19% 与 100% 并存。单帧评测会惩罚每一帧里没匹配上的标注实例，整件评测只问这些视角里有没有留下足够证据。<mark>18 个视角下，单帧漏掉的实例在相邻角度还有机会</mark>。<u>要判断整件召回靠的是视角冗余还是模型本身，看砍视角之后掉多少</u>。靠冗余，18 个砍到 6 个应该明显下滑；靠模型，砍视角不该有影响。论文没做这个实验。</p>
+<p>第二个反直觉的地方是规则从 5 条加到 10 条，只多买了 10 个件。Group II 单独开就把 FP 从 159 压到 40，占全开时总降幅的九成二；Group I 与 Group III 单独开各只压到 120 与 114。三组全开是 30，比 Group II 单开再少 10 个。</p>
+<p>第三个地方是<mark>组间效果不可加</mark>。三组单独开时各挡下的数量分别是 39、119、45，加起来 203，实际全开只降了 129。原因是同一批检出会被多组同时命中，一笔误剔可能同时满足两组的条件，两边都算功劳。</p>
+<blockquote><p>📌 <strong>控制视角</strong>　TP 与 FN 在五行里一个都没动，这不是运气。规则的动作只有一种，把检测从拒收决策里排除，从来不会把没有的检测补出来。判据层是纯减法，所以只要规则不误删 TP，召回就没地方掉。这套 100% 召回的结构性来源在这里，读者看到这个数字时容易把它读成模型很强。</p></blockquote>
+<p>和学出来的后处理比，这套规则的优势是阈值有出处、可审计，劣势是只认图纸上写过的类别与尺寸。Qiu 的对象级 SVM 在 Cflow 上把 F1 从 46.15% 抬到 78.26%，它不需要人写类别清单，面对没见过的缺陷形态有泛化余地；本文的 8 类之外没有判据，检不出来就没有规则可用。和 Maslanka 的 PLC 三重校验比，那套做法在 PLC 侧对连续三次结果投票，误报降 28%，优势是换型号不用重写规则，劣势是挡不住同一瞬间反复出现的系统性误判；本文的规则按区域与尺寸分开，换零件族要重写尺寸表。</p>
+<p>这节要你记住的是，误剔那一列才是产线掏钱的列。</p>
+<hr>
+<h2>五、局限</h2>
+<p>论文自己承认的有这几条。</p>
+<ol><li>单帧实例召回只有 37.19%，原文把成因并列写成两条，视角相关的镜面反射会让某个角度下的标注缺陷看不见，类别不平衡可能也拉低了少数类的检出，两条没有分先后。</li><li>Model II 的 100% 召回建在 46 个 Bad 样本上，原文自己写明这个完美召回是在有限的少数类样本上观察到的。</li><li>100% 的整件召回是这 380 件上的观测，原文把结论限定在已评估的组件范围内，同时写明持续表现依赖稳定的光学条件，也依赖检测流程对新生缺陷形态的适配。</li><li>判据层目前是写死的启发式，原文把未来的方向写成给它的规则加入自适应机制，以适应演化中的产线。</li></ol>
+<p>下面几条论文未将其列为局限，是编者读完之后补上的。</p>
+<p>第一条是节拍。绝对秒数因企业保密没有报，能报的只有 27.3% 这个相对人工基线的降幅，而且人工基线本身的节拍也没有给。<mark>这一格里没有绝对量，也没有跟同类检测站的横比</mark>。</p>
+<p>第二条是标定的有效期。像素每毫米的比例绑在固定工作距离、固定镜头、固定光源上，换型号、换镜头、换一批表面处理都要重量。论文没写重标周期，也没写允许的漂移容差，而这类漂移会直接改掉规则的像素阈值。</p>
+<p>第三条是规则绑型号。R2 的分区、R5 与 R6 的尺寸、R7 的 18×18 都是这根针阀的图纸值，换一个零件族就是重写一遍。这套流程里没有从图纸自动生成规则的机制。</p>
+<p>第四条是逐帧独立不做跨视角对应。判定本身不受影响，同一处缺陷在相邻视角各自被保留也只会得出同一个 NOK。受影响的是&quot;整件缺陷总数&quot;这个量与追溯记录，同一处缺陷会在多个视角各留一条。</p>
+<p>第五条是统计面。276 个合格件上估出 10.9% 的误剔率，二项分布的标准误约 1.9 个百分点，95% 区间大约正负 3.7 个百分点。这份数据里 27.4% 是 NOK，正类比例远高于稳态产线，它更像一份调试用的样本，不像抽检样本。</p>
+<p>第六条是误剔件的去向。30 支被误拒的合格件是返修、复检还是报废，论文没写；停机成本与人工兜底也没写。</p>
+<p>第七条是部署形态。推理跑在哪台机器上、与 PLC 之间用什么协议、节拍余量留了多少，论文只给了训练工作站（RTX A2000 12GB、i5-12600K、32GB DDR5），没给产线侧配置。</p>
+<p>这节要你记住的是，判据适配的是这一个型号，换件就要重写。</p>
+<hr>
+<h2>六、我的评价</h2>
+<p>做得对的地方有三处。</p>
+<p>控制变量做得干净。同一个检查点、同一批帧级预测，阈值也没动，只换判据层，五个配置的差别只能归到规则上。工业论文里愿意把模型冻住再谈系统收益的不多，多数会把模型一起调，收益就分不清是谁的。</p>
+<p>阈值有物理出处。像素每毫米来自标定板的实测，毫米公差来自图纸，这两件事都能拿给客户看。数据驱动的阈值在实验室里好用，进了供应链审核就答不出&quot;这个 28 为什么是 28&quot;。</p>
+<p>优先级按失效后果排。轴面前置、快速失败，这是照漏检的后果排的序，精度数字排在它后面。</p>
+<p>存疑的地方也有三处。</p>
+<p><mark>10 条规则对 5 条规则只多买 10 个件</mark>。在 276 个合格件上，10 个件落在前面算的置信区间里，说 Group III 有独立贡献需要更大的样本。规则越多，维护与换型的成本越高，这笔账论文没算。</p>
+<p>视角数与光照角度这两个换型时最先动的量，没做敏感性分析。判据层的阈值是像素级的，光照一变，检出框的大小和数量都会变，规则的像素阈值却还钉在原来的标定上。</p>
+<p>100% 召回是减法结构决定的，论文把它当结果讲。这个说法对读者有误导风险，因为同样的结构在任何数据集上都会保持召回，前提只是规则不误删 TP。该单列的一项，即规则误删了多少 TP，论文没有单列。</p>
+<p>它想往哪走。原文一句，给判据层的启发式加自适应机制，跟着产线演化。</p>
+<p>这节要你记住的是，最硬的证据是模型冻住之后误剔还能掉八成。</p>
+<hr>
+<h2>七、可以接着做什么</h2>
+<ul><li>做视角数敏感性，18、9、6 三档各跑一遍，看整件召回与节拍怎么换。这件事直接决定产线能不能用更便宜的分度台。</li><li>把标定做成在线自检，每班次用基准件或标定板过一遍，比例漂了就报警，而不是等误剔率涨上来才发现。</li><li>给规则层加一条未知形态旁路，检出类别不在 8 类内时进人工复检队列，而不是按现有规则直接放行。</li><li>把容许池的帧内计数换成整件的跨视角去重计数。这需要三维对应，但换来的是&quot;整件缺陷总数&quot;这个能对得上图纸的量。</li><li>用连续产线数据重估误剔率的置信区间，把 27.4% 这个偏高的正类比例换回稳态良率。</li><li>把缺陷类别与视角号推给 MES，让误剔件能按类别分流到返修或复检，而不是一律报废。</li></ul>
+<div class="fine">以上几条是即时联想，没有实验、没有查证，只当选题线索。</div>
+<p>这节要你记住的是，先把视角数与标定漂移这两件事补上，再谈扩型号。</p>
+<hr>
+<h2>名词速查</h2>
+<div class="scroll"><table><thead><tr><th>术语</th><th>一句话解释</th></tr></thead><tbody><tr><td>针阀</td><td>喷油嘴里那根细长钢针，靠锥面顶住阀体形成密封</td></tr><tr><td>座面</td><td>针阀尖端的锥形功能面，含密封线，本文用实例分割检查</td></tr><tr><td>轴面</td><td>针阀的圆柱杆部，本文只判整体弯曲或转位异常</td></tr><tr><td>密封线</td><td>座面上起密封作用的一圈，判据最严</td></tr><tr><td>实例分割</td><td>既找出每个缺陷的位置框，又给出它覆盖的像素区域</td></tr><tr><td>掩码</td><td>逐像素标出缺陷覆盖范围的二值图</td></tr><tr><td>框</td><td>包住缺陷的最小矩形，规则里的宽度与高度都指它</td></tr><tr><td>置信度</td><td>模型对某个检测的把握分数，本文固定在 0.50 以上才算数</td></tr><tr><td>像素当量</td><td>一个像素对应多少毫米，由标定板实测得到</td></tr><tr><td>标定板</td><td>已知物理尺寸的精密量具，用来把毫米换成像素数</td></tr><tr><td>SOP</td><td>标准作业程序，产线上写明的操作与验收规程</td></tr><tr><td>误剔率</td><td>合格件被误判为不合格的比例，本文的 FRR</td></tr><tr><td>NOK 召回</td><td>不合格件里被正确拒收的比例</td></tr><tr><td>TP / FN / FP / TN</td><td>拒对的、漏掉的、误拒的、放对的四类计数</td></tr><tr><td>Group I</td><td>规则第一组，R1 尺寸门与 R4 边界门</td></tr><tr><td>Group II</td><td>规则第二组，按区域与类别给尺寸豁免</td></tr><tr><td>Group III</td><td>规则第三组，管帧内缺陷数量的上限</td></tr><tr><td>容许池</td><td>尺寸合格但还要看总数的检测先放进去的池子，帧内不超过 5 个就全部剔除</td></tr><tr><td>级联</td><td>规则一条接一条判断，前面不过就不进后面</td></tr><tr><td>快速失败</td><td>一旦某一项判定不合格就立刻出结论，不再往下算</td></tr><tr><td>件号</td><td>PLC 在触发时随图像一起送出的零件标识，追溯用</td></tr><tr><td>伺服分度</td><td>用伺服电机把零件逐角度转到位并停稳的机构</td></tr><tr><td>条形光源</td><td>420×20 毫米的 LED 灯条，两侧各一条，跟着相机一起打光</td></tr><tr><td>帧缓冲</td><td>相机与模型之间的队列，把一帧帧图像按序交给模型</td></tr><tr><td>类加权交叉熵</td><td>按类别频率的反比给损失加权，压住类不平衡</td></tr><tr><td>宏平均 F1</td><td>先算每个类的 F1 再取平均，少数类与多数类同权</td></tr><tr><td>F1</td><td>精确率与召回率的调和平均，一个数概括两头</td></tr><tr><td>IoU</td><td>两个框或两块掩码的交集除以并集，衡量重合程度</td></tr><tr><td>mAP</td><td>对多个置信度阈值积分得到的平均精度，本文没拿它选模</td></tr><tr><td>类别分层抽样</td><td>按每个类的比例分别切分训练、验证与测试集</td></tr><tr><td>尺度增强</td><td>把图像缩放后训练，本文为了保住像素当量没有用它</td></tr><tr><td>光学抖动</td><td>随机扰动光照或视角，本文为了保住细微表面特征没有用它</td></tr><tr><td>单帧评测</td><td>一张图算一次分，漏掉一个实例就扣一次</td></tr><tr><td>整件评测</td><td>一件的 36 帧合起来算一次分，只要有证据就算检出</td></tr><tr><td>三维对应</td><td>把不同视角看到的同一处缺陷匹配成同一个目标，本文没做</td></tr><tr><td>追溯</td><td>从判定结果反查到具体帧、角度与件号的能力</td></tr></tbody></table></div>
+<h2>相关</h2><p style="color:var(--ink2);font-size:14px">最接近的几项工作</p><ul><li><a href="https://arxiv.org/abs/2012.06737" target="_blank" rel="noopener">Computer Vision and Normalizing Flow-Based Defect Detection</a><span style="color:var(--ink3);font-size:13px">　arXiv:2012.06737　参考文献 [17]。它把多视角信息在特征级融合，输出仍是一个「有没有缺陷」的分数；本文不做跨视角特征融合，逐帧独立过图纸判据，再按帧数阈值汇合成整件结论</span></li><li>视觉与 PLC 集成的产线检测<span style="color:var(--ink3);font-size:13px">　参考文献 [3]，Sensors 25(20) 6383，无 arXiv 编号。它靠 PLC 侧对连续三次检测结果投票，误报降 28%，是时间冗余；本文用空间分区加尺寸与数量判据，换零件族要重写尺寸表</span></li></ul>
+<a class="paperlink" href="https://arxiv.org/abs/2610.29398" target="_blank" rel="noopener">
+  查看论文原文 · 下载 PDF（arXiv:2610.29398） →</a>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
+</div></body></html>

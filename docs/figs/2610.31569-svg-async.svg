@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" width="760" height="430" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .ttl{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .m{fill:#6b6b78;font-size:12px}
+    .lb{fill:#1b1b1f;font-size:12.5px;font-weight:700}
+    .sm{fill:#6b6b78;font-size:11.5px}
+  </style>
+
+  <rect x="0" y="0" width="760" height="430" fill="#ffffff"/>
+  <text class="ttl" x="24" y="28">两组流时间的关系，信号用一半步数解完并冻结</text>
+
+  <!-- 冻结区底色 -->
+  <rect x="390" y="70" width="290" height="260" fill="#f6f3fa"/>
+  <text class="sm" x="535" y="88" text-anchor="middle">信号已到端点，动作继续去噪</text>
+
+  <!-- 坐标轴 -->
+  <line x1="100" y1="330" x2="700" y2="330" stroke="#ddd9d2" stroke-width="1.5"/>
+  <line x1="100" y1="70" x2="100" y2="330" stroke="#ddd9d2" stroke-width="1.5"/>
+
+  <!-- 刻度 -->
+  <line x1="100" y1="326" x2="100" y2="334" stroke="#b9b2a8" stroke-width="1.5"/>
+  <line x1="390" y1="326" x2="390" y2="334" stroke="#b9b2a8" stroke-width="1.5"/>
+  <line x1="680" y1="326" x2="680" y2="334" stroke="#b9b2a8" stroke-width="1.5"/>
+  <text class="m" x="100" y="350" text-anchor="middle">1.0</text>
+  <text class="m" x="390" y="350" text-anchor="middle">0.5</text>
+  <text class="m" x="680" y="350" text-anchor="middle">0</text>
+
+  <line x1="96" y1="70" x2="104" y2="70" stroke="#b9b2a8" stroke-width="1.5"/>
+  <line x1="96" y1="200" x2="104" y2="200" stroke="#b9b2a8" stroke-width="1.5"/>
+  <line x1="96" y1="330" x2="104" y2="330" stroke="#b9b2a8" stroke-width="1.5"/>
+  <text class="m" x="88" y="74" text-anchor="end">1.0</text>
+  <text class="m" x="88" y="204" text-anchor="end">0.5</text>
+  <text class="m" x="88" y="334" text-anchor="end">0</text>
+
+  <!-- τ_clean 竖线 -->
+  <line x1="390" y1="62" x2="390" y2="336" stroke="#a89ec4" stroke-width="1.6" stroke-dasharray="7 5"/>
+
+  <!-- 动作线 -->
+  <line x1="100" y1="70" x2="680" y2="330" stroke="#2d5f8a" stroke-width="2.6"/>
+  <!-- 信号线 -->
+  <polyline points="100,70 390,330 680,330" fill="none" stroke="#7a5ea8" stroke-width="2.6"/>
+
+  <!-- 端点标记 -->
+  <circle cx="100" cy="70" r="4.5" fill="#2d5f8a"/>
+  <circle cx="390" cy="330" r="4.5" fill="#7a5ea8"/>
+  <circle cx="680" cy="330" r="4.5" fill="#2d5f8a"/>
+
+  <!-- 标注 -->
+  <text class="lb" x="470" y="272" fill="#2d5f8a">动作组</text>
+  <text class="sm" x="470" y="290" fill="#2d5f8a">从 1 一路走到 0</text>
+
+  <text class="lb" x="128" y="250" fill="#7a5ea8">信号组</text>
+  <text class="sm" x="128" y="268" fill="#7a5ea8">SS 与 FS 共用这张表</text>
+  <text class="sm" x="128" y="286" fill="#7a5ea8">同样的流时间走两倍远</text>
+
+  <text class="m" x="380" y="368" text-anchor="middle">τ_clean = 0.5</text>
+
+  <!-- 轴题 -->
+  <text class="m" x="390" y="398" text-anchor="middle">动作组的流时间 τ_A，从左往右是推理推进的方向，共十步</text>
+  <text class="m" x="56" y="200" text-anchor="middle" transform="rotate(-90 56 200)">该组自己的流时间 τ_q</text>
+  <text class="sm" x="24" y="424">τ_clean = 0 时两条线重合，信号与动作同步解，这也是附录 A.5 那个对照模型的设定。</text>
+</svg>

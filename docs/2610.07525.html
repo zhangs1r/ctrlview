@@ -7,8 +7,8 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <link rel="alternate" type="application/atom+xml" title="CtrlView" href="feed.xml">
-<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261019192040"></head><body>
-<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.07525.html?force=20261019192040" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
+<link rel="stylesheet" href="assets/app.cbe0c779.css?v=20261102193343"></head><body>
+<nav class="bar"><div class="inner"><a class="brand" href="index.html">CtrlView</a><a href="index.html" class="">首页</a><a href="columns.html" class="">栏目</a><a href="topics.html" class="">主题</a><a href="glossary.html" class="">术语表</a><a href="search.html" class="">搜索</a><a href="history.html" class="">历史</a><a href="archive.html" class="">全部文章</a><a href="2610.07525.html?force=20261102193343" title="绕过 CDN 缓存，重新拉取本页">↻ 强制刷新</a></div></nav>
 <div class="wrap">
 <header class="top">
 <div class="kicker">机器人 · 论文精读</div>
@@ -25,7 +25,7 @@ arXiv:2610.07525 · 2026-10-19 · 精读约 32 分钟</div>
 <p>这样做出来的东西还不能直接拿去用。人推出来的只是手的位置，推多大劲、该按多大力，位置里没有。作者把每个指尖实测的三轴接触力，通过雅可比转置折算成等效关节力矩，再经一个虚拟弹簧模型换成关节位置偏移，叠加到实测位置上，得到一份带力信息的关节目标。整条 rollout 里，人工介入的那一段用这份带力的目标，其余段落用基座策略自己的目标，边界处用最小跃度插值接平。这份标签拿去训一个独立的策略，<mark>观测是关节位置和指尖力的历史，输出是整只手的关节位置序列</mark>。</p>
 <p>数字是这样。物体翻转用长方体，只跑冻结的仿真策略成功率 <strong>4/25</strong>，ReDex <strong>20/25</strong>。螺丝刀旋转，平均进度从 <strong>26%</strong> 到 <strong>95%</strong>。换成仿真里没见过的尺寸和形状，小螺丝刀从 33% 到 99%，大螺丝刀从 19% 到 92%，手机翻转从 12% 到 92%。人手介入的时间，长方体上是每次 rollout 的 24.0%，<mark>比全程手把手示范省掉 82% 的人工时间</mark>。</p>
 <p>图 1 是整篇的示意图，左边一栏是螺丝刀旋转，右边一栏是手机翻转。</p>
-<figure><img src="figs/2610.07525-fig1.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-fig1.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>图 1</b>　　(a) 栏是螺丝刀旋转，(b) 栏是手机物体翻转。每栏上半部分是基座策略执行时真机上出现的接触失败，红色叉号标出出问题的那一处接触；下半部分是人手对被选中手指做物理修正，绿色对勾标出修正之后接触恢复。中间那张圆图是整篇的示意，人手与标着 RL 的机械手围成一个循环，说明修正动作与基座策略执行是交替进行的。
 </figcaption></figure>
 <p>这节要你记住的是　仿真失败多在手指局部，那就只在局部动手术。</p>
@@ -47,13 +47,13 @@ arXiv:2610.07525 · 2026-10-19 · 精读约 32 分钟</div>
 <hr>
 <h2>二、总体结构</h2>
 <p>整个流程分三段，第一段完全在仿真里，第二段在真机上人工介入，第三段回到离线训练。图 2 的上半部分画的就是这三段。</p>
-<figure><img src="figs/2610.07525-fig2.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-fig2.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>图 2</b>　　上半部分是三段流程。第一段在 Isaac Sim 里用区域随机化训一个只吃本体感觉的基座策略 π_RL。第二段在真机上跑冻结的基座策略，人手只修坏掉的手指。一次 rollout 的产物是基座策略输出、人的修正动作和指尖力三样一起记下来的记录。第三段拿这些记录离线训一个独立的策略 π_BC，部署时它的输入是本体感觉加指尖力。下半部分是四个细节模块。2a 是修正模块，键盘选指，选中后关节增益降到低档，绿点是低增益、灰点是常增益，右边是人手在柔顺控制下推手指。2b 是带力目标，标定过的力经过一个虚拟弹簧换成关节偏移。2c 是过渡混合，蓝色曲线在干预两端做连续过渡。2d 是力动作目标，基座目标、力目标和掩码三样合起来构成训练数据集。
 </figcaption></figure>
 <p>三段之间靠什么衔接，看下面这张表比看图更快。</p>
 <div class="scroll"><table><thead><tr><th>阶段</th><th>论文小节</th><th>输入</th><th>输出</th><th>在真机上还是离线</th></tr></thead><tbody><tr><td>仿真训练基座策略</td><td>III-A</td><td>关节位置历史、先前目标</td><td>关节位置目标 a^RL</td><td>纯仿真，不碰真机</td></tr><tr><td>人工修正并录制</td><td>III-B</td><td>冻结的 a^RL、键盘选指、人手推力</td><td>实测 q、指尖力 f、掩码 m</td><td>真机在线</td></tr><tr><td>重建带力目标</td><td>III-C</td><td>q、f、m、a^RL</td><td>训练标签 a★</td><td>离线</td></tr><tr><td>训练力条件策略</td><td>III-D</td><td>关节位置与力的 5 步历史</td><td>16 步关节位置块</td><td>离线，部署时在线推理</td></tr></tbody></table></div>
 <p>有一件事从这张表里看不出来，值得单独点一下。基座策略在第二段里是<strong>冻结</strong>的，整条 data collection 期间它一直在闭环里跑。人工修正结束的那一刻，它已经看到修正后的状态。接下来它给出的目标，就是「从这个被修正过的状态继续做任务」。这一段的标签因此自带后续动作，不需要人再补一段示范。</p>
-<figure><img src="figs/2610.07525-svg-attribution.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-svg-attribution.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>示意图 A</b>　（编者绘制）横轴是一次 rollout 内推进的时间，单位是控制步，对应正文里的时间下标 t。纵轴是 12 个手部关节里的 8 个，为了看清掩码结构只画了 8 行，编号从 1 排到 8。蓝色是基座策略在控，橙色是人手在纠，绿色是被软化之后交给人的受纠关节。绿色只出现在橙色窗口内，窗口两侧各有一条淡蓝带，那是 a^RL 与 a^f 之间的最小跃度插值，把人工段和基座段接平。第 5 到第 8 行的蓝条全程不断，表示没被选中的关节一直跟基座目标走。最下面那行说明，受纠关节的实测位置仍然进入基座策略的观测历史，所以基座策略能顺着被修正后的状态继续协调其余手指。
 </figcaption></figure>
 <p>这节要你记住的是　基座策略全程闭环冻结跑，修正只换掉局部关节的目标。</p>
@@ -91,7 +91,7 @@ arXiv:2610.07525 · 2026-10-19 · 精读约 32 分钟</div>
 <p>要把这件事讲清楚，还得补一个量。对第 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math></math> 指，记 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msubsup><mi>a</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mi>f</mi></msubsup><mo>&#x0003D;</mo><msubsup><mi>&#x1D40A;</mi><mi>f</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><msubsup><mi>&#x1D409;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mrow><mo>&#x022A4;</mo></mrow></msubsup><msub><mi>&#x1D41F;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></math> 是它在整手关节空间里的力致偏移，那么这个指尖由实测接触力引起的、线性化的虚拟笛卡尔位移是</p>
 <div class="eq"><span class="eqn">(6)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x00394;</mi><msubsup><mi>&#x1D431;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mi>f</mi></msubsup><mo>&#x0003D;</mo><msub><mi>&#x1D409;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><mi>&#x00394;</mi><msubsup><mi>a</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mi>f</mi></msubsup><mo>&#x0003D;</mo><munder><munder><mrow><msub><mi>&#x1D409;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub><msubsup><mi>&#x1D40A;</mi><mi>f</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><msubsup><mi>&#x1D409;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mrow><mo>&#x022A4;</mo></mrow></msubsup></mrow><mo>&#x23DF;</mo></munder><mrow><msub><mi>&#x1D402;</mi><mrow><mi>x</mi><mo>&#x0002C;</mo><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></munder><msub><mi>&#x1D41F;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></math></div>
 <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D402;</mi><mrow><mi>x</mi><mo>&#x0002C;</mo><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow></msub></mrow></math></math> 是 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>&#x1D40A;</mi><mi>f</mi></msub></mrow></math></math> 在当前位形下诱导出来的局部虚拟笛卡尔柔顺，一个 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x000D7;</mo><mn>3</mn></mrow></math></math> 的矩阵，随位形变化。<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msubsup><mi>&#x1D431;</mi><mrow><mi>i</mi><mo>&#x0002C;</mo><mi>t</mi></mrow><mi>f</mi></msubsup></mrow></math></math> 的物理含义是，这份接触力等效于把指尖在笛卡尔空间里挪了多远。所以整条链是，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>q</mi><mi>t</mi></msub></mrow></math></math> 记下运动，<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x00394;</mi><msubsup><mi>a</mi><mi>t</mi><mi>f</mi></msubsup></mrow></math></math> 把实测的指尖与物体之间的力编进关节目标，两者合起来构成只用于离线监督的 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>a</mi><mi>t</mi><mi>f</mi></msubsup></mrow></math></math>。</p>
-<figure><img src="figs/2610.07525-svg-force2target.svg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-svg-force2target.svg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>示意图 B</b>　（编者绘制）从左到右三步。第一步是实测的三轴指尖净接触力 f_i,t，方向是干净的。第二步用雅可比转置 J_i,t^T 把它映成 12 维关节空间里的等效力矩 τ_t^f，这一步是正向相乘，不做逆，所以不涉及秩或者可解性的问题。第三步乘上固定的对角阵 K_f⁻¹ 得到关节位置偏移 Δa_t^f，结果单位是角度。下面红框点出两件容易画错的事。一是 K_f 固定且各指关节集合不相交，偏移不会渗到别的手指。二是每个受纠指尖最多给出 3 个独立测量方向，要反过来解一支三维指尖力至少需要 3 个相互独立的方向。最下面一行单独强调，Δa_t^f 从头到尾是一个位置量，它与真实接触力之间只差一个选定好的换算尺度，不代表机器人真的软了多少。
 </figcaption></figure>
 <p>然后把带力目标 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>a</mi><mi>t</mi><mi>f</mi></msubsup></mrow></math></math> 和录下来的基座策略目标 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>a</mi><mi>t</mi><mrow><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">L</mi></mrow></mrow></msubsup></mrow></math></math> 合成整条 rollout 的训练标签 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>a</mi><mi>t</mi><mrow><mo>&#x022C6;</mo></mrow></msubsup></mrow></math></math>。介入期间由关节级掩码 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msub><mi>m</mi><mi>t</mi></msub></mrow></math></math> 指出哪些关节被修正过。这些关节的目标换成 <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msubsup><mi>a</mi><mi>t</mi><mi>f</mi></msubsup></mrow></math></math> 里对应分量，没被选中的关节继续用基座策略目标。<strong>带力重建只用在人替换掉基座命令的那些位置上</strong>。因为基座策略在采数据全程都留在闭环里，它介入之后给出的目标反映的就是任务从修正后状态往下接着走。</p>
@@ -126,16 +126,16 @@ arXiv:2610.07525 · 2026-10-19 · 精读约 32 分钟</div>
 <div class="scroll"><table><thead><tr><th>触觉观测</th><th>编码器</th><th>翻转成功 / 试验</th></tr></thead><tbody><tr><td>原始 taxel</td><td>MLP</td><td>6/10</td></tr><tr><td>原始 taxel</td><td>GRU</td><td>2/10</td></tr><tr><td>净力</td><td>GRU</td><td>8/10</td></tr><tr><td><strong>净力</strong></td><td><strong>MLP</strong></td><td><strong>9/10</strong></td></tr></tbody></table></div>
 <p>这张表里最反直觉的一格是原始 taxel 配 GRU 只有 2/10，比同一套原始 taxel 配 MLP 的 6/10 还差，而净力配 GRU 有 8/10。原始 taxel 保留了更丰富的空间接触信息，性能反而更低。作者给的解释是原始 taxel 对传感器噪声和接触变化更敏感。换成净力之后 MLP 和 GRU 差不多，说明这个压缩表示不需要复杂编码器。本文最终用净力加 MLP。</p>
 <p>人工代价的分布还得看一张图。图 4 的柱子是录到的 rollout 时间里至少有一根手指被人修正过的占比。柱内数字是人工时间比总时长，单位分钟，保留一位小数。</p>
-<figure><img src="figs/2610.07525-fig4.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-fig4.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>图 4</b>　　五根柱子从左到右依次是长方体、手机、以及三支螺丝刀。柱高是录到的 rollout 时间里至少有一根手指处在人工修正下的占比，柱内数字是人工时间比总时长，单位分钟。五根柱子对应的数值依次是 24.0%、60.3%、72.0%、38.8%、83.6%。柱内第一行是人工时间，第二行是该物体的 rollout 总时长。柱子下方五个圆点从左到右代表拇指、食指、中指、无名指、小指，蓝点表示这根手指至少被引导过一次，灰点表示它一直由基座策略控制。论文正文把三支螺丝刀的占比写成 72.0%、83.6%、38.8%，与图中从左到右读出来的顺序对不上，这里以图上数值为准，正文那段的物体归属存疑。
 </figcaption></figure>
 <p>把图 4 的圆点横着读一遍得到的是手指分布。螺丝刀上被引导得最多的是无名指，做的是小幅度接触调整，其他手指只偶尔被引导。长方体上只碰拇指。三支螺丝刀里被点到的蓝点没有一根落在小指上。作者还提到，螺丝刀那三支的引导分别占了录到 rollout 时间的 72.0%、38.8% 和 83.6%，涉及三根、一根和两根手指。即便在持续引导的时候，基座策略也一直在控制那些没被修正的手指。</p>
 <p>还有一个数字上的不对称值得交代。作者说螺丝刀旋转上的全程动觉示教很难协调，反复建立接触、释放、再建立，调一根手指会扰动别的接触，导致打滑或者转不下去；就算示教时成功的示范，回放起来也可能低效或者不稳。所以<strong>定量的人工时间对比只做了长方体翻转</strong>，没有把螺丝刀的示教数字摆出来比。</p>
 <p>图 3 是学习完之后自主执行的画面，每一栏四帧从上到下按时间排。论文图 3 从左到右五栏依次是长方体翻转、手机翻转、正常螺丝刀、小号螺丝刀、大号螺丝刀。这里给出其中两栏，左起第一栏的长方体和左起第四栏的小号螺丝刀，两栏的左上角都写着从本次 rollout 起点算起的秒数 T。</p>
-<figure><img src="figs/2610.07525-fig3a.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-fig3a.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>图 3（左起第一栏）</b>　　论文图 3 五栏里最左边那一栏，长方体在手里翻转的自主执行，四帧从上到下的时间标记依次是 T = 2、6、8、11 秒。这一栏只截了长方体一个物体，另外四栏在本次复制时分开放置。看这一栏要看的是一整条动作里手形一直在变，说明基座策略的多指协调没有在蒸馏之后丢掉。
 </figcaption></figure>
-<figure><img src="figs/2610.07525-fig3b.jpg?v=20261019192040" alt="论文插图" loading="lazy" decoding="async"><figcaption>
+<figure><img src="figs/2610.07525-fig3b.jpg?v=20261102193343" alt="论文插图" loading="lazy" decoding="async"><figcaption>
 <b>图 3（左起第四栏）</b>　　论文图 3 里小号螺丝刀（Screwdriver S）那一栏。四帧是自主旋转的连续过程，时间标记依次是 T = 1、10、20、32 秒。每一帧右上角另有一幅小图叠在画面上，画螺丝刀朝向的变化，图上红绿蓝三根短线就是随朝向转过去的坐标轴。这一栏与长方体那一栏合起来，是论文所说的「不同尺寸和几何的物体上都能自适应」这句结论的直观依据。
 </figcaption></figure>
 <p>这节要你记住的是　只修局部能把翻转从一成提到八成，人工省八成。</p>
@@ -183,5 +183,5 @@ arXiv:2610.07525 · 2026-10-19 · 精读约 32 分钟</div>
 
 <a class="paperlink" href="https://arxiv.org/abs/2610.07525" target="_blank" rel="noopener">
   查看论文原文 · 下载 PDF（arXiv:2610.07525） →</a>
-<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-10-19 19:20</footer>
+<footer>CtrlView · 每周论文推荐<br>本页构建于 2026-11-02 19:33</footer>
 </div></body></html>

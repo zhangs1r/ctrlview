@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" font-family="DejaVu Sans, Source Han Sans SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="960" height="470" fill="#ffffff"/>
+  <text x="24" y="36" font-size="20" font-weight="bold" fill="#111111">帧周期、推理耗时与端到端延迟落在同一条时间轴上</text>
+  <text x="24" y="60" font-size="14" fill="#555555">三条横条共用 0 到 120 ms 的横轴，取工厂现场实测值（编者按论文表 1、表 2 与 §4.3 绘制）</text>
+  <line x1="180.0" y1="96" x2="180.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="180.0" y1="330" x2="180.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="180.0" y="352" font-size="13" text-anchor="middle" fill="#333333">0</text>
+  <line x1="300.0" y1="96" x2="300.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="300.0" y1="330" x2="300.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="300.0" y="352" font-size="13" text-anchor="middle" fill="#333333">20</text>
+  <line x1="420.0" y1="96" x2="420.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="420.0" y1="330" x2="420.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="420.0" y="352" font-size="13" text-anchor="middle" fill="#333333">40</text>
+  <line x1="540.0" y1="96" x2="540.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="540.0" y1="330" x2="540.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="540.0" y="352" font-size="13" text-anchor="middle" fill="#333333">60</text>
+  <line x1="660.0" y1="96" x2="660.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="660.0" y1="330" x2="660.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="660.0" y="352" font-size="13" text-anchor="middle" fill="#333333">80</text>
+  <line x1="780.0" y1="96" x2="780.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="780.0" y1="330" x2="780.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="780.0" y="352" font-size="13" text-anchor="middle" fill="#333333">100</text>
+  <line x1="900.0" y1="96" x2="900.0" y2="330" stroke="#e6e6e6" stroke-width="1"/>
+  <line x1="900.0" y1="330" x2="900.0" y2="336" stroke="#333333" stroke-width="1"/>
+  <text x="900.0" y="352" font-size="13" text-anchor="middle" fill="#333333">120</text>
+  <line x1="180" y1="330" x2="900" y2="330" stroke="#333333" stroke-width="1.5"/>
+  <text x="900" y="372" font-size="13" text-anchor="end" fill="#333333">时间（ms）</text>
+  <text x="168" y="134" font-size="14" text-anchor="end" fill="#111111">相机子码流 25 帧</text>
+  <text x="168" y="152" font-size="12" text-anchor="end" fill="#666666">每 40 ms 一帧</text>
+  <text x="168" y="204" font-size="14" text-anchor="end" fill="#111111">加速棒推理</text>
+  <text x="168" y="222" font-size="12" text-anchor="end" fill="#666666">25 到 33 ms</text>
+  <text x="168" y="274" font-size="14" text-anchor="end" fill="#111111">端到端延迟</text>
+  <text x="168" y="292" font-size="12" text-anchor="end" fill="#666666">70 到 90 ms</text>
+  <rect x="180.0" y="116" width="240.0" height="34" fill="#dbe8f6" stroke="#7aa7cc" stroke-width="1"/>
+  <text x="300.0" y="138" font-size="13" text-anchor="middle" fill="#33506b">第 1 帧</text>
+  <rect x="420.0" y="116" width="240.0" height="34" fill="#f1f5fa" stroke="#7aa7cc" stroke-width="1"/>
+  <text x="540.0" y="138" font-size="13" text-anchor="middle" fill="#33506b">第 2 帧</text>
+  <rect x="660.0" y="116" width="240.0" height="34" fill="#dbe8f6" stroke="#7aa7cc" stroke-width="1"/>
+  <text x="780.0" y="138" font-size="13" text-anchor="middle" fill="#33506b">第 3 帧</text>
+  <rect x="180" y="188" width="198.0" height="34" fill="#1f9d55" stroke="#15703c" stroke-width="0"/>
+  <rect x="330.0" y="188" width="48.0" height="34" fill="#8fd3ae" stroke="#15703c" stroke-width="0"/>
+  <text x="204.0" y="210" font-size="13" fill="#ffffff">25 ms</text>
+  <text x="336.0" y="210" font-size="12" fill="#123f26">33</text>
+  <line x1="378.0" y1="176" x2="420.0" y2="176" stroke="#1f9d55" stroke-width="1.5"/>
+  <line x1="378.0" y1="172" x2="378.0" y2="180" stroke="#1f9d55" stroke-width="1.5"/>
+  <line x1="420.0" y1="172" x2="420.0" y2="180" stroke="#1f9d55" stroke-width="1.5"/>
+  <text x="474.0" y="182" font-size="12" fill="#15703c">余量 7 到 15 ms</text>
+  <rect x="180" y="258" width="420.0" height="34" fill="#d9822b" stroke="#8f5312" stroke-width="0"/>
+  <rect x="600.0" y="258" width="120.0" height="34" fill="#f0bd82" stroke="#8f5312" stroke-width="0"/>
+  <text x="204.0" y="280" font-size="13" fill="#ffffff">70 ms</text>
+  <text x="606.0" y="280" font-size="12" fill="#5c3410">90</text>
+  <text x="738.0" y="281" font-size="13" fill="#8f5312">约两帧</text>
+  <line x1="420.0" y1="104" x2="420.0" y2="316" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="426.0" y="112" font-size="12" fill="#c0392b">第 2 帧到，推理必须在此之前做完</text>
+  <line x1="24" y1="386" x2="936" y2="386" stroke="#cccccc" stroke-width="1"/>
+  <text x="24" y="408" font-size="13" fill="#444444">带速按 2.5 m/s 计，80 ms 里皮带走 0.20 m，一个帧周期走 0.10 m</text>
+  <text x="24" y="430" font-size="13" fill="#444444">640×640 时加速棒约 10 帧每秒，合 100 ms 一帧，已经超过 40 ms 的帧周期，只能丢帧</text>
+  <text x="24" y="452" font-size="12" fill="#777777">箭头与余量为算术换算，原图未给帧周期与帧间隔的直接测量</text>
+</svg>

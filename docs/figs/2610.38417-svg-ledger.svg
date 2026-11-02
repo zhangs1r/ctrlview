@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 336" width="920" height="336" font-family="system-ui,-apple-system,'Segoe UI','Microsoft YaHei',sans-serif">
+  <style>
+    .tb{fill:#1b1b1f;font-size:15px;font-weight:700}
+    .sm{fill:#5c5c68;font-size:12.5px}
+    .xs{fill:#6b6b78;font-size:11.5px}
+    .hl{fill:#1b1b1f;font-size:14px;font-weight:700}
+    .b1{fill:#eef4f9;stroke:#9dbcd4;stroke-width:1.5}
+    .b2{fill:#fdf5ec;stroke:#d9c3a0;stroke-width:1.5}
+    .b3{fill:#f1f6f1;stroke:#a8c9b0;stroke-width:1.5}
+    .arr{stroke:#8a8a96;stroke-width:1.7;fill:none;marker-end:url(#ah)}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a96"/>
+    </marker>
+  </defs>
+
+  <text class="tb" x="24" y="30">两个方向上的计数，缺一边不等式就不成立</text>
+  <text class="sm" x="24" y="52">以文中那个 MIMO 例子为例，n = 6，m = 3，p = 3。左边是拿到信息的通道数，右边是可调的系数个数。</text>
+
+  <rect class="b1" x="24" y="76" width="268" height="150" rx="8"/>
+  <text class="hl" x="42" y="102">观测侧</text>
+  <text class="lb" x="42" y="132" style="font-size:15px;font-weight:700">N · p ≥ n</text>
+  <text class="sm" x="42" y="156">3 × 3 = 9 ≥ 6</text>
+  <text class="sm" x="42" y="180">O_h 是 Np 行 n 列，要满列秩 n。</text>
+  <text class="xs" x="42" y="200">一路时滞只贡献 p 行。</text>
+  <text class="xs" x="42" y="218">这一条决定 x(2h) 能否还原。</text>
+
+  <rect class="b2" x="326" y="76" width="268" height="150" rx="8"/>
+  <text class="hl" x="344" y="102">要同时归零的量</text>
+  <text class="lb" x="344" y="132" style="font-size:15px;font-weight:700">F 是 n×n 矩阵，n² 个标量</text>
+  <text class="sm" x="344" y="156">n² = 36</text>
+  <text class="sm" x="344" y="180">终端映射 F 由 x(3h) = F x(2h) 定义。</text>
+  <text class="xs" x="344" y="200">要求它对任意 x(2h) 都为零，</text>
+  <text class="xs" x="344" y="218">等价于 36 个标量同时为零。</text>
+
+  <rect class="b3" x="628" y="76" width="268" height="150" rx="8"/>
+  <text class="hl" x="646" y="102">控制侧</text>
+  <text class="lb" x="646" y="132" style="font-size:15px;font-weight:700">N · m · p · N_b ≥ n²</text>
+  <text class="sm" x="646" y="156">3 × 3 × 3 × N_b = 27 N_b ≥ 36</text>
+  <text class="sm" x="646" y="180">K_b 是 n² 行、NmpN_b 列，要满行秩。</text>
+  <text class="xs" x="646" y="200">列数凑不够行数，这组方程就没有解。</text>
+  <text class="xs" x="646" y="218">这一条决定终端映射能不能被消掉。</text>
+
+  <line class="arr" x1="292" y1="151" x2="320" y2="151"/>
+  <line class="arr" x1="594" y1="151" x2="622" y2="151"/>
+
+  <text class="lb" x="24" y="262">把三个数字并排放</text>
+  <text class="sm" x="24" y="286">常数增益 K 的自由参数只有 m·p = 9 个，而终端映射有 36 个标量要摆布。9 个旋钮调 36 个量，一般调不出来，这就是常数静态输出反馈的维数困难。</text>
+  <text class="sm" x="24" y="308">时变增益把 9 个旋钮换成一条曲线上每点 9 个方向，再乘上 N_b 个基函数，36 个方程才凑够。物理通道没有增加，增加的是时间这一维。</text>
+  <text class="xs" x="24" y="328">论文没有把这段计数写成命题，它落在 (4)、(34) 两式与例子的参数上。</text>
+</svg>
